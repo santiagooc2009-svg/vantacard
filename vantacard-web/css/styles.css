@@ -9,6 +9,7 @@
   --bg-raised: #131519;
   --bg-card: #1a1d22;
   --accent: #c9ced6;
+  --accent-rgb: 201, 206, 214;
   --accent-strong: #eef0f3;
   --accent-dim: #7d838d;
   --text-primary: #f2f3f5;
@@ -61,6 +62,23 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Faint brushed-metal grain over the whole page. Cheap, tasteful
+   substitute for photography: it's what keeps a flat silver/black
+   palette from reading as an empty gradient. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.05;
+  /* overlay barely touches near-black pixels; screen (additive)
+     actually shows up against a dark background. */
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 img,
@@ -112,6 +130,13 @@ button {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
+}
+
+/* Scroll-reveal targets. Starting state only; main.js animates each
+   one to opacity:1/y:0 with ScrollTrigger.batch as it enters view. */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(28px);
 }
 
 h1,
@@ -233,27 +258,37 @@ h3 {
   position: absolute;
   border-radius: 50%;
   filter: blur(50px);
+  /* Slow idle drift, independent of the scroll-driven parallax on
+     the .orbs layer itself (different element, so no transform
+     conflict with the GSAP-driven translateY above it). Keeps the
+     scene alive even while the user isn't scrolling. */
+  animation: orb-breathe 14s ease-in-out infinite;
+}
+
+@keyframes orb-breathe {
+  0%, 100% { transform: scale(1) translate(0, 0); opacity: 1; }
+  50% { transform: scale(1.12) translate(2%, -3%); opacity: 0.75; }
 }
 
 .orbs--back .orb {
   background: radial-gradient(circle, rgba(201, 206, 214, 0.16), transparent 70%);
 }
-.orbs--back .orb:nth-child(1) { width: 420px; height: 420px; top: 6%; left: 8%; }
-.orbs--back .orb:nth-child(2) { width: 340px; height: 340px; bottom: 4%; right: 10%; }
+.orbs--back .orb:nth-child(1) { width: 420px; height: 420px; top: 6%; left: 8%; animation-delay: 0s; }
+.orbs--back .orb:nth-child(2) { width: 340px; height: 340px; bottom: 4%; right: 10%; animation-delay: -7s; }
 
 .orbs--mid .orb {
   background: radial-gradient(circle, rgba(201, 206, 214, 0.22), transparent 68%);
   filter: blur(36px);
 }
-.orbs--mid .orb:nth-child(1) { width: 260px; height: 260px; top: 18%; right: 16%; }
-.orbs--mid .orb:nth-child(2) { width: 200px; height: 200px; bottom: 14%; left: 14%; }
+.orbs--mid .orb:nth-child(1) { width: 260px; height: 260px; top: 18%; right: 16%; animation-duration: 11s; animation-delay: -3s; }
+.orbs--mid .orb:nth-child(2) { width: 200px; height: 200px; bottom: 14%; left: 14%; animation-duration: 12.5s; animation-delay: -9s; }
 
 .orbs--front .orb {
   background: radial-gradient(circle, rgba(238, 240, 243, 0.3), transparent 65%);
   filter: blur(22px);
 }
-.orbs--front .orb:nth-child(1) { width: 130px; height: 130px; top: 30%; left: 22%; }
-.orbs--front .orb:nth-child(2) { width: 100px; height: 100px; bottom: 24%; right: 24%; }
+.orbs--front .orb:nth-child(1) { width: 130px; height: 130px; top: 30%; left: 22%; animation-duration: 8s; animation-delay: -1s; }
+.orbs--front .orb:nth-child(2) { width: 100px; height: 100px; bottom: 24%; right: 24%; animation-duration: 9.5s; animation-delay: -5s; }
 
 /* 3D world */
 .scene-3d {
@@ -492,6 +527,8 @@ h3 {
 }
 
 .btn--primary {
+  position: relative;
+  overflow: hidden;
   background: var(--accent);
   color: var(--bg);
 }
@@ -499,6 +536,21 @@ h3 {
 .btn--primary:hover {
   transform: translateY(-2px);
   background: var(--accent-strong);
+}
+
+/* Chrome shimmer: a bright diagonal band sweeps across on hover,
+   like light catching brushed metal. */
+.btn--primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.65) 50%, transparent 60%);
+  transform: translateX(-120%);
+}
+
+.btn--primary:hover::after {
+  transform: translateX(120%);
+  transition: transform 0.7s ease;
 }
 
 .btn--ghost {
@@ -619,6 +671,7 @@ h3 {
 }
 
 .plan {
+  position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -631,6 +684,28 @@ h3 {
 .plan:hover {
   border-color: var(--border-strong);
   transform: translateY(-4px);
+}
+
+/* Spotlight border: a 1px ring that lights up around the cursor.
+   --mx/--my are set from JS on pointermove. The mask trick keeps
+   only the ring visible, not a filled glow behind the card. */
+.plan::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), 0.55), transparent 65%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.plan:hover::before {
+  opacity: 1;
 }
 
 .plan--featured {

@@ -88,6 +88,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Fade + rise-in for section headings, plan cards, and footer
+  // columns as they enter the viewport. Runs even under reduced
+  // motion (that just makes the CSS transition instant, per the
+  // global @media rule in styles.css) so content never gets stuck
+  // invisible for a user who can't trigger the animated version.
+  ScrollTrigger.batch(".reveal-up", {
+    start: "top 88%",
+    once: true,
+    onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.08 }),
+  });
+
+  // Spotlight border on plan cards: track the cursor into CSS custom
+  // properties the ::before ring reads. Plain pointermove on two
+  // small cards, not a scroll-frame cost, so it's fine outside the
+  // ScrollTrigger/ban-on-scroll-listeners rule (that rule targets
+  // window-level scroll polling, not local pointer tracking).
+  document.querySelectorAll(".plan").forEach((el) => {
+    el.addEventListener("pointermove", (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+      el.style.setProperty("--my", `${e.clientY - r.top}px`);
+    });
+  });
+
   // Final settled positions. The card's Z (60) never changes anywhere
   // in the timeline — it truly stays put. The phone's settled Z (28)
   // stays well below it with a comfortable margin. Y values place the
