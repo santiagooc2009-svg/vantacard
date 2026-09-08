@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VantaCard — Tarjetas de presentación digitales NFC</title>
+<meta name="description" content="Tarjetas de presentación digitales con NFC. Comparte tu contacto, portafolio y redes con un solo toque. Sin apps, sin papel, sin fricción." />
+<meta name="theme-color" content="#0b0a09" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="VantaCard" />
+<meta property="og:title" content="VantaCard — Tarjetas de presentación digitales NFC" />
+<meta property="og:description" content="Comparte tu contacto, portafolio y redes con un solo toque. Sin apps, sin papel, sin fricción." />
+<meta property="og:url" content="https://vantacard.pro" />
+<meta property="og:image" content="https://vantacard.pro/assets/og-image.png" />
+<meta property="og:locale" content="es_MX" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="VantaCard — Tarjetas de presentación digitales NFC" />
+<meta name="twitter:description" content="Comparte tu contacto, portafolio y redes con un solo toque." />
+
+<link rel="canonical" href="https://vantacard.pro" />
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a href="#top" class="nav__logo">VantaCard</a>
+  <div class="nav__links">
+    <a href="#servicios">Servicios</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+  <a class="nav__cta" href="https://wa.me/525639317160" target="_blank" rel="noopener">Solicitar demo</a>
+</nav>
+
+<main id="top">
+
+  <!-- ============== HERO 3D SCENE ============== -->
+  <section class="hero-scene" id="heroScene" aria-label="Presentación animada de VantaCard">
+    <div class="hero-scene__stage" id="stage">
+
+      <div class="orbs orbs--back" id="orbsBack" aria-hidden="true">
+        <span class="orb"></span>
+        <span class="orb"></span>
+      </div>
+      <div class="orbs orbs--mid" id="orbsMid" aria-hidden="true">
+        <span class="orb"></span>
+        <span class="orb"></span>
+      </div>
+
+      <div class="scene-3d">
+        <div class="scene-3d__world" id="world">
+
+          <div class="card-3d" id="card3d" aria-hidden="true">
+            <div class="card-3d__inner">
+              <div class="card-3d__top">
+                <span class="card-3d__mark">VantaCard</span>
+                <svg class="card-3d__nfc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path d="M4 9a8 8 0 0 1 12 0" stroke-linecap="round"/>
+                  <path d="M6.5 11.5a5 5 0 0 1 8 0" stroke-linecap="round"/>
+                  <circle cx="10.5" cy="14.5" r="1.4" fill="currentColor" stroke="none"/>
+                </svg>
+              </div>
+              <div>
+                <div class="card-3d__name">Sport Car Dreams</div>
+                <div class="card-3d__role">Inventario · Citas · NFC 013</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone-3d" id="phone3d" aria-hidden="true">
+            <div class="phone-3d__inner">
+              <div class="phone-3d__notch"></div>
+              <div class="phone-3d__screen" id="phoneScreen">
+                <svg class="phone-3d__glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                  <path d="M4 9a8 8 0 0 1 12 0" stroke-linecap="round"/>
+                  <path d="M6.5 11.5a5 5 0 0 1 8 0" stroke-linecap="round"/>
+                  <path d="M9 14a2 2 0 0 1 3 0" stroke-linecap="round"/>
+                  <circle cx="10.5" cy="16.2" r="1.2" fill="currentColor" stroke="none"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="nfc-ripple" id="nfcRipple" aria-hidden="true"></div>
+          <div class="screen-glow" id="screenGlow" aria-hidden="true"></div>
+          <div class="contact-shadow" id="contactShadow" aria-hidden="true"></div>
+
+        </div>
+      </div>
+
+      <div class="orbs orbs--front" id="orbsFront" aria-hidden="true">
+        <span class="orb"></span>
+        <span class="orb"></span>
+      </div>
+
+      <!-- Overlays the 3D scene, fading in during the zoom-through so
+           the pin can release straight into fully-formed content —
+           no dead scroll gap waiting for it to scroll into view. -->
+      <header class="hero-copy" id="heroCopy">
+        <p class="eyebrow hero-copy__eyebrow">Tarjetas de presentación digitales NFC</p>
+        <h1>Tu presentación, en un toque.</h1>
+        <p>Comparte tu contacto, portafolio y redes con un acercamiento. Sin apps, sin papel, sin fricción — solo acercar el teléfono.</p>
+        <div class="hero-copy__actions">
+          <a class="btn btn--primary" href="https://wa.me/525639317160" target="_blank" rel="noopener">Solicitar demo por WhatsApp</a>
+          <a class="btn btn--ghost" href="#servicios">Ver planes</a>
+        </div>
+        <p class="hero-copy__proof">Caso real — <strong>Sport Car Dreams</strong> usa VantaCard para mostrar su inventario y recibir citas.</p>
+      </header>
+
+    </div>
+  </section>
+
+  <!-- ============== REVEALED CONTENT ============== -->
+  <div class="reveal-content" id="revealContent">
+
+    <section class="services" id="servicios">
+      <div class="services__head">
+        <p class="eyebrow">Planes</p>
+        <h2>Elige cómo quieres presentarte</h2>
+      </div>
+
+      <div class="services__grid">
+
+        <article class="plan">
+          <p class="plan__tag">Individual</p>
+          <h3 class="plan__name">VantaCard Personal</h3>
+          <p class="plan__price">$[completar] <span>MXN</span></p>
+          <p class="plan__desc">Ideal para freelancers, agentes y profesionales que quieren una sola tarjeta con todo su contacto.</p>
+          <ul class="plan__features">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              1 tarjeta NFC física
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Página de perfil personalizable
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Enlaces a redes y WhatsApp
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Actualizaciones ilimitadas
+            </li>
+          </ul>
+          <a class="btn btn--ghost" href="https://wa.me/525639317160" target="_blank" rel="noopener">Solicitar</a>
+        </article>
+
+        <article class="plan plan--featured">
+          <p class="plan__tag">Negocio</p>
+          <h3 class="plan__name">VantaCard Negocio</h3>
+          <p class="plan__price">$[completar] <span>MXN</span></p>
+          <p class="plan__desc">Para equipos y negocios como Sport Car Dreams: catálogo o inventario, y citas directo desde la tarjeta.</p>
+          <ul class="plan__features">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Tarjetas NFC para todo el equipo
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Catálogo / inventario integrado
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Agendado de citas
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Soporte prioritario
+            </li>
+          </ul>
+          <a class="btn btn--primary" href="https://wa.me/525639317160" target="_blank" rel="noopener">Solicitar</a>
+        </article>
+
+      </div>
+    </section>
+
+    <footer class="footer" id="contacto">
+      <div class="footer__inner">
+        <div class="footer__brand">
+          <h3>VantaCard</h3>
+          <p>Tarjetas de presentación digitales NFC, hechas en México.</p>
+        </div>
+        <div class="footer__col">
+          <h4>Contacto</h4>
+          <ul>
+            <li><a href="mailto:a01739804@tec.mx">a01739804@tec.mx</a></li>
+            <li><a href="https://wa.me/525639317160" target="_blank" rel="noopener">WhatsApp +52 563 931 7160</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Síguenos</h4>
+          <ul>
+            <li><a href="#" id="instagramLink">Instagram</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© 2026 VantaCard. Hecho en México.</span>
+        <span>vantacard.pro</span>
+      </div>
+    </footer>
+
+  </div>
+
+</main>
+
+<script src="js/vendor/gsap.min.js"></script>
+<script src="js/vendor/ScrollTrigger.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
