@@ -45,12 +45,48 @@ document.addEventListener("DOMContentLoaded", () => {
     "(prefers-reduced-motion: reduce)"
   ).matches;
 
+  gsap.registerPlugin(ScrollTrigger);
+
   // Nav gets a solid background once we've scrolled past the hero.
-  const updateNav = () => {
-    nav.classList.toggle("nav--solid", window.scrollY > window.innerHeight * 0.6);
-  };
-  window.addEventListener("scroll", updateNav, { passive: true });
-  updateNav();
+  // A plain "scroll" listener re-runs on every frame; ScrollTrigger
+  // batches this into the same rAF pass as everything else on the
+  // page instead. This toggle is a state change, not motion, so it
+  // runs the same way regardless of prefers-reduced-motion.
+  ScrollTrigger.create({
+    trigger: heroScene,
+    start: "bottom top+=80",
+    onEnter: () => nav.classList.add("nav--solid"),
+    onLeaveBack: () => nav.classList.remove("nav--solid"),
+  });
+
+  // "Cómo funciona": each step pins in place and shrinks/fades as the
+  // next one arrives, so the page reads as one sequence instead of a
+  // static three-card row.
+  const steps = gsap.utils.toArray(".how__step");
+  if (!prefersReduced && steps.length > 1) {
+    steps.forEach((step, i) => {
+      if (i === steps.length - 1) return;
+      ScrollTrigger.create({
+        trigger: step,
+        start: "top top+=64",
+        endTrigger: steps[steps.length - 1],
+        end: "top top+=64",
+        pin: true,
+        pinSpacing: false,
+      });
+      gsap.to(step, {
+        scale: 0.86,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: steps[i + 1],
+          start: "top bottom",
+          end: "top top+=64",
+          scrub: true,
+        },
+      });
+    });
+  }
 
   // Final settled positions. The card's Z (60) never changes anywhere
   // in the timeline — it truly stays put. The phone's settled Z (28)
@@ -76,8 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.set(heroCopy, { opacity: 1, y: 0, pointerEvents: "auto" });
     return;
   }
-
-  gsap.registerPlugin(ScrollTrigger);
 
   // Card: fully static from the very first frame. It never moves,
   // rotates, or changes depth for the rest of the scene.

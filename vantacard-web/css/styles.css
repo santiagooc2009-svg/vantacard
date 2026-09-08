@@ -1,25 +1,25 @@
 /* ============================================================
    VantaCard — Design System
-   Un solo mundo visual oscuro. Copper/gold sobre casi-negro.
+   Un solo mundo visual oscuro. Silver/chrome sobre casi-negro frío.
    ============================================================ */
 
 :root {
   /* Color */
-  --bg: #0b0a09;
-  --bg-raised: #15120e;
-  --bg-card: #1a1611;
-  --accent: #e8c077;
-  --accent-strong: #f3d497;
-  --accent-dim: #a9824f;
-  --text-primary: #f5f0e6;
-  --text-secondary: #ab9d89;
-  --text-tertiary: #93866f;
-  --border: rgba(232, 192, 119, 0.14);
-  --border-strong: rgba(232, 192, 119, 0.3);
-  --shadow-color: 30, 20, 10;
+  --bg: #0a0b0d;
+  --bg-raised: #131519;
+  --bg-card: #1a1d22;
+  --accent: #c9ced6;
+  --accent-strong: #eef0f3;
+  --accent-dim: #7d838d;
+  --text-primary: #f2f3f5;
+  --text-secondary: #a7adb6;
+  --text-tertiary: #8b929c;
+  --border: rgba(201, 206, 214, 0.14);
+  --border-strong: rgba(201, 206, 214, 0.3);
+  --shadow-color: 4, 5, 7;
 
   /* Type */
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-display: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 
@@ -138,7 +138,7 @@ h3 {
 }
 
 .nav--solid {
-  background: rgba(11, 10, 9, 0.82);
+  background: rgba(10, 11, 13, 0.82);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom-color: var(--border);
@@ -209,7 +209,7 @@ h3 {
   width: 100%;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 28%, rgba(232, 192, 119, 0.08), transparent 60%),
+    radial-gradient(ellipse 70% 55% at 50% 28%, rgba(201, 206, 214, 0.08), transparent 60%),
     var(--bg);
 }
 
@@ -236,20 +236,20 @@ h3 {
 }
 
 .orbs--back .orb {
-  background: radial-gradient(circle, rgba(232, 192, 119, 0.16), transparent 70%);
+  background: radial-gradient(circle, rgba(201, 206, 214, 0.16), transparent 70%);
 }
 .orbs--back .orb:nth-child(1) { width: 420px; height: 420px; top: 6%; left: 8%; }
 .orbs--back .orb:nth-child(2) { width: 340px; height: 340px; bottom: 4%; right: 10%; }
 
 .orbs--mid .orb {
-  background: radial-gradient(circle, rgba(232, 192, 119, 0.22), transparent 68%);
+  background: radial-gradient(circle, rgba(201, 206, 214, 0.22), transparent 68%);
   filter: blur(36px);
 }
 .orbs--mid .orb:nth-child(1) { width: 260px; height: 260px; top: 18%; right: 16%; }
 .orbs--mid .orb:nth-child(2) { width: 200px; height: 200px; bottom: 14%; left: 14%; }
 
 .orbs--front .orb {
-  background: radial-gradient(circle, rgba(243, 212, 151, 0.3), transparent 65%);
+  background: radial-gradient(circle, rgba(238, 240, 243, 0.3), transparent 65%);
   filter: blur(22px);
 }
 .orbs--front .orb:nth-child(1) { width: 130px; height: 130px; top: 30%; left: 22%; }
@@ -308,7 +308,7 @@ h3 {
   height: 100%;
   border-radius: var(--radius-md);
   padding: var(--space-3);
-  background: linear-gradient(150deg, #211a12 0%, #2a2115 45%, #17130e 100%);
+  background: linear-gradient(150deg, #1b1d22 0%, #23262d 45%, #101114 100%);
   border: 1px solid var(--border-strong);
   box-shadow:
     0 40px 70px -30px rgba(var(--shadow-color), 0.85),
@@ -327,8 +327,9 @@ h3 {
 .card-3d__mark {
   font-family: var(--font-display);
   font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--accent-strong);
-  font-style: italic;
 }
 
 .card-3d__nfc {
@@ -363,8 +364,8 @@ h3 {
   height: 100%;
   border-radius: 42px;
   padding: 12px;
-  background: linear-gradient(165deg, #221c15, #0d0b09 75%);
-  border: 1px solid rgba(232, 192, 119, 0.16);
+  background: linear-gradient(165deg, #1c1e24, #08090b 75%);
+  border: 1px solid rgba(201, 206, 214, 0.16);
   box-shadow: 0 60px 110px -35px rgba(var(--shadow-color), 0.9);
 }
 
@@ -375,7 +376,7 @@ h3 {
   transform: translateX(-50%);
   width: 64px;
   height: 18px;
-  background: #0d0b09;
+  background: #08090b;
   border-radius: 999px;
   z-index: 2;
 }
@@ -385,7 +386,7 @@ h3 {
   width: 100%;
   height: 100%;
   border-radius: 32px;
-  background: radial-gradient(ellipse 120% 90% at 50% 0%, #1a140d, var(--bg) 70%);
+  background: radial-gradient(ellipse 120% 90% at 50% 0%, #15171b, var(--bg) 70%);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -418,7 +419,7 @@ h3 {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(243, 212, 151, 0.95), rgba(232, 192, 119, 0.4) 45%, transparent 72%);
+  background: radial-gradient(circle, rgba(238, 240, 243, 0.95), rgba(201, 206, 214, 0.4) 45%, transparent 72%);
   opacity: 0;
   pointer-events: none;
   z-index: 5;
@@ -510,17 +511,81 @@ h3 {
   color: var(--accent);
 }
 
-.hero-copy__proof {
-  margin-top: var(--space-5);
+/* ---------- Trust strip ---------- */
+.trust-strip {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  text-align: center;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
   color: var(--text-tertiary);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
 }
 
-.hero-copy__proof strong {
+.trust-strip strong {
   color: var(--text-secondary);
   font-weight: 500;
+}
+
+/* ---------- How it works (sticky-stack) ---------- */
+.how {
+  padding: var(--space-6) 0 0;
+}
+
+.how h2 {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  text-align: center;
+  max-width: var(--max-width);
+  margin: 0 auto var(--space-3);
+  padding: 0 var(--space-4);
+}
+
+.how__steps {
+  position: relative;
+}
+
+.how__step {
+  min-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-5) var(--space-4);
+  will-change: transform, opacity;
+}
+
+.how__icon-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-3);
+}
+
+.how__icon {
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+}
+
+.how__step h3 {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+
+.how__step p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 40ch;
+  margin-top: var(--space-2);
 }
 
 /* ---------- Services ---------- */
@@ -570,7 +635,7 @@ h3 {
 
 .plan--featured {
   border-color: var(--border-strong);
-  background: linear-gradient(165deg, var(--bg-card), #1f1912);
+  background: linear-gradient(165deg, var(--bg-card), #20242b);
 }
 
 .plan__tag {
