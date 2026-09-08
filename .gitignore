@@ -1,0 +1,5 @@
+# Local Claude Code / agent skill installs (personal tooling config,
+# not part of the VantaCard site)
+.agents/
+.claude/
+skills-lock.json
