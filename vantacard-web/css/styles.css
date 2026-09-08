@@ -13,7 +13,7 @@
   --accent-dim: #a9824f;
   --text-primary: #f5f0e6;
   --text-secondary: #ab9d89;
-  --text-tertiary: #8a7c6a;
+  --text-tertiary: #93866f;
   --border: rgba(232, 192, 119, 0.14);
   --border-strong: rgba(232, 192, 119, 0.3);
   --shadow-color: 30, 20, 10;
@@ -150,6 +150,10 @@ h3 {
   font-weight: 500;
   letter-spacing: -0.01em;
   color: var(--text-primary);
+  /* Padding + matching negative margin grows the tap target to 44px
+     tall (mobile) without shifting the visible logo position. */
+  padding: 6px 0;
+  margin: -6px 0;
 }
 
 .nav__links {
@@ -170,7 +174,7 @@ h3 {
 .nav__cta {
   font-size: 0.85rem;
   font-weight: 500;
-  padding: 0.6rem 1.15rem;
+  padding: 0.7rem 1.15rem;
   border-radius: 999px;
   border: 1px solid var(--border-strong);
   color: var(--text-primary);
@@ -665,10 +669,13 @@ h3 {
 .footer__col ul {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
 }
 
 .footer__col a {
+  display: block;
+  /* Padding grows the tap target to 44px tall on mobile; ul's old
+     gap is folded into this so visual spacing stays about the same. */
+  padding: 0.7rem 0;
   font-size: 0.9rem;
   color: var(--text-secondary);
   transition: color 0.2s ease;
