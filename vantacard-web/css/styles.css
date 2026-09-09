@@ -222,9 +222,13 @@ h3 {
    Hero scene — pinned 3D animation
    ============================================================ */
 
+/* Tall enough to hold the full scroll-driven sequence: the card's
+   parallax detour through three target profiles, then the original
+   phone-approach phases. All one continuous scrub, so it has to be
+   this long — see the "approach" label in js/main.js. */
 .hero-scene {
   position: relative;
-  height: 460vh;
+  height: 1050vh;
   background: var(--bg);
 }
 
@@ -389,13 +393,14 @@ h3 {
 }
 
 /* Mobile default: centered, below where the card+phone sit. On wide
-   viewports (matched in JS too, for the card's fly-to-side offset) it
-   moves to the right half, opposite the card. */
+   viewports (matched in JS too) js/main.js animates its `x` to
+   whichever side is opposite the card at each step — so no static
+   transform here; GSAP owns xPercent/yPercent/x/y entirely, the same
+   anchoring pattern #card3d and #phone3d already use. */
 .profile-panel {
   position: absolute;
   left: 50%;
   top: 87%;
-  transform: translate(-50%, -50%);
   z-index: 4;
   display: flex;
   flex-direction: column;
@@ -454,7 +459,6 @@ h3 {
 
 @media (min-width: 700px) {
   .profile-panel {
-    left: 76%;
     top: 46%;
     width: min(26vw, 320px);
   }

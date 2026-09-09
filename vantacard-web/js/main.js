@@ -202,20 +202,23 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.set(heroCopy, { opacity: 0, y: 30, pointerEvents: "none" });
   gsap.set(world, { scale: 1, opacity: 1 });
 
-  // ---- Profile intro: the card spins in the air and flies to one
-  // side to show who it's for, then spins back to center ----
-  // Plays once on load, fully independent of scroll (no ScrollTrigger
-  // here), so it never competes with the scroll-scrubbed phone-approach
-  // timeline below — that timeline never touches `card` at all, only
-  // `phone`/orbs/glow, so the two can run concurrently with zero
-  // conflict even if the visitor starts scrolling mid-intro.
+  // ---- Profile parallax intro: the card dips down and turns to each
+  // side, showing who it's for, before settling back to center ----
+  // This is scroll-driven — part of the SAME scrubbed timeline as the
+  // phone-approach phases below, not a separate autoplay one — because
+  // the point is that scrolling down carries you through it. All the
+  // phone-approach tweens further down are anchored to the "approach"
+  // label instead of absolute positions, so this segment can grow or
+  // shrink without hand-editing every number after it.
   // It lands back on the real Sport Car Dreams identity the rest of
   // the page already assumes (trust strip, showcase mockups), so the
-  // card's DOM content matches from here on with no extra reset step.
+  // card's DOM content never actually changes — only the panel's does.
   const isWideStage = window.matchMedia("(min-width: 700px)").matches;
-  const SIDE_X = isWideStage ? -250 : 0;
-  const REAL_NAME = cardName.textContent;
-  const REAL_ROLE = cardRole.textContent;
+  const CARD_Y = CARD_SETTLED.y;
+  const SIDE = isWideStage ? 220 : 0; // how far the card drifts to either side
+  const PANEL_SIDE = isWideStage ? 250 : 0; // how far the panel sits opposite it
+  const LOW_Y = CARD_Y + 105; // noticeably lower than the resting position — the "baja"
+  const MID_Y = CARD_Y + 65; // partway back up, for the last profile before settling
 
   const PROFILES = [
     {
@@ -243,67 +246,38 @@ document.addEventListener("DOMContentLoaded", () => {
     profileDots.forEach((dot, di) => dot.classList.toggle("profile-panel__dot--active", di === i));
   };
 
+  gsap.set(profilePanel, { xPercent: -50, yPercent: -50, x: 0 });
   gsap.set([cardName, cardRole], { opacity: 0 });
 
-  // Every card tween below targets an absolute value (never a relative
-  // "+=" delta) and is placed on an explicit label, so no two tweens
-  // ever touch the same property in an overlapping time range — GSAP
-  // relative tweens that overlap read the in-flight value of the
-  // *other* tween instead of its finished target, which drifted the
-  // card off its exact settled position when this used "+=" deltas.
-  const CARD_Y = CARD_SETTLED.y;
-  const CARD_Y_RAISED = CARD_Y - 45;
-  const FLY_SPIN = 360; // one full turn per flight, so it always lands front-facing
-  const DWELL = 1.0; // how long each profile stays fully visible before the next transition starts
-  let spinY = 0;
+  // Which profile is "current" is derived from the timeline's time on
+  // every update, not from one-time triggers — a scrubbed timeline can
+  // jump straight to any position (fast scrolling, scrolling back up
+  // past several zones at once), and GSAP's .call() only reliably
+  // fires when the playhead sweeps forward across it, not when a jump
+  // lands beyond it or crosses it going backward. Deriving the index
+  // from the current time works no matter how the position was reached.
+  const PROFILE_ZONES = [0, 0.5, 0.92]; // matching the transition midpoints below
+  let currentProfileIndex = -1;
+  let tl; // declared before syncProfile so the closure below never hits a TDZ error
+  const syncProfile = () => {
+    if (!tl) return;
+    const t = tl.time();
+    let idx = -1;
+    for (let z = 0; z < PROFILE_ZONES.length; z++) {
+      if (t >= PROFILE_ZONES[z]) idx = z;
+    }
+    if (idx !== -1 && idx !== currentProfileIndex) {
+      swapProfile(idx);
+      currentProfileIndex = idx;
+    }
+  };
 
-  const introTl = gsap.timeline({ delay: 0.5 });
-
-  // Fly out: a full spin while it arcs up and over to one side, then settles.
-  introTl.addLabel("flyOut", 0);
-  introTl.call(() => swapProfile(0), null, "flyOut");
-  spinY += FLY_SPIN;
-  introTl.to(card, { rotateY: spinY, duration: 0.9, ease: "power2.inOut" }, "flyOut");
-  introTl.to(card, { x: SIDE_X, y: CARD_Y_RAISED, scale: 0.9, duration: 0.55, ease: "power2.out" }, "flyOut");
-  introTl.addLabel("flyOutSettle", "flyOut+=0.55");
-  introTl.to(card, { y: CARD_Y, scale: 1, duration: 0.35, ease: "power2.out" }, "flyOutSettle");
-  introTl.to(profilePanel, { opacity: 1, duration: 0.45, ease: "power2.out" }, "flyOutSettle");
-  // Labeled once fully visible (panel opacity 1) — the dwell for each
-  // profile is measured from here, not from when its transition merely
-  // *started*, so every profile actually gets its full DWELL on screen.
-  introTl.addLabel("ready0", "flyOutSettle+=0.45");
-
-  // Parked: cycle through the remaining profiles with a small turn
-  // between each, just enough to keep the card feeling alive.
-  let readyLabel = "ready0";
-  for (let i = 1; i < PROFILES.length; i++) {
-    const base = spinY;
-    const turnLabel = `turn${i}`;
-    introTl.addLabel(turnLabel, `${readyLabel}+=${DWELL}`);
-    introTl.to(card, { rotateY: base + 18, duration: 0.35, ease: "power2.inOut" }, turnLabel);
-    introTl.to(profilePanel, { opacity: 0, duration: 0.15 }, turnLabel);
-    introTl.call(() => swapProfile(i), null, `${turnLabel}+=0.15`);
-    introTl.to(profilePanel, { opacity: 1, duration: 0.25 }, `${turnLabel}+=0.17`);
-    introTl.to(card, { rotateY: base, duration: 0.35, ease: "power2.inOut" }, `${turnLabel}+=0.42`);
-    readyLabel = `ready${i}`;
-    introTl.addLabel(readyLabel, `${turnLabel}+=0.77`); // after both the panel (+0.42) and the card's return turn (+0.77) finish
-  }
-
-  // Fly back: spins again and returns to dead center as the real card.
-  introTl.addLabel("flyBack", `${readyLabel}+=${DWELL}`);
-  introTl.to(profilePanel, { opacity: 0, duration: 0.3, ease: "power1.in" }, "flyBack");
-  spinY += FLY_SPIN;
-  introTl.to(card, { rotateY: spinY, duration: 0.9, ease: "power2.inOut" }, "flyBack");
-  introTl.to(card, { x: 0, y: CARD_Y_RAISED, scale: 0.9, duration: 0.55, ease: "power3.inOut" }, "flyBack");
-  introTl.addLabel("flyBackSettle", "flyBack+=0.55");
-  introTl.call(() => {
-    cardName.textContent = REAL_NAME;
-    cardRole.textContent = REAL_ROLE;
-  }, null, "flyBackSettle");
-  introTl.to(card, { y: CARD_Y, scale: 1, duration: 0.35, ease: "power2.out" }, "flyBackSettle");
-  introTl.to([cardName, cardRole], { opacity: 1, duration: 0.4, ease: "power2.out" }, "flyBackSettle");
-
-  const tl = gsap.timeline({
+  tl = gsap.timeline({
+    onUpdate: syncProfile, // the timeline's own onUpdate — fires on every render
+    // tick as the scrub:1 easing plays out, unlike scrollTrigger's
+    // onUpdate (tried first), which only fires once per raw scroll
+    // event and not on the ticks in between, so it could catch tl
+    // mid-ease or miss the settled value entirely.
     scrollTrigger: {
       trigger: heroScene,
       start: "top top",
@@ -313,50 +287,79 @@ document.addEventListener("DOMContentLoaded", () => {
       anticipatePin: 1,
     },
   });
+  syncProfile(); // set the initial "Abogado" state before any scrolling happens
 
-  // ---- Phase 1a: de-tilt while still far away (0 -> 0.22) ----
+  // Abogado: dips down-left, panel appears opposite it on the right.
+  tl.to(card, { x: -SIDE, y: LOW_Y, rotateY: -16, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0)
+    .to(profilePanel, { x: PANEL_SIDE, opacity: 1, duration: 0.22, ease: "power1.out" }, 0)
+    // 0.22 -> 0.42: dwell — nothing scheduled, so it just holds while scrolling continues.
+
+    // Emprendedor: turns to the other side, panel follows to the left.
+    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.42)
+    .set(profilePanel, { x: -PANEL_SIDE }, 0.5)
+    .to(card, { x: SIDE, y: LOW_Y - 5, rotateY: 16, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0.42)
+    .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.5)
+    // 0.64 -> 0.84: dwell.
+
+    // Empresario: the real card — drifts back toward center as its
+    // actual name/role fade in (this is the real Sport Car Dreams
+    // identity the rest of the page assumes, not a fictional one).
+    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.84)
+    .to(card, { x: 0, y: MID_Y, rotateY: 0, scale: 0.97, duration: 0.22, ease: "power1.inOut" }, 0.84)
+    .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.92)
+    .to([cardName, cardRole], { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.92)
+    // 1.06 -> 1.16: dwell.
+
+    // Settle: back to dead center, exactly CARD_SETTLED, panel gone —
+    // ready for the phone-approach phases to take over unchanged.
+    .to(profilePanel, { opacity: 0, duration: 0.08 }, 1.16)
+    .to(card, { x: 0, y: CARD_Y, rotateY: 0, scale: 1, duration: 0.18, ease: "power2.out" }, 1.16);
+
+  tl.addLabel("approach", 1.4);
+
+  // ---- Phase 1a: de-tilt while still far away ----
   // The phone straightens out to face the camera square-on well
   // before its depth gets anywhere near the card's.
   tl.to(
     phone,
     { rotateX: 0, rotateY: 0, z: -650, x: 12, y: 150, scale: 0.62, duration: 0.22, ease: "power1.inOut" },
-    0
+    "approach"
   )
-    .to(orbsBack, { yPercent: -5, duration: 0.5, ease: "none" }, 0)
-    .to(orbsMid, { yPercent: -9, duration: 0.5, ease: "none" }, 0)
-    .to(orbsFront, { yPercent: -14, duration: 0.5, ease: "none" }, 0)
+    .to(orbsBack, { yPercent: -5, duration: 0.5, ease: "none" }, "approach")
+    .to(orbsMid, { yPercent: -9, duration: 0.5, ease: "none" }, "approach")
+    .to(orbsFront, { yPercent: -14, duration: 0.5, ease: "none" }, "approach")
 
-    // ---- Phase 1b: approach, already flat (0.22 -> 0.5) ----
+    // ---- Phase 1b: approach, already flat ----
     // Both card and phone are now unrotated rectangles, so however
     // close their Z values get, neither can poke through the other.
-    .to(phone, { z: -70, x: 0, y: 205, scale: 0.9, duration: 0.28, ease: "power2.inOut" }, 0.22)
-    .to(orbsBack, { yPercent: -10, duration: 0.5, ease: "none" }, 0.5)
-    .to(orbsMid, { yPercent: -20, duration: 0.5, ease: "none" }, 0.5)
-    .to(orbsFront, { yPercent: -32, duration: 0.5, ease: "none" }, 0.5)
+    .to(phone, { z: -70, x: 0, y: 205, scale: 0.9, duration: 0.28, ease: "power2.inOut" }, "approach+=0.22")
+    .to(orbsBack, { yPercent: -10, duration: 0.5, ease: "none" }, "approach+=0.5")
+    .to(orbsMid, { yPercent: -20, duration: 0.5, ease: "none" }, "approach+=0.5")
+    .to(orbsFront, { yPercent: -32, duration: 0.5, ease: "none" }, "approach+=0.5")
 
-    // ---- Phase 2: two-stage settle (0.5 -> 0.66) ----
+    // ---- Phase 2: two-stage settle ----
     // A fast, weighty deceleration (power4.out) into place, then a
     // small secondary settle (back.out) for the premium "landed"
     // feel. Only the phone moves here — the card was already home.
-    .to(phone, { ...PHONE_SETTLED, scale: 0.96, duration: 0.11, ease: "power4.out" }, 0.5)
-    .to(phone, { ...PHONE_SETTLED, duration: 0.05, ease: "back.out(2.2)" }, 0.61)
-    .to(contactShadow, { opacity: 0.55, scale: 1, duration: 0.14, ease: "power2.out" }, 0.55)
+    .to(phone, { ...PHONE_SETTLED, scale: 0.96, duration: 0.11, ease: "power4.out" }, "approach+=0.5")
+    .to(phone, { ...PHONE_SETTLED, duration: 0.05, ease: "back.out(2.2)" }, "approach+=0.61")
+    .to(contactShadow, { opacity: 0.55, scale: 1, duration: 0.14, ease: "power2.out" }, "approach+=0.55")
 
-    // ---- NFC tap (~0.63) ----
-    .to(ripple, { opacity: 1, scale: 1.7, duration: 0.09, ease: "power1.out" }, 0.63)
-    .to(ripple, { opacity: 0, scale: 2.3, duration: 0.11, ease: "power1.out" }, 0.72)
-    .to(glow, { opacity: 0.9, scale: 1, duration: 0.07, ease: "power1.out" }, 0.65)
+    // ---- NFC tap ----
+    .to(ripple, { opacity: 1, scale: 1.7, duration: 0.09, ease: "power1.out" }, "approach+=0.63")
+    .to(ripple, { opacity: 0, scale: 2.3, duration: 0.11, ease: "power1.out" }, "approach+=0.72")
+    .to(glow, { opacity: 0.9, scale: 1, duration: 0.07, ease: "power1.out" }, "approach+=0.65")
 
-    // ---- Phase 3: zoom through the screen (0.72 -> 1) ----
+    // ---- Phase 3: zoom through the screen ----
     // The scene (not the whole stage — heroCopy lives in the stage
     // too and must stay unaffected) zooms in and dissolves into the
     // glow, which blooms to fill the frame and then fades away as
     // heroCopy fades in on top of it. The pin releases with heroCopy
     // already fully shown, so there is nothing left to scroll to.
-    .to(world, { scale: 7, opacity: 0, duration: 0.26, ease: "power2.in" }, 0.72)
-    .to(glow, { opacity: 1, scale: 16, duration: 0.26, ease: "power2.in" }, 0.72)
-    .to([orbsBack, orbsMid, orbsFront], { opacity: 0, duration: 0.14 }, 0.72)
-    .to(glow, { opacity: 0, duration: 0.16, ease: "power1.out" }, 0.86)
-    .to(heroCopy, { opacity: 1, y: 0, duration: 0.18, ease: "power2.out" }, 0.86)
-    .set(heroCopy, { pointerEvents: "auto" }, 0.98);
+    .to(world, { scale: 7, opacity: 0, duration: 0.26, ease: "power2.in" }, "approach+=0.72")
+    .to(glow, { opacity: 1, scale: 16, duration: 0.26, ease: "power2.in" }, "approach+=0.72")
+    .to([orbsBack, orbsMid, orbsFront], { opacity: 0, duration: 0.14 }, "approach+=0.72")
+    .to(glow, { opacity: 0, duration: 0.16, ease: "power1.out" }, "approach+=0.86")
+    .to(heroCopy, { opacity: 1, y: 0, duration: 0.18, ease: "power2.out" }, "approach+=0.86")
+    .set(heroCopy, { pointerEvents: "auto" }, "approach+=0.98");
 });
