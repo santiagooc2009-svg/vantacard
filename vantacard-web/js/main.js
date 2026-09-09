@@ -206,6 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (prefersReduced || typeof gsap === "undefined") {
     // Static, already-settled composition. No scroll-jacking.
     gsap.set(card, CARD_SETTLED);
+    gsap.set([cardName, cardRole], { opacity: 0 }); // generic card, same as the animated path
     gsap.set(phone, PHONE_SETTLED);
     gsap.set(contactShadow, { y: SHADOW_Y, opacity: 0.5, scale: 1 });
     gsap.set(heroScene, { height: "100vh" });
@@ -240,9 +241,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // phone-approach tweens further down are anchored to the "approach"
   // label instead of absolute positions, so this segment can grow or
   // shrink without hand-editing every number after it.
-  // It lands back on the real Sport Car Dreams identity the rest of
-  // the page already assumes (trust strip, showcase mockups), so the
-  // card's DOM content never actually changes — only the panel's does.
+  // The card itself stays generic (just the VantaCard mark, no name
+  // or role) through this whole sequence and into the NFC-tap demo
+  // that follows — the real Sport Car Dreams case study is introduced
+  // separately, in the trust strip and showcase mockups below.
   const isWideStage = window.matchMedia("(min-width: 700px)").matches;
   const CARD_Y = CARD_SETTLED.y;
   const SIDE = isWideStage ? 220 : 0; // how far the card drifts to either side
@@ -335,17 +337,21 @@ document.addEventListener("DOMContentLoaded", () => {
     .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.42)
     // 0.56 -> 0.68: dwell.
 
-    // Empresario: stays fully committed to the right (same spot
-    // Emprendedor already landed on — no card movement here, just the
-    // content swapping to the real identity while parked in place).
+    // Empresario: stays fully committed to the right, but still makes
+    // a real, fluid move there (a further dip down) rather than
+    // sitting frozen while only the text changes — every step gets
+    // actual motion, not just a content swap in place.
     .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.68)
-    .to([cardName, cardRole], { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.68)
+    .to(card, { x: SIDE, y: LOW_Y + 15, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0.68)
     .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.76)
     // 0.90 -> 1.02: dwell.
 
     // Return to center: its own clean, deliberate move (not folded
     // into the Empresario step) — panel is already gone, so this is
     // the card by itself heading home before the NFC/phone phases.
+    // The card stays generic (just the VantaCard mark) through this
+    // whole sequence — no client name/role revealed here, so the NFC
+    // demo that follows reads as a plain, universal card.
     .to(profilePanel, { opacity: 0, duration: 0.08 }, 1.02)
     .to(card, { x: 0, y: CARD_Y, scale: 1, duration: 0.24, ease: "power2.inOut" }, 1.02);
 
