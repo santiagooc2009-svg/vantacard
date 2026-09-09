@@ -589,83 +589,9 @@ h3 {
   background: var(--bg);
 }
 
-.hero-copy {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: var(--space-4);
-  text-align: center;
-  pointer-events: none;
-}
-
-.hero-copy--active {
-  pointer-events: auto;
-}
-
-.hero-copy__eyebrow {
-  margin-bottom: var(--space-2);
-}
-
-.hero-copy h1 {
-  font-size: clamp(2.6rem, 5.6vw, 4.4rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  max-width: 16ch;
-  margin: 0 auto var(--space-3);
-  /* Chrome shimmer: a bright band drifts across the headline, like
-     light moving over brushed metal. */
-  background: linear-gradient(
-    100deg,
-    var(--text-primary) 30%,
-    var(--accent-strong) 45%,
-    var(--text-primary) 60%
-  );
-  background-size: 250% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: chrome-sweep 7s ease-in-out infinite;
-}
-
 @keyframes chrome-sweep {
   0%, 100% { background-position: 100% 0; }
   50% { background-position: 0 0; }
-}
-
-/* Windows high-contrast / forced-colors mode overrides `color` but
-   not necessarily background-clip:text, which can leave this
-   headline fully invisible (transparent fill, no fallback color).
-   Drop the gradient fill there and just use solid system text. */
-@media (forced-colors: active) {
-  .hero-copy h1 {
-    background: none;
-    -webkit-background-clip: initial;
-    background-clip: initial;
-    color: CanvasText;
-    animation: none;
-  }
-}
-
-.hero-copy p {
-  max-width: 46ch;
-  margin: 0 auto;
-  color: var(--text-secondary);
-  font-size: 1.05rem;
-}
-
-.hero-copy__actions {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-  flex-wrap: wrap;
 }
 
 .btn {
@@ -717,18 +643,25 @@ h3 {
 }
 
 /* ---------- Trust strip ---------- */
+/* Overlays the 3D scene, revealed via GSAP near the end of the
+   zoom-through — same role #heroCopy used to fill: something to see
+   right as the pin releases, so there's no blank stretch of scroll
+   before the next section appears. */
 .trust-strip {
-  position: relative;
-  z-index: 2;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8%;
+  z-index: 10;
   margin: 0;
-  padding: var(--space-3) var(--space-4);
+  padding: 0 var(--space-4);
   text-align: center;
   font-family: var(--font-mono);
   font-size: 0.82rem;
   letter-spacing: 0.02em;
   color: var(--text-tertiary);
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .trust-strip strong {
@@ -1090,10 +1023,37 @@ h3 {
   text-align: center;
 }
 
-.identity__inner h2 {
+.identity__inner h1 {
   font-size: clamp(2rem, 4vw, 3rem);
   max-width: 26ch;
   margin: 0 auto var(--space-5);
+  /* Chrome shimmer: a bright band drifts across the headline, like
+     light moving over brushed metal. */
+  background: linear-gradient(
+    100deg,
+    var(--text-primary) 30%,
+    var(--accent-strong) 45%,
+    var(--text-primary) 60%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: chrome-sweep 7s ease-in-out infinite;
+}
+
+/* Windows high-contrast / forced-colors mode overrides `color` but
+   not necessarily background-clip:text, which can leave this
+   headline fully invisible (transparent fill, no fallback color).
+   Drop the gradient fill there and just use solid system text. */
+@media (forced-colors: active) {
+  .identity__inner h1 {
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    color: CanvasText;
+    animation: none;
+  }
 }
 
 .identity__card {

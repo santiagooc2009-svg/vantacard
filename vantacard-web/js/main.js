@@ -18,12 +18,6 @@
       la de la tarjeta, ambos son planos paralelos a la cámara y
       no hay rango de profundidad que se pueda cruzar.
 
-   #heroCopy vive DENTRO del stage pineado (no después, en el flujo
-   normal del documento) y se revela ahí mismo durante el zoom. Si
-   viviera después de #heroScene, el fade-in terminaría antes de
-   que el usuario llegara a hacer scroll hasta él, dejando una
-   franja de scroll "muerta" en negro entre el fin del pin y la
-   aparición real del contenido.
    ============================================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -39,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const ripple = document.getElementById("nfcRipple");
   const glow = document.getElementById("screenGlow");
   const contactShadow = document.getElementById("contactShadow");
-  const heroCopy = document.getElementById("heroCopy");
+  const trustStrip = document.getElementById("trustStrip");
   const cardName = card.querySelector(".card-3d__name");
   const cardRole = card.querySelector(".card-3d__role");
   const profilePanel = document.getElementById("profilePanel");
@@ -209,8 +203,8 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.set([cardName, cardRole], { opacity: 0 }); // generic card, same as the animated path
     gsap.set(phone, PHONE_SETTLED);
     gsap.set(contactShadow, { y: SHADOW_Y, opacity: 0.5, scale: 1 });
+    gsap.set(trustStrip, { opacity: 1 });
     gsap.set(heroScene, { height: "100vh" });
-    gsap.set(heroCopy, { opacity: 1, y: 0, pointerEvents: "auto" });
     return;
   }
 
@@ -230,7 +224,6 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.set(contactShadow, { y: SHADOW_Y, opacity: 0, scale: 0.55 });
   gsap.set(glow, { y: TAP_Y, opacity: 0, scale: 0.3 });
   gsap.set(ripple, { y: TAP_Y, opacity: 0, scale: 0.2 });
-  gsap.set(heroCopy, { opacity: 0, y: 30, pointerEvents: "none" });
   gsap.set(world, { scale: 1, opacity: 1 });
 
   // ---- Profile parallax intro: the card dips down and turns to each
@@ -391,15 +384,13 @@ document.addEventListener("DOMContentLoaded", () => {
     .to(glow, { opacity: 0.9, scale: 1, duration: 0.07, ease: "power1.out" }, "approach+=0.65")
 
     // ---- Phase 3: zoom through the screen ----
-    // The scene (not the whole stage — heroCopy lives in the stage
-    // too and must stay unaffected) zooms in and dissolves into the
-    // glow, which blooms to fill the frame and then fades away as
-    // heroCopy fades in on top of it. The pin releases with heroCopy
-    // already fully shown, so there is nothing left to scroll to.
+    // The scene zooms in and dissolves into the glow, which blooms to
+    // fill the frame and then fades away — the pin releases right as
+    // it fades, straight into the next section, so there's no dead
+    // scroll gap waiting for anything else to appear.
     .to(world, { scale: 7, opacity: 0, duration: 0.26, ease: "power2.in" }, "approach+=0.72")
     .to(glow, { opacity: 1, scale: 16, duration: 0.26, ease: "power2.in" }, "approach+=0.72")
     .to([orbsBack, orbsMid, orbsFront], { opacity: 0, duration: 0.14 }, "approach+=0.72")
     .to(glow, { opacity: 0, duration: 0.16, ease: "power1.out" }, "approach+=0.86")
-    .to(heroCopy, { opacity: 1, y: 0, duration: 0.18, ease: "power2.out" }, "approach+=0.86")
-    .set(heroCopy, { pointerEvents: "auto" }, "approach+=0.98");
+    .to(trustStrip, { opacity: 1, duration: 0.18, ease: "power2.out" }, "approach+=0.86");
 });

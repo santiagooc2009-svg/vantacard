@@ -135,31 +135,22 @@
         </div>
       </div>
 
-      <!-- Overlays the 3D scene, fading in during the zoom-through so
-           the pin can release straight into fully-formed content —
-           no dead scroll gap waiting for it to scroll into view. -->
-      <header class="hero-copy" id="heroCopy">
-        <p class="eyebrow hero-copy__eyebrow">Tarjetas de presentación digitales NFC</p>
-        <h1>Tu presentación, en un toque.</h1>
-        <p>Comparte tu contacto, portafolio y redes con un solo acercamiento. Sin apps, sin papel, sin fricción.</p>
-        <div class="hero-copy__actions">
-          <a class="btn btn--primary" href="https://wa.me/525639317160" target="_blank" rel="noopener">Solicitar demo</a>
-          <a class="btn btn--ghost" href="#planes">Ver planes</a>
-        </div>
-      </header>
+      <!-- Lives inside the pinned stage, same spot the old hero
+           headline used to fade in — so the pin still has something
+           to reveal right before it releases, instead of ending on a
+           blank frame with an empty-feeling stretch of scroll before
+           the next section appears. -->
+      <p class="trust-strip" id="trustStrip">Caso real: <strong>Sport Car Dreams</strong> usa VantaCard para mostrar su inventario y recibir citas.</p>
 
     </div>
   </section>
-
-  <!-- Compact trust strip, directly under the hero, not inside it. -->
-  <p class="trust-strip">Caso real: <strong>Sport Car Dreams</strong> usa VantaCard para mostrar su inventario y recibir citas.</p>
 
   <!-- ============== REVEALED CONTENT ============== -->
   <div class="reveal-content" id="revealContent">
 
     <section class="identity">
       <div class="identity__inner reveal-up">
-        <h2>Tu identidad profesional en una sola tarjeta.</h2>
+        <h1>Tu identidad profesional en una sola tarjeta.</h1>
         <div class="identity__card">
           <span class="brand-mark">
             <svg class="brand-mark__icon" viewBox="0 0 40 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
