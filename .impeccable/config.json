@@ -38,6 +38,15 @@
         ],
         "createdAt": "2026-09-09T13:54:52.554Z",
         "reason": "Same Inter-as-body-font pairing; flagged here only because self-hosting moved the @font-face rules into this new file."
+      },
+      {
+        "rule": "icon-tile-stack",
+        "value": "*",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-09T18:03:46.007Z",
+        "reason": "Icon and heading are laid out side-by-side (.how__step-head, flex row) per the detector's own suggested fix — verified via getBoundingClientRect that icon and h3 share the same Y range with different X ranges. The detector flags the bordered icon-frame + nearby h3 by DOM proximity, not actual rendered geometry, so it can't see the fix already applied."
       }
     ]
   }

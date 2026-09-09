@@ -770,6 +770,21 @@ h3 {
   will-change: transform, opacity;
 }
 
+.how__index {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--accent-dim);
+  margin-bottom: var(--space-3);
+}
+
+.how__step-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
 .how__icon-frame {
   display: flex;
   align-items: center;
@@ -779,7 +794,7 @@ h3 {
   padding: var(--space-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  margin-bottom: var(--space-3);
+  flex-shrink: 0;
 }
 
 .how__icon {
@@ -929,13 +944,36 @@ h3 {
   background: linear-gradient(165deg, var(--bg-card), #20242b);
 }
 
+.plan__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: var(--space-2);
+}
+
+.plan__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.plan__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
 .plan__tag {
   font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: var(--space-2);
 }
 
 .plan__name {
@@ -972,17 +1010,26 @@ h3 {
 
 .plan__features li {
   display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
+  align-items: center;
+  gap: 0.65rem;
   font-size: 0.9rem;
   color: var(--text-secondary);
 }
 
-.plan__features svg {
+.plan__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(var(--accent-rgb), 0.12);
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  margin-top: 3px;
+}
+
+.plan__check svg {
+  width: 11px;
+  height: 11px;
   color: var(--accent);
 }
 
