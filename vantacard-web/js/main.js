@@ -256,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // fires when the playhead sweeps forward across it, not when a jump
   // lands beyond it or crosses it going backward. Deriving the index
   // from the current time works no matter how the position was reached.
-  const PROFILE_ZONES = [0, 0.5, 0.92]; // matching the transition midpoints below
+  const PROFILE_ZONES = [0, 0.42, 0.76]; // matching the transition midpoints below
   let currentProfileIndex = -1;
   let tl; // declared before syncProfile so the closure below never hits a TDZ error
   const syncProfile = () => {
@@ -292,30 +292,32 @@ document.addEventListener("DOMContentLoaded", () => {
   // Abogado: dips down-left, panel appears opposite it on the right.
   tl.to(card, { x: -SIDE, y: LOW_Y, rotateY: -16, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0)
     .to(profilePanel, { x: PANEL_SIDE, opacity: 1, duration: 0.22, ease: "power1.out" }, 0)
-    // 0.22 -> 0.42: dwell — nothing scheduled, so it just holds while scrolling continues.
+    // 0.22 -> 0.34: dwell — nothing scheduled, so it just holds while scrolling continues.
+    // (Kept short on purpose: a long stretch of scrolling with nothing
+    // changing reads as the page being stuck, not as a pause.)
 
     // Emprendedor: turns to the other side, panel follows to the left.
-    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.42)
-    .set(profilePanel, { x: -PANEL_SIDE }, 0.5)
-    .to(card, { x: SIDE, y: LOW_Y - 5, rotateY: 16, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0.42)
-    .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.5)
-    // 0.64 -> 0.84: dwell.
+    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.34)
+    .set(profilePanel, { x: -PANEL_SIDE }, 0.42)
+    .to(card, { x: SIDE, y: LOW_Y - 5, rotateY: 16, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0.34)
+    .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.42)
+    // 0.56 -> 0.68: dwell.
 
     // Empresario: the real card — drifts back toward center as its
     // actual name/role fade in (this is the real Sport Car Dreams
     // identity the rest of the page assumes, not a fictional one).
-    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.84)
-    .to(card, { x: 0, y: MID_Y, rotateY: 0, scale: 0.97, duration: 0.22, ease: "power1.inOut" }, 0.84)
-    .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.92)
-    .to([cardName, cardRole], { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.92)
-    // 1.06 -> 1.16: dwell.
+    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.68)
+    .to(card, { x: 0, y: MID_Y, rotateY: 0, scale: 0.97, duration: 0.22, ease: "power1.inOut" }, 0.68)
+    .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.76)
+    .to([cardName, cardRole], { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.76)
+    // 0.90 -> 0.96: dwell.
 
     // Settle: back to dead center, exactly CARD_SETTLED, panel gone —
     // ready for the phone-approach phases to take over unchanged.
-    .to(profilePanel, { opacity: 0, duration: 0.08 }, 1.16)
-    .to(card, { x: 0, y: CARD_Y, rotateY: 0, scale: 1, duration: 0.18, ease: "power2.out" }, 1.16);
+    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.96)
+    .to(card, { x: 0, y: CARD_Y, rotateY: 0, scale: 1, duration: 0.18, ease: "power2.out" }, 0.96);
 
-  tl.addLabel("approach", 1.4);
+  tl.addLabel("approach", 1.18);
 
   // ---- Phase 1a: de-tilt while still far away ----
   // The phone straightens out to face the camera square-on well
