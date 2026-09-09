@@ -865,6 +865,61 @@ h3 {
   }
 }
 
+/* ---------- Offerings (what we do) ---------- */
+.offerings {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.offerings__head {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.offerings__head h2 {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+}
+
+.offerings__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 900px) {
+  .offerings__grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
+.offerings__media {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-3);
+}
+
+.offerings__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offerings__item h3 {
+  font-size: 1.15rem;
+  margin-bottom: var(--space-1);
+}
+
+.offerings__item p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
 /* ---------- Services ---------- */
 .services {
   max-width: var(--max-width);
@@ -1045,6 +1100,7 @@ h3 {
   width: min(360px, 78vw);
   aspect-ratio: 1.586;
   margin: 0 auto var(--space-5);
+  padding: var(--space-4);
   border-radius: var(--radius-lg);
   background: linear-gradient(150deg, #1b1d22 0%, #23262d 45%, #101114 100%);
   border: 1px solid var(--border-strong);
