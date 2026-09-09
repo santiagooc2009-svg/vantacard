@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "vantacard-web/css/styles.css"
+        ],
+        "createdAt": "2026-09-09T13:44:17.488Z",
+        "reason": "intentional chrome-shimmer on hero h1 matching user's explicit silver/chrome brand direction; user repeatedly asked for more visual interest, not a default AI gradient-text tell"
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-09T13:45:41.201Z",
+        "reason": "same intentional chrome-shimmer on hero h1 (defined in styles.css) already sanctioned; hook re-flags on index.html edits too"
+      }
+    ]
+  }
+}

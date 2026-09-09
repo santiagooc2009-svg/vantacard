@@ -3,3 +3,6 @@
 .agents/
 .claude/
 skills-lock.json
+
+# Design audit tooling output (regenerated on demand, not site content)
+vantacard-web/audit-output/
