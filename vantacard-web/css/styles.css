@@ -388,47 +388,58 @@ h3 {
   margin-top: 0.2rem;
 }
 
-.profile-intro {
+/* Mobile default: centered, below where the card+phone sit. On wide
+   viewports (matched in JS too, for the card's fly-to-side offset) it
+   moves to the right half, opposite the card. */
+.profile-panel {
   position: absolute;
   left: 50%;
-  top: 53%;
+  top: 87%;
   transform: translate(-50%, -50%);
   z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.6rem;
-  width: min(84vw, 340px);
+  width: min(84vw, 320px);
   text-align: center;
   pointer-events: none;
   opacity: 0;
 }
 
-.profile-intro__tag {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent);
-  padding: 0.3rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: rgba(var(--accent-rgb), 0.06);
+.profile-panel__label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-transform: capitalize;
 }
 
-.profile-intro__benefit {
+.profile-panel__icon {
+  width: 44px;
+  height: 44px;
+  color: var(--accent);
+}
+
+.profile-panel__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.profile-panel__benefit {
   font-size: 0.92rem;
   line-height: 1.5;
   color: var(--text-secondary);
 }
 
-.profile-intro__dots {
+.profile-panel__dots {
   display: flex;
   gap: 6px;
   margin-top: 0.1rem;
 }
 
-.profile-intro__dot {
+.profile-panel__dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
@@ -436,9 +447,26 @@ h3 {
   opacity: 0.4;
 }
 
-.profile-intro__dot--active {
+.profile-panel__dot--active {
   opacity: 1;
   background: var(--accent-strong);
+}
+
+@media (min-width: 700px) {
+  .profile-panel {
+    left: 76%;
+    top: 46%;
+    width: min(26vw, 320px);
+  }
+
+  .profile-panel__label {
+    font-size: clamp(2rem, 3vw, 2.6rem);
+  }
+
+  .profile-panel__icon {
+    width: 52px;
+    height: 52px;
+  }
 }
 
 .phone-3d {

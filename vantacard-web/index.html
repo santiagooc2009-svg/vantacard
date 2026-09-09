@@ -103,16 +103,18 @@
         <span class="orb"></span>
       </div>
 
-      <!-- Plays once on load, independent of scroll: the card turns to
-           show who it's for before the phone-approach animation (which
-           is scroll-driven) takes over. -->
-      <div class="profile-intro" id="profileIntro" aria-hidden="true">
-        <span class="profile-intro__tag" id="profileTag">Abogados</span>
-        <p class="profile-intro__benefit" id="profileBenefit">Comparte tu cédula, tu especialidad y agenda una consulta antes de despedirte.</p>
-        <div class="profile-intro__dots" id="profileDots">
-          <span class="profile-intro__dot profile-intro__dot--active"></span>
-          <span class="profile-intro__dot"></span>
-          <span class="profile-intro__dot"></span>
+      <!-- Plays once on load, independent of scroll: the card spins and
+           flies to one side to show who it's for, then spins back to
+           center before the phone-approach animation (scroll-driven)
+           takes over. -->
+      <div class="profile-panel" id="profilePanel" aria-hidden="true">
+        <span class="profile-panel__label" id="profileLabel">Abogado</span>
+        <div class="profile-panel__icon" id="profileIcon"></div>
+        <p class="profile-panel__benefit" id="profileBenefit">Comparte tu cédula, tu especialidad y agenda una consulta antes de despedirte.</p>
+        <div class="profile-panel__dots" id="profileDots">
+          <span class="profile-panel__dot profile-panel__dot--active"></span>
+          <span class="profile-panel__dot"></span>
+          <span class="profile-panel__dot"></span>
         </div>
       </div>
 

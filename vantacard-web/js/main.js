@@ -42,10 +42,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const heroCopy = document.getElementById("heroCopy");
   const cardName = card.querySelector(".card-3d__name");
   const cardRole = card.querySelector(".card-3d__role");
-  const profileIntro = document.getElementById("profileIntro");
-  const profileTag = document.getElementById("profileTag");
+  const profilePanel = document.getElementById("profilePanel");
+  const profileLabel = document.getElementById("profileLabel");
+  const profileIcon = document.getElementById("profileIcon");
   const profileBenefit = document.getElementById("profileBenefit");
-  const profileDots = gsap.utils.toArray(".profile-intro__dot");
+  const profileDots = gsap.utils.toArray(".profile-panel__dot");
 
   const prefersReduced = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
@@ -201,82 +202,106 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.set(heroCopy, { opacity: 0, y: 30, pointerEvents: "none" });
   gsap.set(world, { scale: 1, opacity: 1 });
 
-  // ---- Profile intro: the card turns to show who it's for ----
+  // ---- Profile intro: the card spins in the air and flies to one
+  // side to show who it's for, then spins back to center ----
   // Plays once on load, fully independent of scroll (no ScrollTrigger
   // here), so it never competes with the scroll-scrubbed phone-approach
   // timeline below — that timeline never touches `card` at all, only
   // `phone`/orbs/glow, so the two can run concurrently with zero
   // conflict even if the visitor starts scrolling mid-intro.
-  // The last stop is the real Sport Car Dreams card the rest of the
-  // page already assumes (trust strip, showcase mockups), so the
+  // It lands back on the real Sport Car Dreams identity the rest of
+  // the page already assumes (trust strip, showcase mockups), so the
   // card's DOM content matches from here on with no extra reset step.
-  const ORIGINAL_NAME = cardName.textContent;
-  const ORIGINAL_ROLE = cardRole.textContent;
-  const PROFILE_STEPS = [
+  const isWideStage = window.matchMedia("(min-width: 700px)").matches;
+  const SIDE_X = isWideStage ? -250 : 0;
+  const REAL_NAME = cardName.textContent;
+  const REAL_ROLE = cardRole.textContent;
+
+  const PROFILES = [
     {
-      tag: "Abogados",
-      name: "Lic. Ana Torres",
-      role: "Abogada corporativa",
+      label: "Abogado",
       benefit: "Comparte tu cédula, tu especialidad y agenda una consulta antes de despedirte.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 6 5 9M12 6l7 3"/><path d="M3 9c0 2 1.6 3.5 3.5 3.5S10 11 10 9"/><path d="M14 9c0 2 1.6 3.5 3.5 3.5S21 11 21 9"/><path d="M12 6v13"/><path d="M8.5 21h7"/></svg>',
     },
     {
-      tag: "Emprendedores",
-      name: "Diego Ruiz",
-      role: "Fundador · Startup",
+      label: "Emprendedor",
       benefit: "Comparte tu pitch, tus redes y tu contacto sin repartir una sola tarjeta de papel.",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c2.8 1.8 4.5 5 4.5 9 0 2-.6 3.8-1.5 5.2L12 19l-3-2.8C8.1 14.8 7.5 13 7.5 11c0-4 1.7-7.2 4.5-9Z"/><circle cx="12" cy="10" r="1.8"/><path d="M9 15.5 6 18M15 15.5l3 2.5"/><path d="M10 19.5 12 22l2-2.5"/></svg>',
     },
     {
-      tag: "Empresarios",
-      name: ORIGINAL_NAME,
-      role: ORIGINAL_ROLE,
+      label: "Empresario",
       benefit: "Muestra tu catálogo, tu inventario y agenda citas directo desde la tarjeta.",
-      isReal: true,
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/><path d="M11 13v2h2v-2"/></svg>',
     },
   ];
-  const CLOSING_STEP = {
-    tag: "Y también",
-    benefit: "Para cualquier profesional que quiera presentarse mejor.",
+
+  const swapProfile = (i) => {
+    const p = PROFILES[i];
+    profileLabel.textContent = p.label;
+    profileBenefit.textContent = p.benefit;
+    profileIcon.innerHTML = p.icon;
+    profileDots.forEach((dot, di) => dot.classList.toggle("profile-panel__dot--active", di === i));
   };
 
-  const swapCardContent = (step) => {
-    cardName.textContent = step.name;
-    cardRole.textContent = step.role;
-  };
-  const swapCaption = (step) => {
-    profileTag.textContent = step.tag;
-    profileBenefit.textContent = step.benefit;
-  };
-  const setActiveDot = (i) => {
-    profileDots.forEach((dot, di) => dot.classList.toggle("profile-intro__dot--active", di === i));
-  };
+  gsap.set([cardName, cardRole], { opacity: 0 });
+
+  // Every card tween below targets an absolute value (never a relative
+  // "+=" delta) and is placed on an explicit label, so no two tweens
+  // ever touch the same property in an overlapping time range — GSAP
+  // relative tweens that overlap read the in-flight value of the
+  // *other* tween instead of its finished target, which drifted the
+  // card off its exact settled position when this used "+=" deltas.
+  const CARD_Y = CARD_SETTLED.y;
+  const CARD_Y_RAISED = CARD_Y - 45;
+  const FLY_SPIN = 360; // one full turn per flight, so it always lands front-facing
+  const DWELL = 1.0; // how long each profile stays fully visible before the next transition starts
+  let spinY = 0;
 
   const introTl = gsap.timeline({ delay: 0.5 });
-  introTl.to(profileIntro, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0);
 
-  PROFILE_STEPS.forEach((step, i) => {
-    const dir = i % 2 === 0 ? -1 : 1;
-    const turnOut = gsap.timeline();
-    turnOut
-      .to(card, { rotateY: dir * 24, duration: 0.45, ease: "power2.inOut" }, 0)
-      .to([cardName, cardRole, profileTag, profileBenefit], { opacity: 0, duration: 0.18, ease: "power1.in" }, 0)
-      .call(() => {
-        swapCardContent(step);
-        swapCaption(step);
-        setActiveDot(i);
-      })
-      .to([cardName, cardRole, profileTag, profileBenefit], { opacity: 1, duration: 0.18, ease: "power1.out" }, "+=0.02")
-      .to(card, { rotateY: 0, duration: 0.45, ease: "power2.inOut" }, "<");
-    introTl.add(turnOut).to({}, { duration: 0.9 }); // dwell so the profile is readable
-  });
+  // Fly out: a full spin while it arcs up and over to one side, then settles.
+  introTl.addLabel("flyOut", 0);
+  introTl.call(() => swapProfile(0), null, "flyOut");
+  spinY += FLY_SPIN;
+  introTl.to(card, { rotateY: spinY, duration: 0.9, ease: "power2.inOut" }, "flyOut");
+  introTl.to(card, { x: SIDE_X, y: CARD_Y_RAISED, scale: 0.9, duration: 0.55, ease: "power2.out" }, "flyOut");
+  introTl.addLabel("flyOutSettle", "flyOut+=0.55");
+  introTl.to(card, { y: CARD_Y, scale: 1, duration: 0.35, ease: "power2.out" }, "flyOutSettle");
+  introTl.to(profilePanel, { opacity: 1, duration: 0.45, ease: "power2.out" }, "flyOutSettle");
+  // Labeled once fully visible (panel opacity 1) — the dwell for each
+  // profile is measured from here, not from when its transition merely
+  // *started*, so every profile actually gets its full DWELL on screen.
+  introTl.addLabel("ready0", "flyOutSettle+=0.45");
 
-  // Closing beat: caption only, card keeps the real Sport Car Dreams
-  // content that's now on it.
-  introTl
-    .to([profileTag, profileBenefit], { opacity: 0, duration: 0.15 })
-    .call(() => swapCaption(CLOSING_STEP))
-    .to([profileTag, profileBenefit], { opacity: 1, duration: 0.3 })
-    .to({}, { duration: 1.1 })
-    .to(profileIntro, { opacity: 0, duration: 0.5, ease: "power1.in" });
+  // Parked: cycle through the remaining profiles with a small turn
+  // between each, just enough to keep the card feeling alive.
+  let readyLabel = "ready0";
+  for (let i = 1; i < PROFILES.length; i++) {
+    const base = spinY;
+    const turnLabel = `turn${i}`;
+    introTl.addLabel(turnLabel, `${readyLabel}+=${DWELL}`);
+    introTl.to(card, { rotateY: base + 18, duration: 0.35, ease: "power2.inOut" }, turnLabel);
+    introTl.to(profilePanel, { opacity: 0, duration: 0.15 }, turnLabel);
+    introTl.call(() => swapProfile(i), null, `${turnLabel}+=0.15`);
+    introTl.to(profilePanel, { opacity: 1, duration: 0.25 }, `${turnLabel}+=0.17`);
+    introTl.to(card, { rotateY: base, duration: 0.35, ease: "power2.inOut" }, `${turnLabel}+=0.42`);
+    readyLabel = `ready${i}`;
+    introTl.addLabel(readyLabel, `${turnLabel}+=0.77`); // after both the panel (+0.42) and the card's return turn (+0.77) finish
+  }
+
+  // Fly back: spins again and returns to dead center as the real card.
+  introTl.addLabel("flyBack", `${readyLabel}+=${DWELL}`);
+  introTl.to(profilePanel, { opacity: 0, duration: 0.3, ease: "power1.in" }, "flyBack");
+  spinY += FLY_SPIN;
+  introTl.to(card, { rotateY: spinY, duration: 0.9, ease: "power2.inOut" }, "flyBack");
+  introTl.to(card, { x: 0, y: CARD_Y_RAISED, scale: 0.9, duration: 0.55, ease: "power3.inOut" }, "flyBack");
+  introTl.addLabel("flyBackSettle", "flyBack+=0.55");
+  introTl.call(() => {
+    cardName.textContent = REAL_NAME;
+    cardRole.textContent = REAL_ROLE;
+  }, null, "flyBackSettle");
+  introTl.to(card, { y: CARD_Y, scale: 1, duration: 0.35, ease: "power2.out" }, "flyBackSettle");
+  introTl.to([cardName, cardRole], { opacity: 1, duration: 0.4, ease: "power2.out" }, "flyBackSettle");
 
   const tl = gsap.timeline({
     scrollTrigger: {
