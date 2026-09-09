@@ -40,6 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const glow = document.getElementById("screenGlow");
   const contactShadow = document.getElementById("contactShadow");
   const heroCopy = document.getElementById("heroCopy");
+  const cardName = card.querySelector(".card-3d__name");
+  const cardRole = card.querySelector(".card-3d__role");
+  const profileIntro = document.getElementById("profileIntro");
+  const profileTag = document.getElementById("profileTag");
+  const profileBenefit = document.getElementById("profileBenefit");
+  const profileDots = gsap.utils.toArray(".profile-intro__dot");
 
   const prefersReduced = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
@@ -194,6 +200,83 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.set(ripple, { y: TAP_Y, opacity: 0, scale: 0.2 });
   gsap.set(heroCopy, { opacity: 0, y: 30, pointerEvents: "none" });
   gsap.set(world, { scale: 1, opacity: 1 });
+
+  // ---- Profile intro: the card turns to show who it's for ----
+  // Plays once on load, fully independent of scroll (no ScrollTrigger
+  // here), so it never competes with the scroll-scrubbed phone-approach
+  // timeline below — that timeline never touches `card` at all, only
+  // `phone`/orbs/glow, so the two can run concurrently with zero
+  // conflict even if the visitor starts scrolling mid-intro.
+  // The last stop is the real Sport Car Dreams card the rest of the
+  // page already assumes (trust strip, showcase mockups), so the
+  // card's DOM content matches from here on with no extra reset step.
+  const ORIGINAL_NAME = cardName.textContent;
+  const ORIGINAL_ROLE = cardRole.textContent;
+  const PROFILE_STEPS = [
+    {
+      tag: "Abogados",
+      name: "Lic. Ana Torres",
+      role: "Abogada corporativa",
+      benefit: "Comparte tu cédula, tu especialidad y agenda una consulta antes de despedirte.",
+    },
+    {
+      tag: "Emprendedores",
+      name: "Diego Ruiz",
+      role: "Fundador · Startup",
+      benefit: "Comparte tu pitch, tus redes y tu contacto sin repartir una sola tarjeta de papel.",
+    },
+    {
+      tag: "Empresarios",
+      name: ORIGINAL_NAME,
+      role: ORIGINAL_ROLE,
+      benefit: "Muestra tu catálogo, tu inventario y agenda citas directo desde la tarjeta.",
+      isReal: true,
+    },
+  ];
+  const CLOSING_STEP = {
+    tag: "Y también",
+    benefit: "Para cualquier profesional que quiera presentarse mejor.",
+  };
+
+  const swapCardContent = (step) => {
+    cardName.textContent = step.name;
+    cardRole.textContent = step.role;
+  };
+  const swapCaption = (step) => {
+    profileTag.textContent = step.tag;
+    profileBenefit.textContent = step.benefit;
+  };
+  const setActiveDot = (i) => {
+    profileDots.forEach((dot, di) => dot.classList.toggle("profile-intro__dot--active", di === i));
+  };
+
+  const introTl = gsap.timeline({ delay: 0.5 });
+  introTl.to(profileIntro, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0);
+
+  PROFILE_STEPS.forEach((step, i) => {
+    const dir = i % 2 === 0 ? -1 : 1;
+    const turnOut = gsap.timeline();
+    turnOut
+      .to(card, { rotateY: dir * 24, duration: 0.45, ease: "power2.inOut" }, 0)
+      .to([cardName, cardRole, profileTag, profileBenefit], { opacity: 0, duration: 0.18, ease: "power1.in" }, 0)
+      .call(() => {
+        swapCardContent(step);
+        swapCaption(step);
+        setActiveDot(i);
+      })
+      .to([cardName, cardRole, profileTag, profileBenefit], { opacity: 1, duration: 0.18, ease: "power1.out" }, "+=0.02")
+      .to(card, { rotateY: 0, duration: 0.45, ease: "power2.inOut" }, "<");
+    introTl.add(turnOut).to({}, { duration: 0.9 }); // dwell so the profile is readable
+  });
+
+  // Closing beat: caption only, card keeps the real Sport Car Dreams
+  // content that's now on it.
+  introTl
+    .to([profileTag, profileBenefit], { opacity: 0, duration: 0.15 })
+    .call(() => swapCaption(CLOSING_STEP))
+    .to([profileTag, profileBenefit], { opacity: 1, duration: 0.3 })
+    .to({}, { duration: 1.1 })
+    .to(profileIntro, { opacity: 0, duration: 0.5, ease: "power1.in" });
 
   const tl = gsap.timeline({
     scrollTrigger: {

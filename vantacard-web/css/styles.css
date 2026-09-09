@@ -388,6 +388,59 @@ h3 {
   margin-top: 0.2rem;
 }
 
+.profile-intro {
+  position: absolute;
+  left: 50%;
+  top: 53%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: min(84vw, 340px);
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.profile-intro__tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 0.3rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(var(--accent-rgb), 0.06);
+}
+
+.profile-intro__benefit {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.profile-intro__dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 0.1rem;
+}
+
+.profile-intro__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  opacity: 0.4;
+}
+
+.profile-intro__dot--active {
+  opacity: 1;
+  background: var(--accent-strong);
+}
+
 .phone-3d {
   width: 220px;
   aspect-ratio: 9 / 19.3;
