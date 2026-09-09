@@ -20,6 +20,24 @@
         ],
         "createdAt": "2026-09-09T13:45:41.201Z",
         "reason": "same intentional chrome-shimmer on hero h1 (defined in styles.css) already sanctioned; hook re-flags on index.html edits too"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-09T13:54:52.551Z",
+        "reason": "Body/UI text font, deliberately paired with the distinctive display face (Bricolage Grotesque) per this session's typography update — Inter kept for body legibility, not a generator default."
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "vantacard-web/css/fonts.css"
+        ],
+        "createdAt": "2026-09-09T13:54:52.554Z",
+        "reason": "Same Inter-as-body-font pairing; flagged here only because self-hosting moved the @font-face rules into this new file."
       }
     ]
   }
