@@ -1027,6 +1027,63 @@ h3 {
   color: var(--accent);
 }
 
+/* ---------- Identity (closing brand statement) ---------- */
+.identity {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-7);
+  text-align: center;
+}
+
+.identity__inner h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  max-width: 26ch;
+  margin: 0 auto var(--space-5);
+}
+
+.identity__card {
+  width: min(360px, 78vw);
+  aspect-ratio: 1.586;
+  margin: 0 auto var(--space-5);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(150deg, #1b1d22 0%, #23262d 45%, #101114 100%);
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 40px 80px -30px rgba(var(--shadow-color), 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.4s var(--ease-premium);
+}
+
+.identity__card:hover {
+  transform: translateY(-4px);
+}
+
+.identity__card .brand-mark {
+  gap: 1rem;
+}
+
+.identity__card .brand-mark__icon {
+  width: 40px;
+  height: 32px;
+}
+
+.identity__card .brand-mark__divider {
+  height: 30px;
+}
+
+.identity__card .brand-mark__wordmark {
+  font-size: 0.95rem;
+}
+
+.identity__inner p {
+  max-width: 44ch;
+  margin: 0 auto var(--space-4);
+  color: var(--text-secondary);
+}
+
 /* ---------- Footer ---------- */
 .footer {
   border-top: 1px solid var(--border);
