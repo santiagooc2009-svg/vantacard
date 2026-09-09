@@ -498,6 +498,38 @@ h3 {
   line-height: 1.08;
   max-width: 18ch;
   margin: 0 auto var(--space-3);
+  /* Chrome shimmer: a bright band drifts across the headline, like
+     light moving over brushed metal. */
+  background: linear-gradient(
+    100deg,
+    var(--text-primary) 30%,
+    var(--accent-strong) 45%,
+    var(--text-primary) 60%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: chrome-sweep 7s ease-in-out infinite;
+}
+
+@keyframes chrome-sweep {
+  0%, 100% { background-position: 100% 0; }
+  50% { background-position: 0 0; }
+}
+
+/* Windows high-contrast / forced-colors mode overrides `color` but
+   not necessarily background-clip:text, which can leave this
+   headline fully invisible (transparent fill, no fallback color).
+   Drop the gradient fill there and just use solid system text. */
+@media (forced-colors: active) {
+  .hero-copy h1 {
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    color: CanvasText;
+    animation: none;
+  }
 }
 
 .hero-copy p {
@@ -638,6 +670,63 @@ h3 {
   font-size: 1rem;
   max-width: 40ch;
   margin-top: var(--space-2);
+}
+
+/* ---------- Showcase (asymmetric, deliberately not a matching grid
+   like .services below it) ---------- */
+.showcase {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.showcase__head {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.showcase__head h2 {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+}
+
+.showcase__head p {
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+}
+
+.showcase__gallery {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.showcase__item {
+  perspective: 1200px;
+}
+
+.showcase__item img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  will-change: transform;
+  transform: rotateX(0) rotateY(0);
+}
+
+.showcase__item--secondary {
+  margin-top: var(--space-7);
+}
+
+@media (max-width: 780px) {
+  .showcase__gallery {
+    grid-template-columns: 1fr;
+  }
+  .showcase__item--secondary {
+    margin-top: 0;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 /* ---------- Services ---------- */

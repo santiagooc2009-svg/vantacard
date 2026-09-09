@@ -112,6 +112,45 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Tilt on the showcase screenshots: the image leans toward the
+  // cursor, like a physical card being turned to catch the light.
+  // Plain gsap.to (not quickTo — quickTo silently no-ops on rotateX/
+  // rotateY in this GSAP version, verified with an isolated repro:
+  // it logs "rotateX not eligible for reset" and never touches the
+  // transform) with overwrite:"auto" still redirects smoothly when a
+  // new pointermove arrives before the previous tween finishes.
+  if (!prefersReduced) {
+    document.querySelectorAll(".showcase__item img").forEach((img) => {
+      img.parentElement.addEventListener("pointermove", (e) => {
+        const r = img.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        gsap.to(img, { rotateX: py * -10, rotateY: px * 10, duration: 0.4, ease: "power3.out", overwrite: "auto" });
+      });
+      img.parentElement.addEventListener("pointerleave", () => {
+        gsap.to(img, { rotateX: 0, rotateY: 0, duration: 0.4, ease: "power3.out", overwrite: "auto" });
+      });
+    });
+  }
+
+  // Magnetic pull on buttons: they nudge toward the cursor within a
+  // small radius, then spring back on leave.
+  if (!prefersReduced) {
+    document.querySelectorAll(".btn").forEach((btn) => {
+      const moveX = gsap.quickTo(btn, "x", { duration: 0.35, ease: "power3.out" });
+      const moveY = gsap.quickTo(btn, "y", { duration: 0.35, ease: "power3.out" });
+      btn.addEventListener("pointermove", (e) => {
+        const r = btn.getBoundingClientRect();
+        moveX((e.clientX - r.left - r.width / 2) * 0.25);
+        moveY((e.clientY - r.top - r.height / 2) * 0.3);
+      });
+      btn.addEventListener("pointerleave", () => {
+        moveX(0);
+        moveY(0);
+      });
+    });
+  }
+
   // Final settled positions. The card's Z (60) never changes anywhere
   // in the timeline — it truly stays put. The phone's settled Z (28)
   // stays well below it with a comfortable margin. Y values place the
