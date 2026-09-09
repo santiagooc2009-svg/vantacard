@@ -253,17 +253,17 @@ document.addEventListener("DOMContentLoaded", () => {
     {
       label: "Abogado",
       benefit: "Comparte tu cédula, tu especialidad y agenda una consulta antes de despedirte.",
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 6 5 9M12 6l7 3"/><path d="M3 9c0 2 1.6 3.5 3.5 3.5S10 11 10 9"/><path d="M14 9c0 2 1.6 3.5 3.5 3.5S21 11 21 9"/><path d="M12 6v13"/><path d="M8.5 21h7"/></svg>',
+      icon: "assets/badge-abogado.png",
     },
     {
       label: "Emprendedor",
       benefit: "Comparte tu pitch, tus redes y tu contacto sin repartir una sola tarjeta de papel.",
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c2.8 1.8 4.5 5 4.5 9 0 2-.6 3.8-1.5 5.2L12 19l-3-2.8C8.1 14.8 7.5 13 7.5 11c0-4 1.7-7.2 4.5-9Z"/><circle cx="12" cy="10" r="1.8"/><path d="M9 15.5 6 18M15 15.5l3 2.5"/><path d="M10 19.5 12 22l2-2.5"/></svg>',
+      icon: "assets/badge-emprendedor.png",
     },
     {
       label: "Empresario",
       benefit: "Muestra tu catálogo, tu inventario y agenda citas directo desde la tarjeta.",
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/><path d="M11 13v2h2v-2"/></svg>',
+      icon: "assets/badge-empresario.png",
     },
   ];
 
@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const p = PROFILES[i];
     profileLabel.textContent = p.label;
     profileBenefit.textContent = p.benefit;
-    profileIcon.innerHTML = p.icon;
+    profileIcon.src = p.icon;
     profileDots.forEach((dot, di) => dot.classList.toggle("profile-panel__dot--active", di === i));
   };
 
@@ -335,20 +335,21 @@ document.addEventListener("DOMContentLoaded", () => {
     .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.42)
     // 0.56 -> 0.68: dwell.
 
-    // Empresario: the real card — moves directly to its exact final
-    // resting spot (not a halfway point followed by another move) as
-    // its actual name/role fade in. This is the real Sport Car Dreams
-    // identity the rest of the page assumes, not a fictional one, and
-    // once it lands here it never moves again — the phone-approach
-    // phases below pick up from exactly this position.
+    // Empresario: stays fully committed to the right (same spot
+    // Emprendedor already landed on — no card movement here, just the
+    // content swapping to the real identity while parked in place).
     .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.68)
-    .to(card, { x: 0, y: CARD_Y, scale: 1, duration: 0.22, ease: "power1.inOut" }, 0.68)
+    .to([cardName, cardRole], { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.68)
     .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.76)
-    .to([cardName, cardRole], { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.76)
-    // 0.90 -> 0.96: dwell, card already settled — only the panel fades away.
-    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.96);
+    // 0.90 -> 1.02: dwell.
 
-  tl.addLabel("approach", 1.18);
+    // Return to center: its own clean, deliberate move (not folded
+    // into the Empresario step) — panel is already gone, so this is
+    // the card by itself heading home before the NFC/phone phases.
+    .to(profilePanel, { opacity: 0, duration: 0.08 }, 1.02)
+    .to(card, { x: 0, y: CARD_Y, scale: 1, duration: 0.24, ease: "power2.inOut" }, 1.02);
+
+  tl.addLabel("approach", 1.32);
 
   // ---- Phase 1a: de-tilt while still far away ----
   // The phone straightens out to face the camera square-on well
