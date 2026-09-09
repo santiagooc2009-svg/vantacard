@@ -248,7 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const SIDE = isWideStage ? 220 : 0; // how far the card drifts to either side
   const PANEL_SIDE = isWideStage ? 250 : 0; // how far the panel sits opposite it
   const LOW_Y = CARD_Y + 105; // noticeably lower than the resting position — the "baja"
-  const MID_Y = CARD_Y + 65; // partway back up, for the last profile before settling
 
   const PROFILES = [
     {
@@ -336,19 +335,18 @@ document.addEventListener("DOMContentLoaded", () => {
     .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.42)
     // 0.56 -> 0.68: dwell.
 
-    // Empresario: the real card — drifts back toward center as its
-    // actual name/role fade in (this is the real Sport Car Dreams
-    // identity the rest of the page assumes, not a fictional one).
+    // Empresario: the real card — moves directly to its exact final
+    // resting spot (not a halfway point followed by another move) as
+    // its actual name/role fade in. This is the real Sport Car Dreams
+    // identity the rest of the page assumes, not a fictional one, and
+    // once it lands here it never moves again — the phone-approach
+    // phases below pick up from exactly this position.
     .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.68)
-    .to(card, { x: 0, y: MID_Y, scale: 0.97, duration: 0.22, ease: "power1.inOut" }, 0.68)
+    .to(card, { x: 0, y: CARD_Y, scale: 1, duration: 0.22, ease: "power1.inOut" }, 0.68)
     .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.76)
     .to([cardName, cardRole], { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.76)
-    // 0.90 -> 0.96: dwell.
-
-    // Settle: back to dead center, exactly CARD_SETTLED, panel gone —
-    // ready for the phone-approach phases to take over unchanged.
-    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.96)
-    .to(card, { x: 0, y: CARD_Y, scale: 1, duration: 0.18, ease: "power2.out" }, 0.96);
+    // 0.90 -> 0.96: dwell, card already settled — only the panel fades away.
+    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.96);
 
   tl.addLabel("approach", 1.18);
 
