@@ -140,6 +140,36 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Depth parallax on the showcase pair: the two screenshots drift at
+  // different rates as the section scrolls past, so they separate
+  // instead of moving as one flat block — reads as actual depth, not
+  // just a decoration. Independent of the pointer-tilt above (touches
+  // yPercent, tilt touches rotateX/rotateY — different properties on
+  // the same element, so neither tween's overwrite:"auto" affects
+  // the other).
+  if (!prefersReduced) {
+    gsap.to(".showcase__item--main img", {
+      yPercent: -8,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".showcase__gallery",
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true,
+      },
+    });
+    gsap.to(".showcase__item--secondary img", {
+      yPercent: 12,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".showcase__gallery",
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true,
+      },
+    });
+  }
+
   // Magnetic pull on buttons: they nudge toward the cursor within a
   // small radius, then spring back on leave.
   if (!prefersReduced) {
