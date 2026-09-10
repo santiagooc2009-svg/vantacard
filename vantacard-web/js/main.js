@@ -136,12 +136,13 @@ document.addEventListener("DOMContentLoaded", () => {
     onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.08 }),
   });
 
-  // Spotlight border on plan cards: track the cursor into CSS custom
-  // properties the ::before ring reads. Plain pointermove on two
-  // small cards, not a scroll-frame cost, so it's fine outside the
-  // ScrollTrigger/ban-on-scroll-listeners rule (that rule targets
-  // window-level scroll polling, not local pointer tracking).
-  document.querySelectorAll(".plan").forEach((el) => {
+  // Spotlight border on plan cards and offering tiles: track the
+  // cursor into CSS custom properties the ::before ring reads. Plain
+  // pointermove on a handful of small cards, not a scroll-frame
+  // cost, so it's fine outside the ScrollTrigger/ban-on-scroll-
+  // listeners rule (that rule targets window-level scroll polling,
+  // not local pointer tracking).
+  document.querySelectorAll(".plan, .offerings__media").forEach((el) => {
     el.addEventListener("pointermove", (e) => {
       const r = el.getBoundingClientRect();
       el.style.setProperty("--mx", `${e.clientX - r.left}px`);

@@ -23,6 +23,11 @@
   --font-display: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  /* Third voice, used sparingly: one italic word inside a headline,
+     never a whole paragraph — the contrast is the point. IBM Plex
+     Serif so the accent shares a family with the mono labels
+     already on the page, instead of being an unrelated import. */
+  --font-accent: "IBM Plex Serif", Georgia, "Times New Roman", serif;
 
   /* Scale */
   --space-1: 0.5rem;
@@ -130,6 +135,50 @@ button {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
+}
+
+/* Third typographic voice: a single italic serif word dropped into
+   an otherwise grotesque-sans headline. Used at most once or twice
+   a page — it's a accent, not a second body font. */
+.accent-italic {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent-strong);
+}
+
+/* Ambient section glow: a large, very faint radial light off to one
+   side, so flat black sections read as lit space rather than an
+   empty void. Single light source, one accent hue — same restraint
+   as the rest of the palette, just extended past the hero. */
+.ambient-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.ambient-glow::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  z-index: 0;
+  width: min(70vw, 900px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.07), transparent 70%);
+  pointer-events: none;
+}
+
+.ambient-glow--left::before {
+  left: -15%;
+}
+
+.ambient-glow--right::before {
+  right: -15%;
+}
+
+.ambient-glow > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* Scroll-reveal targets. Starting state only; main.js animates each
@@ -683,6 +732,13 @@ h3 {
   padding: var(--space-6) 0 0;
 }
 
+.how__eyebrow {
+  text-align: center;
+  max-width: var(--max-width);
+  margin: 0 auto var(--space-2);
+  padding: 0 var(--space-4);
+}
+
 .how h2 {
   font-size: clamp(1.8rem, 3.2vw, 2.6rem);
   text-align: center;
@@ -839,13 +895,44 @@ h3 {
   }
 }
 
+.offerings__item {
+  transition: transform 0.3s var(--ease-premium);
+}
+
+.offerings__item:hover {
+  transform: translateY(-4px);
+}
+
 .offerings__media {
+  position: relative;
   aspect-ratio: 4 / 3;
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--bg-card);
   border: 1px solid var(--border);
   margin-bottom: var(--space-3);
+}
+
+/* Same spotlight-ring mechanic as .plan, extended here so the two
+   card grids on the page feel like one system, not two. */
+.offerings__media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), 0.5), transparent 65%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.offerings__item:hover .offerings__media::before {
+  opacity: 1;
 }
 
 .offerings__media img {
