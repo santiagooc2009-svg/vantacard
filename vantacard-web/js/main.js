@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const ripple = document.getElementById("nfcRipple");
   const glow = document.getElementById("screenGlow");
   const contactShadow = document.getElementById("contactShadow");
+  const heroPayoff = document.getElementById("heroPayoff");
   const cardName = card.querySelector(".card-3d__name");
   const cardRole = card.querySelector(".card-3d__role");
   const profilePanel = document.getElementById("profilePanel");
@@ -421,11 +422,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ---- Phase 3: zoom through the screen ----
     // The scene zooms in and dissolves into the glow, which blooms to
-    // fill the frame and then fades away — the pin releases right as
-    // it fades, straight into the identity section, so there's no
-    // dead scroll gap and no extra screen in between.
+    // fill the frame and then fades away. The identity headline fades
+    // in right on top of that fade-out, finishing exactly as the pin
+    // releases, so the payoff is already on screen the instant the
+    // scene goes dark — no stretch of empty black waiting for the
+    // next section to scroll up from below.
     .to(world, { scale: 7, opacity: 0, duration: 0.26, ease: "power2.in" }, "approach+=0.72")
     .to(glow, { opacity: 1, scale: 16, duration: 0.26, ease: "power2.in" }, "approach+=0.72")
     .to([orbsBack, orbsMid, orbsFront], { opacity: 0, duration: 0.14 }, "approach+=0.72")
-    .to(glow, { opacity: 0, duration: 0.16, ease: "power1.out" }, "approach+=0.86");
+    .to(glow, { opacity: 0, duration: 0.16, ease: "power1.out" }, "approach+=0.86")
+    .to(heroPayoff, { opacity: 1, duration: 0.16, ease: "power2.out" }, "approach+=0.86");
 });

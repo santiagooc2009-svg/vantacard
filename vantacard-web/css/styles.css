@@ -594,6 +594,42 @@ h3 {
   50% { background-position: 0 0; }
 }
 
+/* ---------- Hero payoff (in-pin echo of the identity headline) ---------- */
+.hero-payoff {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  margin: 0;
+  width: min(26ch, 82vw);
+  text-align: center;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.15;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    var(--text-primary) 30%,
+    var(--accent-strong) 45%,
+    var(--text-primary) 60%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (forced-colors: active) {
+  .hero-payoff {
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    color: CanvasText;
+  }
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

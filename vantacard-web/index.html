@@ -135,6 +135,15 @@
         </div>
       </div>
 
+      <!-- Fades in during the very last stretch of the pinned
+           animation, mirroring the identity section's own headline
+           word for word (kept out of the accessibility tree since
+           it's a transient echo, not new content) — so the moment
+           the scene finishes fading out, that message is already on
+           screen instead of a stretch of empty black before the real
+           section scrolls up into view. -->
+      <p class="hero-payoff" id="heroPayoff" aria-hidden="true">Tu identidad profesional en una sola tarjeta.</p>
+
     </div>
   </section>
 
