@@ -1,0 +1,1275 @@
+/* ============================================================
+   VantaCard — Design System
+   Un solo mundo visual oscuro. Silver/chrome sobre casi-negro frío.
+   ============================================================ */
+
+:root {
+  /* Color */
+  --bg: #0a0b0d;
+  --bg-raised: #131519;
+  --bg-card: #1a1d22;
+  --accent: #c9ced6;
+  --accent-rgb: 201, 206, 214;
+  --accent-strong: #eef0f3;
+  --accent-dim: #7d838d;
+  --text-primary: #f2f3f5;
+  --text-secondary: #a7adb6;
+  --text-tertiary: #8b929c;
+  --border: rgba(201, 206, 214, 0.14);
+  --border-strong: rgba(201, 206, 214, 0.3);
+  --shadow-color: 4, 5, 7;
+
+  /* Type */
+  --font-display: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  /* Third voice, used sparingly: one italic word inside a headline,
+     never a whole paragraph — the contrast is the point. IBM Plex
+     Serif so the accent shares a family with the mono labels
+     already on the page, instead of being an unrelated import. */
+  --font-accent: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+
+  /* Scale */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-5: 3rem;
+  --space-6: 4.5rem;
+  --space-7: 7rem;
+
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+
+  --max-width: 1180px;
+
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Faint brushed-metal grain over the whole page. Cheap, tasteful
+   substitute for photography: it's what keeps a flat silver/black
+   palette from reading as an empty gradient. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.05;
+  /* overlay barely touches near-black pixels; screen (additive)
+     actually shows up against a dark background. */
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------- Typography ---------- */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Third typographic voice: a single italic serif word dropped into
+   an otherwise grotesque-sans headline. Used at most once or twice
+   a page — it's a accent, not a second body font. */
+.accent-italic {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent-strong);
+}
+
+/* Ambient section glow: a large, very faint radial light off to one
+   side, so flat black sections read as lit space rather than an
+   empty void. Single light source, one accent hue — same restraint
+   as the rest of the palette, just extended past the hero. */
+.ambient-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.ambient-glow::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  z-index: 0;
+  width: min(70vw, 900px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.07), transparent 70%);
+  pointer-events: none;
+}
+
+.ambient-glow--left::before {
+  left: -15%;
+}
+
+.ambient-glow--right::before {
+  right: -15%;
+}
+
+.ambient-glow > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Scroll-reveal targets. Starting state only; main.js animates each
+   one to opacity:1/y:0 with ScrollTrigger.batch as it enters view. */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+/* ---------- Nav ---------- */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  transition: background-color 0.4s var(--ease-premium), border-color 0.4s var(--ease-premium);
+  border-bottom: 1px solid transparent;
+}
+
+.nav--solid {
+  background: rgba(10, 11, 13, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom-color: var(--border);
+}
+
+.nav__logo {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-primary);
+  /* Padding + matching negative margin grows the tap target to 44px
+     tall (mobile) without shifting the visible logo position. The
+     brand-mark icon is only 19px tall, shorter than the plain text
+     this used to wrap, hence the wider padding than elsewhere. */
+  padding: 13px 0;
+  margin: -13px 0;
+}
+
+.nav__links {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.nav__links a {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: color 0.25s ease;
+}
+
+.nav__links a:hover {
+  color: var(--text-primary);
+}
+
+.nav__cta {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.7rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.nav__cta:hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+@media (max-width: 720px) {
+  .nav__links {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Hero scene — pinned 3D animation
+   ============================================================ */
+
+/* Tall enough to hold the full scroll-driven sequence: the card's
+   parallax detour through three target profiles, then the original
+   phone-approach phases. All one continuous scrub, so it has to be
+   this long — see the "approach" label in js/main.js. */
+.hero-scene {
+  position: relative;
+  height: 750vh;
+  background: var(--bg);
+}
+
+.hero-scene__stage {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 28%, rgba(201, 206, 214, 0.08), transparent 60%),
+    var(--bg);
+}
+
+.hero-scene__stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 90% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* Orb parallax layers */
+.orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  /* Slow idle drift, independent of the scroll-driven parallax on
+     the .orbs layer itself (different element, so no transform
+     conflict with the GSAP-driven translateY above it). Keeps the
+     scene alive even while the user isn't scrolling. */
+  animation: orb-breathe 14s ease-in-out infinite;
+}
+
+@keyframes orb-breathe {
+  0%, 100% { transform: scale(1) translate(0, 0); opacity: 1; }
+  50% { transform: scale(1.12) translate(2%, -3%); opacity: 0.75; }
+}
+
+.orbs--back .orb {
+  background: radial-gradient(circle, rgba(201, 206, 214, 0.16), transparent 70%);
+}
+.orbs--back .orb:nth-child(1) { width: 420px; height: 420px; top: 6%; left: 8%; animation-delay: 0s; }
+.orbs--back .orb:nth-child(2) { width: 340px; height: 340px; bottom: 4%; right: 10%; animation-delay: -7s; }
+
+.orbs--mid .orb {
+  background: radial-gradient(circle, rgba(201, 206, 214, 0.22), transparent 68%);
+  filter: blur(36px);
+}
+.orbs--mid .orb:nth-child(1) { width: 260px; height: 260px; top: 18%; right: 16%; animation-duration: 11s; animation-delay: -3s; }
+.orbs--mid .orb:nth-child(2) { width: 200px; height: 200px; bottom: 14%; left: 14%; animation-duration: 12.5s; animation-delay: -9s; }
+
+.orbs--front .orb {
+  background: radial-gradient(circle, rgba(238, 240, 243, 0.3), transparent 65%);
+  filter: blur(22px);
+}
+.orbs--front .orb:nth-child(1) { width: 130px; height: 130px; top: 30%; left: 22%; animation-duration: 8s; animation-delay: -1s; }
+.orbs--front .orb:nth-child(2) { width: 100px; height: 100px; bottom: 24%; right: 24%; animation-duration: 9.5s; animation-delay: -5s; }
+
+/* 3D world */
+.scene-3d {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1800px;
+}
+
+.scene-3d__world {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.contact-shadow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180px;
+  height: 34px;
+  opacity: 0;
+  filter: blur(4px);
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.65), transparent 72%);
+}
+
+/* .card-3d / .phone-3d live directly in the preserve-3d world and carry
+   only position + the animated transform. Visual styling (box-shadow,
+   border-radius, background) lives one level deeper on the __inner
+   element. Putting both on the same node that also has a live 3D
+   transform breaks Chromium's z-sort against 3D siblings — verified by
+   isolated repro — regardless of Z sign or will-change. Splitting the
+   node keeps the sorted element a plain box. */
+.card-3d,
+.phone-3d {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.card-3d {
+  width: 300px;
+  aspect-ratio: 1.586;
+}
+
+.card-3d__inner {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  background: linear-gradient(150deg, #1b1d22 0%, #23262d 45%, #101114 100%);
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 40px 70px -30px rgba(var(--shadow-color), 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-3d__top {
+  display: flex;
+  align-items: center;
+}
+
+/* Brand mark: icon + divider + "Vanta / Card" wordmark. Used at full
+   (stacked, two-line) size on the card face; the nav uses the
+   --compact modifier to keep it to one line at nav-bar height. */
+.brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.brand-mark__icon {
+  width: 30px;
+  height: 24px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.brand-mark__divider {
+  width: 1px;
+  height: 22px;
+  background: var(--border-strong);
+  flex-shrink: 0;
+}
+
+.brand-mark__wordmark {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+
+.brand-mark--compact {
+  gap: 0.55rem;
+}
+
+.brand-mark--compact .brand-mark__icon {
+  width: 24px;
+  height: 19px;
+}
+
+.brand-mark--compact .brand-mark__divider {
+  height: 17px;
+}
+
+.brand-mark--compact .brand-mark__wordmark {
+  flex-direction: row;
+  gap: 0.35em;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.card-3d__name {
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.card-3d__role {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+/* Mobile default: centered, below where the card+phone sit. On wide
+   viewports (matched in JS too) js/main.js animates its `x` to
+   whichever side is opposite the card at each step — so no static
+   transform here; GSAP owns xPercent/yPercent/x/y entirely, the same
+   anchoring pattern #card3d and #phone3d already use. */
+.profile-panel {
+  position: absolute;
+  left: 50%;
+  top: 87%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: min(84vw, 320px);
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.profile-panel__label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+.profile-panel__icon {
+  width: 76px;
+  height: 76px;
+}
+
+.profile-panel__benefit {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.profile-panel__dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 0.1rem;
+}
+
+.profile-panel__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  opacity: 0.4;
+}
+
+.profile-panel__dot--active {
+  opacity: 1;
+  background: var(--accent-strong);
+}
+
+@media (min-width: 700px) {
+  .profile-panel {
+    top: 46%;
+    width: min(26vw, 320px);
+  }
+
+  .profile-panel__label {
+    font-size: clamp(2rem, 3vw, 2.6rem);
+  }
+
+  .profile-panel__icon {
+    width: 92px;
+    height: 92px;
+  }
+}
+
+.phone-3d {
+  width: 220px;
+  aspect-ratio: 9 / 19.3;
+}
+
+.phone-3d__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 42px;
+  padding: 12px;
+  background: linear-gradient(165deg, #1c1e24, #08090b 75%);
+  border: 1px solid rgba(201, 206, 214, 0.16);
+  box-shadow: 0 60px 110px -35px rgba(var(--shadow-color), 0.9);
+}
+
+.phone-3d__notch {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 18px;
+  background: #08090b;
+  border-radius: 999px;
+  z-index: 2;
+}
+
+.phone-3d__screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 32px;
+  background: radial-gradient(ellipse 120% 90% at 50% 0%, #15171b, var(--bg) 70%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone-3d__glyph {
+  width: 46px;
+  height: 46px;
+  color: var(--accent);
+  opacity: 0.55;
+}
+
+.nfc-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.screen-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(238, 240, 243, 0.95), rgba(201, 206, 214, 0.4) 45%, transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ============================================================
+   Revealed content
+   ============================================================ */
+
+.reveal-content {
+  position: relative;
+  z-index: 2;
+  background: var(--bg);
+}
+
+@keyframes chrome-sweep {
+  0%, 100% { background-position: 100% 0; }
+  50% { background-position: 0 0; }
+}
+
+/* ---------- Hero payoff (in-pin echo of the identity headline) ---------- */
+.hero-payoff {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  margin: 0;
+  width: min(26ch, 82vw);
+  text-align: center;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.15;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    var(--text-primary) 30%,
+    var(--accent-strong) 45%,
+    var(--text-primary) 60%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (forced-colors: active) {
+  .hero-payoff {
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    color: CanvasText;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: transform 0.25s var(--ease-premium), background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.btn--primary {
+  position: relative;
+  overflow: hidden;
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+  background: var(--accent-strong);
+}
+
+/* Chrome shimmer: a bright diagonal band sweeps across on hover,
+   like light catching brushed metal. */
+.btn--primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.65) 50%, transparent 60%);
+  transform: translateX(-120%);
+}
+
+.btn--primary:hover::after {
+  transform: translateX(120%);
+  transition: transform 0.7s ease;
+}
+
+.btn--ghost {
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+}
+
+.btn--ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- How it works (sticky-stack) ---------- */
+.how {
+  padding: var(--space-6) 0 0;
+}
+
+.how__eyebrow {
+  text-align: center;
+  max-width: var(--max-width);
+  margin: 0 auto var(--space-2);
+  padding: 0 var(--space-4);
+}
+
+.how h2 {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  text-align: center;
+  max-width: var(--max-width);
+  margin: 0 auto var(--space-3);
+  padding: 0 var(--space-4);
+}
+
+.how__steps {
+  position: relative;
+}
+
+.how__step {
+  min-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-5) var(--space-4);
+  will-change: transform, opacity;
+}
+
+.how__index {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--accent-dim);
+  margin-bottom: var(--space-3);
+}
+
+.how__step-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.how__icon-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.how__icon {
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+}
+
+.how__step h3 {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+
+.how__step p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 40ch;
+  margin-top: var(--space-2);
+}
+
+/* ---------- Showcase (asymmetric, deliberately not a matching grid
+   like .services below it) ---------- */
+.showcase {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.showcase__head {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.showcase__head h2 {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+}
+
+.showcase__head p {
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+}
+
+.showcase__gallery {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.showcase__item {
+  perspective: 1200px;
+}
+
+.showcase__item img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  will-change: transform;
+  transform: rotateX(0) rotateY(0);
+}
+
+.showcase__item--secondary {
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 780px) {
+  .showcase__gallery {
+    grid-template-columns: 1fr;
+  }
+  .showcase__item--secondary {
+    margin-top: 0;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ---------- Offerings (what we do) ---------- */
+.offerings {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.offerings__head {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.offerings__head h2 {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+}
+
+.offerings__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 900px) {
+  .offerings__grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
+.offerings__item {
+  transition: transform 0.3s var(--ease-premium);
+}
+
+.offerings__item:hover {
+  transform: translateY(-4px);
+}
+
+.offerings__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-3);
+}
+
+/* Same spotlight-ring mechanic as .plan, extended here so the two
+   card grids on the page feel like one system, not two. */
+.offerings__media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), 0.5), transparent 65%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.offerings__item:hover .offerings__media::before {
+  opacity: 1;
+}
+
+.offerings__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offerings__item h3 {
+  font-size: 1.15rem;
+  margin-bottom: var(--space-1);
+}
+
+.offerings__item p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+/* ---------- Services ---------- */
+.services {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.services__head {
+  max-width: 52ch;
+  margin: 0 auto var(--space-5);
+  text-align: center;
+}
+
+.services__head h2 {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  margin-top: var(--space-2);
+}
+
+.services__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (max-width: 780px) {
+  .services__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.plan {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.3s ease, transform 0.3s var(--ease-premium);
+}
+
+.plan:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-4px);
+}
+
+/* Spotlight border: a 1px ring that lights up around the cursor.
+   --mx/--my are set from JS on pointermove. The mask trick keeps
+   only the ring visible, not a filled glow behind the card. */
+.plan::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), 0.55), transparent 65%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.plan:hover::before {
+  opacity: 1;
+}
+
+.plan--featured {
+  border-color: var(--border-strong);
+  background: linear-gradient(165deg, var(--bg-card), #20242b);
+}
+
+.plan__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: var(--space-2);
+}
+
+.plan__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.plan__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.plan__tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.plan__name {
+  font-size: 1.4rem;
+  margin-bottom: var(--space-1);
+}
+
+.plan__price {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin: var(--space-2) 0;
+}
+
+.plan__price span {
+  font-size: 0.95rem;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+.plan__desc {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  margin-bottom: var(--space-3);
+}
+
+.plan__features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: var(--space-4);
+  flex-grow: 1;
+}
+
+.plan__features li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.plan__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(var(--accent-rgb), 0.12);
+  flex-shrink: 0;
+}
+
+.plan__check svg {
+  width: 11px;
+  height: 11px;
+  color: var(--accent);
+}
+
+/* ---------- Identity (closing brand statement) ---------- */
+.identity {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.identity__inner h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  max-width: 26ch;
+  margin: 0 auto var(--space-5);
+  /* Chrome shimmer: a bright band drifts across the headline, like
+     light moving over brushed metal. */
+  background: linear-gradient(
+    100deg,
+    var(--text-primary) 30%,
+    var(--accent-strong) 45%,
+    var(--text-primary) 60%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: chrome-sweep 7s ease-in-out infinite;
+}
+
+/* Windows high-contrast / forced-colors mode overrides `color` but
+   not necessarily background-clip:text, which can leave this
+   headline fully invisible (transparent fill, no fallback color).
+   Drop the gradient fill there and just use solid system text. */
+@media (forced-colors: active) {
+  .identity__inner h1 {
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    color: CanvasText;
+    animation: none;
+  }
+}
+
+.identity__card {
+  width: min(360px, 78vw);
+  aspect-ratio: 1.586;
+  margin: 0 auto var(--space-5);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(150deg, #1b1d22 0%, #23262d 45%, #101114 100%);
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 40px 80px -30px rgba(var(--shadow-color), 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.4s var(--ease-premium);
+}
+
+.identity__card:hover {
+  transform: translateY(-4px);
+}
+
+.identity__card .brand-mark {
+  gap: 1rem;
+}
+
+.identity__card .brand-mark__icon {
+  width: 40px;
+  height: 32px;
+}
+
+.identity__card .brand-mark__divider {
+  height: 30px;
+}
+
+.identity__card .brand-mark__wordmark {
+  font-size: 0.95rem;
+}
+
+.identity__inner p {
+  max-width: 44ch;
+  margin: 0 auto var(--space-4);
+  color: var(--text-secondary);
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: var(--space-5) var(--space-4) var(--space-4);
+}
+
+.footer__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.footer__brand h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.4rem;
+}
+
+.footer__brand p {
+  color: var(--text-tertiary);
+  font-size: 0.85rem;
+  max-width: 32ch;
+}
+
+.footer__col h4 {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-2);
+  font-weight: 500;
+}
+
+.footer__col ul {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer__col a {
+  display: block;
+  /* Padding grows the tap target to 44px tall on mobile; ul's old
+     gap is folded into this so visual spacing stays about the same. */
+  padding: 0.7rem 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.footer__col a:hover {
+  color: var(--accent);
+}
+
+.footer__bottom {
+  max-width: var(--max-width);
+  margin: var(--space-5) auto 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

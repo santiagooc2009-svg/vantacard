@@ -1,0 +1,53 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "vantacard-web/css/styles.css"
+        ],
+        "createdAt": "2026-09-09T13:44:17.488Z",
+        "reason": "intentional chrome-shimmer on hero h1 matching user's explicit silver/chrome brand direction; user repeatedly asked for more visual interest, not a default AI gradient-text tell"
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-09T13:45:41.201Z",
+        "reason": "same intentional chrome-shimmer on hero h1 (defined in styles.css) already sanctioned; hook re-flags on index.html edits too"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-09T13:54:52.551Z",
+        "reason": "Body/UI text font, deliberately paired with the distinctive display face (Bricolage Grotesque) per this session's typography update — Inter kept for body legibility, not a generator default."
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "vantacard-web/css/fonts.css"
+        ],
+        "createdAt": "2026-09-09T13:54:52.554Z",
+        "reason": "Same Inter-as-body-font pairing; flagged here only because self-hosting moved the @font-face rules into this new file."
+      },
+      {
+        "rule": "icon-tile-stack",
+        "value": "*",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-09T18:03:46.007Z",
+        "reason": "Icon and heading are laid out side-by-side (.how__step-head, flex row) per the detector's own suggested fix — verified via getBoundingClientRect that icon and h3 share the same Y range with different X ranges. The detector flags the bordered icon-frame + nearby h3 by DOM proximity, not actual rendered geometry, so it can't see the fix already applied."
+      }
+    ]
+  }
+}
