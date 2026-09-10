@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const ripple = document.getElementById("nfcRipple");
   const glow = document.getElementById("screenGlow");
   const contactShadow = document.getElementById("contactShadow");
-  const trustStrip = document.getElementById("trustStrip");
   const cardName = card.querySelector(".card-3d__name");
   const cardRole = card.querySelector(".card-3d__role");
   const profilePanel = document.getElementById("profilePanel");
@@ -60,32 +59,68 @@ document.addEventListener("DOMContentLoaded", () => {
     onLeaveBack: () => nav.classList.remove("nav--solid"),
   });
 
-  // "Cómo funciona": each step pins in place and shrinks/fades as the
-  // next one arrives, so the page reads as one sequence instead of a
-  // static three-card row.
+  // "Cómo funciona": each step pins in place and shrinks/fades out as
+  // the next one rises in and takes over, so the page reads as one
+  // sequence instead of a static three-card row. Every step but the
+  // first starts hidden and fades/grows in over the exact same scroll
+  // window the previous step fades/shrinks out over, so the handoff
+  // is a clean crossfade instead of two fully-opaque headings
+  // overlapping while the incoming one is still drifting into place.
   const steps = gsap.utils.toArray(".how__step");
   if (!prefersReduced && steps.length > 1) {
+    gsap.set(steps.slice(1), { opacity: 0, scale: 0.94 });
+
     steps.forEach((step, i) => {
+      if (i > 0) {
+        // fromTo, not to: an implicit "to" would capture whatever
+        // opacity the step happens to be at when this tween is
+        // *created* (0, from the gsap.set above) as its start value,
+        // so it would just hold at 0 instead of rising to 1.
+        gsap.fromTo(
+          step,
+          { opacity: 0, scale: 0.94 },
+          {
+            opacity: 1,
+            scale: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: step,
+              start: "top bottom",
+              end: "top top+=64",
+              scrub: true,
+            },
+          }
+        );
+      }
+
       if (i === steps.length - 1) return;
       ScrollTrigger.create({
         trigger: step,
         start: "top top+=64",
-        endTrigger: steps[steps.length - 1],
+        endTrigger: steps[i + 1],
         end: "top top+=64",
         pin: true,
         pinSpacing: false,
       });
-      gsap.to(step, {
-        scale: 0.86,
-        opacity: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: steps[i + 1],
-          start: "top bottom",
-          end: "top top+=64",
-          scrub: true,
-        },
-      });
+      // Same reasoning in reverse: an implicit "to" on a step that is
+      // itself hidden at creation time (every step but the first)
+      // would capture opacity 0 as its start and never visibly fade,
+      // silently cancelling the fromTo above once this window opens.
+      gsap.fromTo(
+        step,
+        { opacity: 1, scale: 1 },
+        {
+          scale: 0.86,
+          opacity: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: steps[i + 1],
+            start: "top bottom",
+            end: "top top+=64",
+            scrub: true,
+          },
+        }
+      );
     });
   }
 
@@ -203,7 +238,6 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.set([cardName, cardRole], { opacity: 0 }); // generic card, same as the animated path
     gsap.set(phone, PHONE_SETTLED);
     gsap.set(contactShadow, { y: SHADOW_Y, opacity: 0.5, scale: 1 });
-    gsap.set(trustStrip, { opacity: 1 });
     gsap.set(heroScene, { height: "100vh" });
     return;
   }
@@ -237,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // The card itself stays generic (just the VantaCard mark, no name
   // or role) through this whole sequence and into the NFC-tap demo
   // that follows — the real Sport Car Dreams case study is introduced
-  // separately, in the trust strip and showcase mockups below.
+  // separately, in the showcase mockups below.
   const isWideStage = window.matchMedia("(min-width: 700px)").matches;
   const CARD_Y = CARD_SETTLED.y;
   const SIDE = isWideStage ? 220 : 0; // how far the card drifts to either side
@@ -388,11 +422,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---- Phase 3: zoom through the screen ----
     // The scene zooms in and dissolves into the glow, which blooms to
     // fill the frame and then fades away — the pin releases right as
-    // it fades, straight into the next section, so there's no dead
-    // scroll gap waiting for anything else to appear.
+    // it fades, straight into the identity section, so there's no
+    // dead scroll gap and no extra screen in between.
     .to(world, { scale: 7, opacity: 0, duration: 0.26, ease: "power2.in" }, "approach+=0.72")
     .to(glow, { opacity: 1, scale: 16, duration: 0.26, ease: "power2.in" }, "approach+=0.72")
     .to([orbsBack, orbsMid, orbsFront], { opacity: 0, duration: 0.14 }, "approach+=0.72")
-    .to(glow, { opacity: 0, duration: 0.16, ease: "power1.out" }, "approach+=0.86")
-    .to(trustStrip, { opacity: 1, duration: 0.18, ease: "power2.out" }, "approach+=0.86");
+    .to(glow, { opacity: 0, duration: 0.16, ease: "power1.out" }, "approach+=0.86");
 });

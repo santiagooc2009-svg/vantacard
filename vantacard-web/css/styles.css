@@ -642,33 +642,6 @@ h3 {
   color: var(--accent);
 }
 
-/* ---------- Trust strip ---------- */
-/* Overlays the 3D scene, revealed via GSAP near the end of the
-   zoom-through — same role #heroCopy used to fill: something to see
-   right as the pin releases, so there's no blank stretch of scroll
-   before the next section appears. */
-.trust-strip {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 8%;
-  z-index: 10;
-  margin: 0;
-  padding: 0 var(--space-4);
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  letter-spacing: 0.02em;
-  color: var(--text-tertiary);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.trust-strip strong {
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
 /* ---------- How it works (sticky-stack) ---------- */
 .how {
   padding: var(--space-6) 0 0;
@@ -767,7 +740,9 @@ h3 {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   align-items: center;
-  gap: var(--space-5);
+  gap: var(--space-4);
+  max-width: 760px;
+  margin: 0 auto;
 }
 
 .showcase__item {
@@ -783,7 +758,7 @@ h3 {
 }
 
 .showcase__item--secondary {
-  margin-top: var(--space-7);
+  margin-top: var(--space-5);
 }
 
 @media (max-width: 780px) {
