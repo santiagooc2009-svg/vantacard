@@ -330,12 +330,14 @@ document.addEventListener("DOMContentLoaded", () => {
     .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.42)
     // 0.56 -> 0.68: dwell.
 
-    // Empresario: stays fully committed to the right, but still makes
-    // a real, fluid move there (a further dip down) rather than
-    // sitting frozen while only the text changes — every step gets
-    // actual motion, not just a content swap in place.
+    // Empresario: crosses back over to the other side (left), panel
+    // flips back to the right to stay opposite it — a real, fluid
+    // move each time rather than sitting frozen while only the text
+    // changes — every step gets actual motion, not just a content
+    // swap in place.
     .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.68)
-    .to(card, { x: SIDE, y: LOW_Y + 15, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0.68)
+    .set(profilePanel, { x: PANEL_SIDE }, 0.76)
+    .to(card, { x: -SIDE, y: LOW_Y + 15, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0.68)
     .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.76)
     // 0.90 -> 1.02: dwell.
 
