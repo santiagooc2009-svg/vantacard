@@ -56,6 +56,15 @@
         ],
         "createdAt": "2026-09-13T19:02:03.440Z",
         "reason": "Icon and heading are laid out side-by-side (.sustain-card__head, flex row) per the detector's own suggested fix — verified via getBoundingClientRect that icon and h3 share the same Y range with different X ranges, for all six cards on this page. Same DOM-proximity heuristic limitation already sanctioned for .how__step-head on index.html."
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "vantacard-web/sostenibilidad.html"
+        ],
+        "createdAt": "2026-09-13T21:29:58.096Z",
+        "reason": "Same Inter-as-body-font pairing already sanctioned for index.html and css/fonts.css (Inter kept for body legibility, deliberately paired with the distinctive display face Bricolage Grotesque) — flagged here only because this new page also links fonts.css/styles.css."
       }
     ]
   }
