@@ -82,26 +82,32 @@
   text-align: left;
 }
 
+.sustain-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
 .sustain-card__icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  margin-bottom: var(--space-3);
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
 }
 
 .sustain-card__icon svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   color: var(--accent);
 }
 
 .sustain-card h3 {
   font-size: 1.1rem;
-  margin-bottom: var(--space-1);
 }
 
 .sustain-card p {
