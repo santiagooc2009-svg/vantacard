@@ -276,24 +276,43 @@ document.addEventListener("DOMContentLoaded", () => {
   // separately, in the showcase mockups below.
   const isWideStage = window.matchMedia("(min-width: 700px)").matches;
   const CARD_Y = CARD_SETTLED.y;
-  const SIDE = isWideStage ? 220 : 0; // how far the card drifts to either side
-  const PANEL_SIDE = isWideStage ? 250 : 0; // how far the panel sits opposite it
-  const LOW_Y = CARD_Y + 105; // noticeably lower than the resting position — the "baja"
+  // Mobile gets the same zigzag, just scaled down to fit: 300px card
+  // on a ~360-390px screen has very little room either side before
+  // it clips, so the drift is small but still a real, visible move —
+  // not disabled the way it was before (SIDE 0 = the card just sat
+  // still on phones, which is where most of this audience is).
+  const SIDE = isWideStage ? 210 : 34;
+  const PANEL_SIDE = isWideStage ? 240 : 0;
+  // One shared dip depth for every step, not a different Y per
+  // profile — that inconsistency read as three unrelated animations
+  // instead of one uniform motion repeated three times.
+  const ZIGZAG_Y = CARD_Y + 100;
+  const STEP_DURATION = 0.22;
+  const STEP_GAP = 0.34; // spacing between the start of each step
+  const PANEL_SWITCH_DELAY = 0.08; // when the panel jumps to the opposite side, mid fade-out
+  // Background parallax during the zigzag: each orb layer drifts a
+  // little against the card's direction, back layer least and front
+  // layer most, so the side-to-side motion reads as real depth
+  // instead of a flat card sliding over a static backdrop.
+  const ORB_DRIFT = isWideStage ? [2, 4, 7] : [1, 2, 3];
 
   const PROFILES = [
     {
       label: "Abogado",
+      dir: 1, // right
       benefit: "Comparte tu cédula, tu especialidad y agenda una consulta antes de despedirte.",
       icon: "assets/badge-abogado.png",
     },
     {
       label: "Emprendedor",
-      benefit: "Comparte tu pitch, tus redes y tu contacto sin repartir una sola tarjeta de papel.",
+      dir: -1, // left
+      benefit: "Comparte tu proyecto, tus redes y tu contacto al instante para hacer networking real.",
       icon: "assets/badge-emprendedor.png",
     },
     {
       label: "Empresario",
-      benefit: "Muestra tu catálogo, tu inventario y agenda citas directo desde la tarjeta.",
+      dir: 1, // right
+      benefit: "Comparte tu contacto, respalda tu trayectoria y muestra tu catálogo en un solo toque.",
       icon: "assets/badge-empresario.png",
     },
   ];
@@ -316,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // fires when the playhead sweeps forward across it, not when a jump
   // lands beyond it or crosses it going backward. Deriving the index
   // from the current time works no matter how the position was reached.
-  const PROFILE_ZONES = [0, 0.42, 0.76]; // matching the transition midpoints below
+  const PROFILE_ZONES = PROFILES.map((_, i) => (i === 0 ? 0 : i * STEP_GAP + PANEL_SWITCH_DELAY));
   let currentProfileIndex = -1;
   let tl; // declared before syncProfile so the closure below never hits a TDZ error
   const syncProfile = () => {
@@ -349,44 +368,50 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   syncProfile(); // set the initial "Abogado" state before any scrolling happens
 
-  // Abogado: dips down-left, panel appears opposite it on the right.
-  // No rotation anywhere in this sequence — the card only ever
-  // translates and scales, so it stays flat and readable in transit
-  // instead of tilting through a 3D turn.
-  tl.to(card, { x: -SIDE, y: LOW_Y, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0)
-    .to(profilePanel, { x: PANEL_SIDE, opacity: 1, duration: 0.22, ease: "power1.out" }, 0)
-    // 0.22 -> 0.34: dwell — nothing scheduled, so it just holds while scrolling continues.
-    // (Kept short on purpose: a long stretch of scrolling with nothing
-    // changing reads as the page being stuck, not as a pause.)
+  // One uniform step, repeated identically for every profile: card
+  // dips to ZIGZAG_Y and slides toward `dir`, the panel fades out,
+  // jumps to the opposite side, and fades back in, and the three orb
+  // layers drift a little against the card for parallax depth. Same
+  // duration, same ease, same shape every time — alternating only the
+  // sign of the direction is what turns it into a zigzag (right,
+  // left, right) instead of three different-looking animations.
+  PROFILES.forEach((p, i) => {
+    const start = i * STEP_GAP;
+    const cardX = SIDE * p.dir;
+    const panelX = -PANEL_SIDE * p.dir;
+    const orbDir = -p.dir; // background drifts opposite the card
 
-    // Emprendedor: moves to the other side, panel follows to the left.
-    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.34)
-    .set(profilePanel, { x: -PANEL_SIDE }, 0.42)
-    .to(card, { x: SIDE, y: LOW_Y - 5, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0.34)
-    .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.42)
-    // 0.56 -> 0.68: dwell.
+    if (i > 0) {
+      tl.to(profilePanel, { opacity: 0, duration: 0.08 }, start)
+        .set(profilePanel, { x: panelX }, start + PANEL_SWITCH_DELAY)
+        .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, start + PANEL_SWITCH_DELAY);
+    } else {
+      tl.set(profilePanel, { x: panelX }, start).to(
+        profilePanel,
+        { opacity: 1, duration: STEP_DURATION, ease: "power1.out" },
+        start
+      );
+    }
 
-    // Empresario: crosses back over to the other side (left), panel
-    // flips back to the right to stay opposite it — a real, fluid
-    // move each time rather than sitting frozen while only the text
-    // changes — every step gets actual motion, not just a content
-    // swap in place.
-    .to(profilePanel, { opacity: 0, duration: 0.08 }, 0.68)
-    .set(profilePanel, { x: PANEL_SIDE }, 0.76)
-    .to(card, { x: -SIDE, y: LOW_Y + 15, scale: 0.94, duration: 0.22, ease: "power1.inOut" }, 0.68)
-    .to(profilePanel, { opacity: 1, duration: 0.14, ease: "power1.out" }, 0.76)
-    // 0.90 -> 1.02: dwell.
+    tl.to(card, { x: cardX, y: ZIGZAG_Y, scale: 0.94, duration: STEP_DURATION, ease: "power1.inOut" }, start)
+      .to(orbsBack, { xPercent: orbDir * ORB_DRIFT[0], duration: STEP_DURATION, ease: "power1.inOut" }, start)
+      .to(orbsMid, { xPercent: orbDir * ORB_DRIFT[1], duration: STEP_DURATION, ease: "power1.inOut" }, start)
+      .to(orbsFront, { xPercent: orbDir * ORB_DRIFT[2], duration: STEP_DURATION, ease: "power1.inOut" }, start);
+    // dwell until the next step's `start`, or (for the last step) until the return-to-center below.
+  });
 
-    // Return to center: its own clean, deliberate move (not folded
-    // into the Empresario step) — panel is already gone, so this is
-    // the card by itself heading home before the NFC/phone phases.
-    // The card stays generic (just the VantaCard mark) through this
-    // whole sequence — no client name/role revealed here, so the NFC
-    // demo that follows reads as a plain, universal card.
-    .to(profilePanel, { opacity: 0, duration: 0.08 }, 1.02)
-    .to(card, { x: 0, y: CARD_Y, scale: 1, duration: 0.24, ease: "power2.inOut" }, 1.02);
+  // Return to center: its own clean, deliberate move, card and orbs
+  // together — the card by itself heading home, background settling
+  // back to neutral, before the NFC/phone phases take over. The card
+  // stays generic (just the VantaCard mark) through this whole
+  // sequence — no client name/role revealed here, so the NFC demo
+  // that follows reads as a plain, universal card.
+  const returnStart = PROFILES.length * STEP_GAP;
+  tl.to(profilePanel, { opacity: 0, duration: 0.08 }, returnStart)
+    .to(card, { x: 0, y: CARD_Y, scale: 1, duration: 0.24, ease: "power2.inOut" }, returnStart)
+    .to([orbsBack, orbsMid, orbsFront], { xPercent: 0, duration: 0.24, ease: "power2.inOut" }, returnStart);
 
-  tl.addLabel("approach", 1.32);
+  tl.addLabel("approach", returnStart + 0.3);
 
   // ---- Phase 1a: de-tilt while still far away ----
   // The phone straightens out to face the camera square-on well

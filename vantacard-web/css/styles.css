@@ -969,6 +969,11 @@ h3 {
   margin-top: var(--space-2);
 }
 
+.services__lede {
+  margin-top: var(--space-3);
+  color: var(--text-secondary);
+}
+
 .services__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
