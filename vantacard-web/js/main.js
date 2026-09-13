@@ -300,19 +300,19 @@ document.addEventListener("DOMContentLoaded", () => {
     {
       label: "Abogado",
       dir: 1, // right
-      benefit: "Comparte tu cédula, tu especialidad y agenda una consulta antes de despedirte.",
+      benefit: "Tu cédula, tu especialidad y la consulta agendada — antes de despedirte.",
       icon: "assets/badge-abogado.png",
     },
     {
       label: "Emprendedor",
       dir: -1, // left
-      benefit: "Comparte tu proyecto, tus redes y tu contacto al instante para hacer networking real.",
+      benefit: "Tu proyecto, tus redes y tu contacto — listos para la siguiente gran alianza.",
       icon: "assets/badge-emprendedor.png",
     },
     {
       label: "Empresario",
       dir: 1, // right
-      benefit: "Comparte tu contacto, respalda tu trayectoria y muestra tu catálogo en un solo toque.",
+      benefit: "Tu contacto y tu trayectoria — a la altura de cada reunión.",
       icon: "assets/badge-empresario.png",
     },
   ];
