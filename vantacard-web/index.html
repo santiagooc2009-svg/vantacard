@@ -52,6 +52,12 @@
 
 <a href="#top" class="skip-link">Saltar al contenido</a>
 
+<div class="tone" aria-hidden="true">
+  <div class="tone__wash" id="toneWash"></div>
+  <div class="tone__glow tone__glow--a" id="toneGlowA"></div>
+  <div class="tone__glow tone__glow--b" id="toneGlowB"></div>
+</div>
+
 <nav class="nav" id="nav">
   <a href="#top" class="nav__logo">
     <span class="brand-mark brand-mark--compact">
@@ -197,7 +203,7 @@
   <div class="reveal-content" id="revealContent">
 
 
-    <section class="chapter ambient-glow ambient-glow--right" id="como-funciona">
+    <section class="chapter" id="como-funciona">
       <div class="chapter__aside reveal-group">
         <h2>Cómo funciona</h2>
         <p>Tres momentos: sacas la tarjeta, la acercas y la conversación ya tiene a dónde seguir.</p>
@@ -261,7 +267,7 @@
       </div>
     </section>
 
-    <section class="offerings ambient-glow ambient-glow--left" id="servicios">
+    <section class="offerings" id="servicios">
       <div class="offerings__head reveal-group">
         <h2>Nuestros servicios</h2>
       </div>
@@ -290,7 +296,7 @@
       </div>
     </section>
 
-    <section class="services ambient-glow ambient-glow--right" id="planes">
+    <section class="services" id="planes">
       <div class="services__head reveal-group">
         <h2>Elige cómo quieres <span class="accent-italic">presentarte</span></h2>
         <p class="services__lede">Una sola compra, cero reimpresiones. Lo que gastas al año en tarjetas de papel te alcanza para una tarjeta inteligente que no se acaba.</p>
@@ -445,6 +451,7 @@
 
 <script src="js/vendor/gsap.min.js"></script>
 <script src="js/vendor/ScrollTrigger.min.js"></script>
+<script src="js/tone.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

@@ -37,10 +37,29 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Fade, rise and pull into focus. The blur start state lives in CSS
+  // under prefers-reduced-motion: no-preference, so the property is
+  // only tweened when it is actually there to tween.
+  //
+  // filter:none on completion, not clearProps: clearing the inline
+  // style would expose the CSS blur underneath again. Dropping the
+  // filter matters because blur(0px) is still a filter — it holds every
+  // revealed element on its own compositor layer for the rest of the
+  // visit, and there are dozens of them.
+  const releaseFilter = function () {
+    gsap.set(this.targets(), { filter: "none" });
+  };
+  const arrive = (extra) =>
+    Object.assign(
+      { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+      prefersReduced ? {} : { filter: "blur(0px)", onComplete: releaseFilter },
+      extra
+    );
+
   ScrollTrigger.batch(".reveal-up", {
     start: "top 88%",
     once: true,
-    onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.08 }),
+    onEnter: (batch) => gsap.to(batch, arrive({ stagger: 0.08 })),
   });
 
   // Heading blocks stagger their own children — same mechanic as
@@ -48,10 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ScrollTrigger.batch(".reveal-group", {
     start: "top 88%",
     once: true,
-    onEnter: (batch) =>
-      batch.forEach((el) =>
-        gsap.to(el.children, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.06 })
-      ),
+    onEnter: (batch) => batch.forEach((el) => gsap.to(el.children, arrive({ stagger: 0.06 }))),
   });
 
   if (!prefersReduced) {

@@ -75,10 +75,32 @@ document.addEventListener("DOMContentLoaded", () => {
   // motion (that just makes the CSS transition instant, per the
   // global @media rule in styles.css) so content never gets stuck
   // invisible for a user who can't trigger the animated version.
+  //
+  // The blur is the other half of it: the element doesn't appear, it
+  // comes into focus. CSS sets the 5px start state (under
+  // no-preference only), so a reduced-motion visitor gets a plain fade
+  // and no filter work at all — which is why the property is added to
+  // the tween conditionally rather than always.
+  //
+  // filter:none on completion, not clearProps: clearing the inline
+  // style would expose the CSS blur underneath again. Dropping the
+  // filter matters because blur(0px) is still a filter — it holds every
+  // revealed element on its own compositor layer for the rest of the
+  // visit, and there are dozens of them.
+  const releaseFilter = function () {
+    gsap.set(this.targets(), { filter: "none" });
+  };
+  const arrive = (extra) =>
+    Object.assign(
+      { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+      prefersReduced ? {} : { filter: "blur(0px)", onComplete: releaseFilter },
+      extra
+    );
+
   ScrollTrigger.batch(".reveal-up", {
     start: "top 88%",
     once: true,
-    onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.08 }),
+    onEnter: (batch) => gsap.to(batch, arrive({ stagger: 0.08 })),
   });
 
   // Section heading blocks (eyebrow + h2 + lede) used to arrive as one
@@ -90,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     once: true,
     onEnter: (batch) =>
       batch.forEach((el) =>
-        gsap.to(el.children, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.06 })
+        gsap.to(el.children, arrive({ stagger: 0.06 }))
       ),
   });
 
@@ -279,7 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // page stayed at opacity 0 for the whole visit. Reveal those
     // elements outright instead: no scroll dependency to get stale,
     // and no movement, which is the point of reduced motion.
-    gsap.set([".reveal-up", ".reveal-group > *"], { opacity: 1, y: 0 });
+    gsap.set([".reveal-up", ".reveal-group > *"], { opacity: 1, y: 0, filter: "none" });
     // The payoff line is copy, not decoration, and its only reveal is
     // inside the scroll timeline — so a reduced-motion visitor never
     // read it at all. Parked above the card rather than at its animated

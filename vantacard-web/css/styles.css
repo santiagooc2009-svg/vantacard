@@ -160,47 +160,72 @@ button {
   color: var(--accent-strong);
 }
 
-/* Ambient section glow: a large, very faint radial light off to one
-   side, so flat black sections read as lit space rather than an empty
-   void. Single light source, one accent hue — same restraint as the
-   rest of the palette, just extended past the hero.
+/* ---------- Page-wide light field ----------
+   One light for the whole document instead of one per section.
 
-   Sized to the section's own box rather than as a fixed-diameter
-   circle. A circle wider and taller than its section got cut off at
-   the section edges, which drew a hard horizontal line across the
-   page wherever two sections met. An ellipse that fades out inside
-   its own box has nothing to clip, so it also removes the need for
-   overflow:hidden here — which mattered, because that would have
-   made every section a scroll container and silently disabled the
-   sticky chapter headings inside it. */
-.ambient-glow {
-  position: relative;
-}
+   Every section used to carry its own glow, which is exactly what made
+   the page read as a stack of slides: the light started and stopped at
+   each boundary, so every section announced itself as a separate card.
+   This is a single fixed layer behind everything — a tall vertical wash
+   of tone plus two soft lights — that the scroll moves. Nothing about
+   it is tied to a section, so the colour under the content never steps;
+   it drifts, continuously, from the top of the page to the bottom.
 
-.ambient-glow::before {
-  content: "";
-  position: absolute;
-  /* Bleeds out to the full viewport width. The sections that carry a
-     glow are centred and max-width-capped, so an inset:0 glow stopped
-     dead at the content edge and drew two vertical lines down the
-     page. */
-  inset: 0 calc(50% - 50vw);
-  z-index: 0;
-  background: radial-gradient(ellipse 58% 78% at var(--glow-x) 50%, rgba(var(--accent-rgb), 0.075), transparent 72%);
+   Everything in here moves by transform only, on a fixed layer, so the
+   whole effect is compositor work: no repaint of the page behind it. */
+.tone {
+  position: fixed;
+  inset: 0;
+  /* Behind in-flow content but above the canvas, which is painted from
+     body's own background-color. */
+  z-index: -1;
+  overflow: hidden;
   pointer-events: none;
 }
 
-.ambient-glow--left::before {
-  --glow-x: 4%;
+/* Taller than the viewport on purpose: the scroll slides it past, and
+   what you see through the window is a slow, continuous change of tone
+   rather than a cut between one section's colour and the next. The
+   stops stay within a few levels of --bg — this should read as the room
+   being lit differently, never as coloured bands. */
+.tone__wash {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 320vh;
+  will-change: transform;
+  background: linear-gradient(
+    180deg,
+    #0a0b0d 0%,
+    #0c0e14 18%,
+    #090a0d 34%,
+    #0d0f16 52%,
+    #0a0b10 70%,
+    #0c0e13 86%,
+    #0a0b0d 100%
+  );
 }
 
-.ambient-glow--right::before {
-  --glow-x: 96%;
+.tone__glow {
+  position: absolute;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  will-change: transform;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.055), transparent 68%);
 }
 
-.ambient-glow > * {
-  position: relative;
-  z-index: 1;
+.tone__glow--a {
+  width: min(105vw, 1100px);
+  left: -22%;
+  top: -30%;
+}
+
+.tone__glow--b {
+  width: min(95vw, 960px);
+  right: -20%;
+  top: 20%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.042), transparent 70%);
 }
 
 /* Scroll-reveal targets. Starting state only; main.js animates each
@@ -208,6 +233,17 @@ button {
 .reveal-up {
   opacity: 0;
   transform: translateY(28px);
+}
+
+/* The blur is the difference between content appearing and content
+   coming into focus. Only under no-preference: a filter transition is
+   motion, and it is also the one part of the reveal that costs real
+   GPU work, so a reduced-motion visitor gets the plain fade. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-up,
+  .reveal-group > * {
+    filter: blur(5px);
+  }
 }
 
 /* Same idea, one level down: the container stays put and its children

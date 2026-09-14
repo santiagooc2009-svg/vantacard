@@ -37,6 +37,12 @@
 
 <a href="#top" class="skip-link">Saltar al contenido</a>
 
+<div class="tone" aria-hidden="true">
+  <div class="tone__wash" id="toneWash"></div>
+  <div class="tone__glow tone__glow--a" id="toneGlowA"></div>
+  <div class="tone__glow tone__glow--b" id="toneGlowB"></div>
+</div>
+
 <nav class="nav" id="nav">
   <a href="index.html" class="nav__logo">
     <span class="brand-mark brand-mark--compact">
@@ -62,26 +68,19 @@
 
 <main id="top">
 
-  <!-- ============== Apertura ============== -->
+  <!-- ============== Apertura ==============
+       La apertura y "el problema" eran dos bloques seguidos diciendo lo
+       mismo: que la información cambia y el papel no la alcanza. Ahora
+       es uno solo. -->
   <header class="sustain-hero">
     <h1 class="reveal-up">Una nueva forma <span class="accent-italic">de conectar</span>.</h1>
-    <p class="sustain-hero__lede reveal-up">Innovar no es hacer las cosas distintas: es hacerlas mejor. Convertimos la tarjeta de presentación en una identidad digital que se actualiza en lugar de reimprimirse.</p>
+    <p class="sustain-hero__lede reveal-up">Un puesto, un teléfono, una empresa: la información profesional cambia todo el tiempo, y con papel cada cambio significa tarjetas nuevas y tirar las que sobraron. Innovar no es hacer las cosas distintas, sino hacerlas mejor.</p>
   </header>
-
-  <!-- ============== 1. El problema ============== -->
-  <section class="chapter">
-    <div class="chapter__aside reveal-group">
-      <h2>¿Por qué seguir <span class="accent-italic">haciendo lo mismo</span>?</h2>
-    </div>
-    <div class="chapter__body reveal-group">
-      <p>Un puesto, un teléfono, una empresa. La información profesional cambia todo el tiempo, y con papel cada cambio significa mandar a hacer tarjetas nuevas y tirar las que sobraron — junto con los datos que alguien ya guardó y que dejaron de servir sin que ninguno de los dos se enterara.</p>
-    </div>
-  </section>
 
   <blockquote class="pull-quote reveal-up">La identidad profesional puede evolucionar sin tener que empezar desde cero.</blockquote>
 
   <!-- ============== 2. La solución ============== -->
-  <section class="chapter ambient-glow ambient-glow--left">
+  <section class="chapter">
     <div class="chapter__aside reveal-group">
       <h2>Una tarjeta que <span class="accent-italic">evoluciona</span> contigo.</h2>
       <p>Una tarjeta física, y detrás de ella una identidad digital. Lo que cambia se edita una vez.</p>
@@ -237,6 +236,7 @@
 
 <script src="js/vendor/gsap.min.js"></script>
 <script src="js/vendor/ScrollTrigger.min.js"></script>
+<script src="js/tone.js"></script>
 <script src="js/compromiso.js"></script>
 </body>
 </html>
