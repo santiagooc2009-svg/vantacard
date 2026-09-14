@@ -52,19 +52,28 @@
         "rule": "icon-tile-stack",
         "value": "*",
         "files": [
-          "vantacard-web/sostenibilidad.html"
+          "vantacard-web/compromiso.html"
         ],
-        "createdAt": "2026-09-13T19:02:03.440Z",
-        "reason": "Icon and heading are laid out side-by-side (.sustain-card__head, flex row) per the detector's own suggested fix — verified via getBoundingClientRect that icon and h3 share the same Y range with different X ranges, for all six cards on this page. Same DOM-proximity heuristic limitation already sanctioned for .how__step-head on index.html."
+        "createdAt": "2026-09-14T00:00:00.000Z",
+        "reason": "Page was redesigned so each section has a distinct layout; icon+heading pairs now live in .sustain-row__icon (Visión, flex row) and .sustain-step__icon (Solución, flex row) — verified via getBoundingClientRect that icon and h3 share the same Y range with different X ranges in both. Same DOM-proximity heuristic limitation already sanctioned for .how__step-head on index.html. Supersedes the prior entry referencing the now-removed .sustain-card__head."
       },
       {
         "rule": "overused-font",
         "value": "inter",
         "files": [
-          "vantacard-web/sostenibilidad.html"
+          "vantacard-web/compromiso.html"
         ],
         "createdAt": "2026-09-13T21:29:58.096Z",
         "reason": "Same Inter-as-body-font pairing already sanctioned for index.html and css/fonts.css (Inter kept for body legibility, deliberately paired with the distinctive display face Bricolage Grotesque) — flagged here only because this new page also links fonts.css/styles.css."
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "vantacard-web/compromiso.html"
+        ],
+        "createdAt": "2026-09-14T00:00:00.000Z",
+        "reason": "Same intentional chrome-shimmer on the hero h1 (.hero-payoff / .identity__inner h1, defined in styles.css) already sanctioned for styles.css and index.html; the detector scans the full cascade of a linked stylesheet regardless of whether this page's markup actually uses those classes — this page's own hero h1 has no gradient fill at all."
       }
     ]
   }
