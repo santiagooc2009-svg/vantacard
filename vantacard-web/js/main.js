@@ -301,19 +301,19 @@ document.addEventListener("DOMContentLoaded", () => {
       label: "Abogado",
       dir: 1, // right
       benefit: "Tu cédula, tu especialidad y la consulta agendada — antes de despedirte.",
-      icon: "assets/badge-abogado.png",
+      icon: "assets/badge-abogado.webp",
     },
     {
       label: "Emprendedor",
       dir: -1, // left
       benefit: "Tu proyecto, tus redes y tu contacto — listos para la siguiente gran alianza.",
-      icon: "assets/badge-emprendedor.png",
+      icon: "assets/badge-emprendedor.webp",
     },
     {
       label: "Empresario",
       dir: 1, // right
       benefit: "Tu contacto y tu trayectoria — a la altura de cada reunión.",
-      icon: "assets/badge-empresario.png",
+      icon: "assets/badge-empresario.webp",
     },
   ];
 
