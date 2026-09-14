@@ -521,19 +521,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // panel is not blank before this file runs. Change one, change both.
   const PROFILES = [
     {
-      label: "Abogado",
+      label: "Profesionistas",
       dir: 1, // right
       benefit: "Tu cédula, tu especialidad y la cita, sin dictar nada.",
-      icon: "assets/badge-abogado.webp",
+      icon: "assets/badge-profesionista.webp",
     },
     {
-      label: "Emprendedor",
+      label: "Pymes",
       dir: -1, // left
-      benefit: "Tu proyecto completo, no un “ahorita te paso el link”.",
-      icon: "assets/badge-emprendedor.webp",
+      benefit: "Tu catálogo y tu agenda en su teléfono, no en un folleto.",
+      icon: "assets/badge-pyme.webp",
     },
     {
-      label: "Empresario",
+      label: "Empresarios",
       dir: 1, // right
       benefit: "Cambias un puesto una vez, no reimprimes 500 tarjetas.",
       icon: "assets/badge-empresario.webp",
@@ -590,7 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
       anticipatePin: 1,
     },
   });
-  syncProfile(); // set the initial "Abogado" state before any scrolling happens
+  syncProfile(); // set the initial "Profesionistas" state before any scrolling happens
 
   // One uniform step, repeated identically for every profile: card
   // dips to ZIGZAG_Y and slides toward `dir`, the panel fades out,

@@ -1139,10 +1139,12 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* 44px, not 42: below that it stops being a comfortable tap target
-     on a phone, which is the only place this link really gets used. */
-  width: 44px;
-  height: 44px;
+  /* 48px box, 26px mark. At 44/19 the glyph was swimming in its own
+     frame and read as an afterthought; this is the same ratio the
+     step icons use, at a size that actually carries a logo. Still
+     comfortably above the 44px tap-target floor. */
+  width: 48px;
+  height: 48px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
@@ -1150,8 +1152,8 @@ h3 {
 }
 
 .social-link svg {
-  width: 19px;
-  height: 19px;
+  width: 26px;
+  height: 26px;
 }
 
 @media (hover: hover) and (pointer: fine) {
