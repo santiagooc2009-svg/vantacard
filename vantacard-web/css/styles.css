@@ -150,14 +150,6 @@ button {
 }
 
 /* ---------- Typography ---------- */
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
 /* Third typographic voice: a single italic serif word dropped into
    an otherwise grotesque-sans headline. Used at most once or twice
    a page — it's a accent, not a second body font. */
@@ -169,32 +161,41 @@ button {
 }
 
 /* Ambient section glow: a large, very faint radial light off to one
-   side, so flat black sections read as lit space rather than an
-   empty void. Single light source, one accent hue — same restraint
-   as the rest of the palette, just extended past the hero. */
+   side, so flat black sections read as lit space rather than an empty
+   void. Single light source, one accent hue — same restraint as the
+   rest of the palette, just extended past the hero.
+
+   Sized to the section's own box rather than as a fixed-diameter
+   circle. A circle wider and taller than its section got cut off at
+   the section edges, which drew a hard horizontal line across the
+   page wherever two sections met. An ellipse that fades out inside
+   its own box has nothing to clip, so it also removes the need for
+   overflow:hidden here — which mattered, because that would have
+   made every section a scroll container and silently disabled the
+   sticky chapter headings inside it. */
 .ambient-glow {
   position: relative;
-  overflow: hidden;
 }
 
 .ambient-glow::before {
   content: "";
   position: absolute;
-  top: -10%;
+  /* Bleeds out to the full viewport width. The sections that carry a
+     glow are centred and max-width-capped, so an inset:0 glow stopped
+     dead at the content edge and drew two vertical lines down the
+     page. */
+  inset: 0 calc(50% - 50vw);
   z-index: 0;
-  width: min(70vw, 900px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.07), transparent 70%);
+  background: radial-gradient(ellipse 58% 78% at var(--glow-x) 50%, rgba(var(--accent-rgb), 0.075), transparent 72%);
   pointer-events: none;
 }
 
 .ambient-glow--left::before {
-  left: -15%;
+  --glow-x: 4%;
 }
 
 .ambient-glow--right::before {
-  right: -15%;
+  --glow-x: 96%;
 }
 
 .ambient-glow > * {
@@ -210,8 +211,8 @@ button {
 }
 
 /* Same idea, one level down: the container stays put and its children
-   arrive in sequence, so a heading block reads eyebrow → headline →
-   lede instead of landing as a single slab. */
+   arrive in sequence, so a heading block reads headline → lede instead
+   of landing as a single slab. */
 .reveal-group > * {
   opacity: 0;
   transform: translateY(22px);
@@ -486,9 +487,16 @@ h3 {
   aspect-ratio: 1.586;
 }
 
-.card-3d__inner {
-  width: 100%;
-  height: 100%;
+/* One card face, written once and worn by two elements: the static
+   card in the hero and the card inside the 3D scene. They are meant to
+   be the same physical object — the page scrolls one into the other and
+   crossfades between them — so every face property has to match
+   exactly. When they didn't, the swap showed: the hero card carried a
+   centred brand mark and 28px corners, the scene card a top-left mark
+   and 18px corners, and for the length of the crossfade you saw both
+   marks at once inside one card. */
+.card-3d__inner,
+.identity__card {
   border-radius: var(--radius-md);
   padding: var(--space-3);
   background: linear-gradient(150deg, #1b1d22 0%, #23262d 45%, #101114 100%);
@@ -501,7 +509,12 @@ h3 {
   justify-content: space-between;
 }
 
-.card-3d__top {
+.card-3d__inner {
+  width: 100%;
+  height: 100%;
+}
+
+.card-face__top {
   display: flex;
   align-items: center;
 }
@@ -835,119 +848,247 @@ h3 {
   color: var(--accent);
 }
 
-/* ---------- How it works (sticky-stack) ---------- */
-.how {
-  padding: var(--space-6) 0 0;
-}
+/* ---------- Editorial chapter ----------
+   One shape for every section on the site whose job is to explain
+   something: the heading lives in its own narrow column and STAYS
+   there while its content scrolls past in the wide column beside it.
 
-.how__eyebrow {
-  text-align: center;
-  max-width: var(--max-width);
-  margin: 0 auto var(--space-2);
-  padding: 0 var(--space-4);
-}
-
-.how h2 {
-  font-size: clamp(2.1rem, 3.8vw, 3.1rem);
-  letter-spacing: -0.02em;
-  text-align: center;
-  max-width: var(--max-width);
-  margin: 0 auto var(--space-3);
-  padding: 0 var(--space-4);
-}
-
-.how__steps {
-  position: relative;
-}
-
-.how__step {
-  /* 78vh left a visible band of empty black between the section heading
-     and the first step before the pin engaged. 68vh closes most of it
-     and matches the equivalent step height on compromiso.html. */
-  min-height: 68vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: var(--space-5) var(--space-4);
-  will-change: transform, opacity;
-}
-
-.how__index {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  color: var(--accent-dim);
-  margin-bottom: var(--space-3);
-}
-
-.how__step-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-2);
-}
-
-.how__icon-frame {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  padding: var(--space-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  flex-shrink: 0;
-}
-
-.how__icon {
-  width: 24px;
-  height: 24px;
-  color: var(--accent);
-}
-
-.how__step h3 {
-  font-size: clamp(1.5rem, 3vw, 2.1rem);
-}
-
-.how__step p {
-  color: var(--text-secondary);
-  font-size: 1rem;
-  max-width: 40ch;
-  margin-top: var(--space-2);
-}
-
-/* ---------- Showcase (asymmetric, deliberately not a matching grid
-   like .services below it) ---------- */
-.showcase {
+   It replaces two separate pinned sticky-stacks (this page's "Cómo
+   funciona" and compromiso's "Nuestra solución"). Those took the
+   scroll away from the reader, and they pushed the section heading
+   off the top of the screen long before the content ended — so most
+   of the section was body text with nothing on screen saying what it
+   belonged to. Sticky costs no JavaScript and never fights the
+   reader's own scrolling. */
+.chapter {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: var(--space-6) var(--space-4);
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: var(--space-6);
+  align-items: start;
 }
 
-.showcase__head {
-  text-align: center;
-  margin-bottom: var(--space-6);
+.chapter__aside {
+  position: sticky;
+  /* Nav is 72px tall; this clears it with room to breathe. */
+  top: 104px;
+  align-self: start;
 }
 
-.showcase__head h2 {
-  font-size: clamp(2.1rem, 3.8vw, 3.1rem);
+.chapter__aside h2 {
+  font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+  line-height: 1.12;
   letter-spacing: -0.02em;
 }
 
-.showcase__head p {
-  margin-top: var(--space-2);
+.chapter__aside > p {
+  margin-top: var(--space-3);
   color: var(--text-secondary);
+  line-height: 1.65;
 }
 
+.chapter__body > p {
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.chapter__body > p + p {
+  margin-top: var(--space-3);
+}
+
+@media (max-width: 900px) {
+  .chapter {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+  }
+  .chapter__aside {
+    position: static;
+  }
+}
+
+/* ---------- Numbered step rows ----------
+   Shared by index and compromiso. Both pages used to build this idea
+   as their own full-height pinned stack, with the CSS and the
+   ScrollTrigger logic duplicated; now it is one quiet list that reads
+   at a glance instead of three screens of scrolling. */
+.steps {
+  display: flex;
+  flex-direction: column;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+
+.step:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.step__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  transition: border-color 0.3s ease;
+}
+
+.step__icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* Same 48px slot, filled with the index instead of an icon — used by
+   lists that are numbered rather than illustrated. */
+.step__icon--num {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--accent-dim);
+}
+
+/* The index sits inside the heading rather than floating above the
+   row as its own micro-label — one less loose scrap of text. */
+.step__title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  font-size: 1.15rem;
+}
+
+.step__index {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: var(--accent-dim);
+  transition: color 0.3s ease;
+}
+
+.step p {
+  margin-top: 0.4rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .step:hover .step__icon {
+    border-color: var(--border-strong);
+  }
+  .step:hover .step__index {
+    color: var(--accent);
+  }
+}
+
+@media (max-width: 480px) {
+  .step {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+  .step__icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ---------- Pull quote ----------
+   The one place either page raises its voice. Full measure, centred,
+   serif italic — it breaks the chapter rhythm on purpose, so a long
+   read has a beat between chapters instead of running flat. */
+.pull-quote {
+  position: relative;
+  max-width: 46ch;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4);
+  border: none;
+  text-align: center;
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(1.5rem, 3.4vw, 2.3rem);
+  line-height: 1.32;
+  color: var(--accent-strong);
+}
+
+.pull-quote::before {
+  content: "\201C";
+  display: block;
+  font-family: var(--font-accent);
+  font-style: normal;
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  line-height: 1;
+  color: var(--border-strong);
+  margin-bottom: var(--space-1);
+}
+
+/* ---------- Fixed WhatsApp button ----------
+   Same spot on every screen, always: no scroll-triggered show/hide,
+   no entrance animation, and deliberately NOT a .btn, so main.js's
+   magnetic-pull and press handlers skip it — the brief was a button
+   that does not move. Only its border and background respond, and
+   only to hover. */
+.wa-fab {
+  position: fixed;
+  right: max(var(--space-3), env(safe-area-inset-right));
+  bottom: max(var(--space-3), env(safe-area-inset-bottom));
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(19, 21, 25, 0.88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-strong);
+  color: var(--accent-strong);
+  /* Edge, not elevation. A lit rim plus the blur behind it already
+     lifts a 54px circle off a near-black page; adding a soft drop
+     shadow on top of a hairline border is the generated-UI tell. */
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.wa-fab svg {
+  width: 25px;
+  height: 25px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wa-fab:hover {
+    border-color: var(--accent);
+    background: rgba(26, 29, 34, 0.96);
+  }
+}
+
+/* The button floats over whatever is at the bottom of the page, and
+   the last thing on both pages is the footer's bottom row. This keeps
+   it off the text there instead of sitting on top of it. */
+.footer__bottom {
+  padding-bottom: 58px;
+}
+
+/* ---------- Showcase ----------
+   Lives in the chapter grid now, so "Asi se ve" stays pinned beside
+   the screenshots instead of scrolling off above them. The gallery
+   itself keeps its asymmetry: two phone screens at different sizes
+   and different heights, not a matching pair. ---------- */
 .showcase__gallery {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   align-items: center;
   gap: var(--space-4);
-  max-width: 760px;
-  margin: 0 auto;
 }
 
 .showcase__item {
@@ -966,7 +1107,7 @@ h3 {
   margin-top: var(--space-5);
 }
 
-@media (max-width: 780px) {
+@media (max-width: 560px) {
   .showcase__gallery {
     grid-template-columns: 1fr;
   }
@@ -1264,7 +1405,10 @@ h3 {
 .identity::after {
   content: "";
   position: absolute;
-  inset: 0;
+  /* Full viewport width, not the section's 1180px cap: an inset:0
+     vignette stopped at the content edge and left two vertical seams
+     running down either side of the hero. */
+  inset: 0 calc(50% - 50vw);
   z-index: -1;
   pointer-events: none;
   background: radial-gradient(ellipse 90% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
@@ -1324,37 +1468,13 @@ h3 {
 }
 
 .identity__card {
-  width: min(360px, 78vw);
+  /* Same 300px as the scene card, so the scale the handoff has to
+     reconcile is 1 and the two are pixel-identical when they trade
+     places. */
+  width: min(300px, 78vw);
   aspect-ratio: 1.586;
   margin: 0 auto var(--space-4);
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  background: linear-gradient(150deg, #1b1d22 0%, #23262d 45%, #101114 100%);
-  border: 1px solid var(--border-strong);
-  box-shadow:
-    0 40px 80px -30px rgba(var(--shadow-color), 0.85),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   pointer-events: none;
-}
-
-.identity__card .brand-mark {
-  gap: 1rem;
-}
-
-.identity__card .brand-mark__icon {
-  width: 40px;
-  height: 32px;
-}
-
-.identity__card .brand-mark__divider {
-  height: 30px;
-}
-
-.identity__card .brand-mark__wordmark {
-  font-size: 0.95rem;
 }
 
 /* Reassurance at the point of decision, which is where it actually
@@ -1380,12 +1500,21 @@ h3 {
     padding-top: calc(var(--space-6) + 0.5rem);
   }
 
-  .identity__card {
-    width: min(290px, 70vw);
+  .identity__inner h1 {
+    font-size: clamp(2.2rem, 4.2vw, 3.1rem);
+  }
+}
+
+/* Small, short phones (360x640 and down). Same problem, other end of the
+   range: the CTA fell just past the fold. */
+@media (max-width: 720px) and (max-height: 700px) {
+  .identity {
+    padding-top: calc(var(--space-5) + 1rem);
+    padding-bottom: var(--space-4);
   }
 
   .identity__inner h1 {
-    font-size: clamp(2.2rem, 4.2vw, 3.1rem);
+    font-size: clamp(1.9rem, 6.8vw, 2.5rem);
   }
 }
 

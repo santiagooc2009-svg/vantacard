@@ -60,70 +60,15 @@ document.addEventListener("DOMContentLoaded", () => {
     onLeaveBack: () => nav.classList.remove("nav--solid"),
   });
 
-  // "Cómo funciona": each step pins in place and shrinks/fades out as
-  // the next one rises in and takes over, so the page reads as one
-  // sequence instead of a static three-card row. Every step but the
-  // first starts hidden and fades/grows in over the exact same scroll
-  // window the previous step fades/shrinks out over, so the handoff
-  // is a clean crossfade instead of two fully-opaque headings
-  // overlapping while the incoming one is still drifting into place.
-  const steps = gsap.utils.toArray(".how__step");
-  if (!prefersReduced && steps.length > 1) {
-    gsap.set(steps.slice(1), { opacity: 0, scale: 0.94 });
-
-    steps.forEach((step, i) => {
-      if (i > 0) {
-        // fromTo, not to: an implicit "to" would capture whatever
-        // opacity the step happens to be at when this tween is
-        // *created* (0, from the gsap.set above) as its start value,
-        // so it would just hold at 0 instead of rising to 1.
-        gsap.fromTo(
-          step,
-          { opacity: 0, scale: 0.94 },
-          {
-            opacity: 1,
-            scale: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: step,
-              start: "top bottom",
-              end: "top top+=64",
-              scrub: true,
-            },
-          }
-        );
-      }
-
-      if (i === steps.length - 1) return;
-      ScrollTrigger.create({
-        trigger: step,
-        start: "top top+=64",
-        endTrigger: steps[i + 1],
-        end: "top top+=64",
-        pin: true,
-        pinSpacing: false,
-      });
-      // Same reasoning in reverse: an implicit "to" on a step that is
-      // itself hidden at creation time (every step but the first)
-      // would capture opacity 0 as its start and never visibly fade,
-      // silently cancelling the fromTo above once this window opens.
-      gsap.fromTo(
-        step,
-        { opacity: 1, scale: 1 },
-        {
-          scale: 0.86,
-          opacity: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: steps[i + 1],
-            start: "top bottom",
-            end: "top top+=64",
-            scrub: true,
-          },
-        }
-      );
-    });
-  }
+  // "Cómo funciona" and "Así se ve" used to pin: each step took over
+  // the whole viewport and the next one crossfaded in. Two problems
+  // with that, both reported by real readers — it took the scroll away
+  // from them, and it pushed the section heading off the top of the
+  // screen, so they were left reading a lone paragraph with nothing on
+  // screen saying what it was about. Both sections are now plain
+  // chapter grids: the heading is sticky in CSS beside its content,
+  // and the steps just fade up like everything else on the page. No
+  // ScrollTrigger needed here at all.
 
   // Fade + rise-in for section headings, plan cards, and footer
   // columns as they enter the viewport. Runs even under reduced
@@ -335,6 +280,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // elements outright instead: no scroll dependency to get stale,
     // and no movement, which is the point of reduced motion.
     gsap.set([".reveal-up", ".reveal-group > *"], { opacity: 1, y: 0 });
+    // The payoff line is copy, not decoration, and its only reveal is
+    // inside the scroll timeline — so a reduced-motion visitor never
+    // read it at all. Parked above the card rather than at its animated
+    // position, which is dead centre, exactly where the card sits in
+    // this static composition.
+    gsap.set(heroPayoff, { opacity: 1, top: "16%" });
     return;
   }
 
@@ -407,7 +358,15 @@ document.addEventListener("DOMContentLoaded", () => {
         scrollTrigger: {
           trigger: heroSection,
           start: "top top",
-          end: "bottom top",
+          // Lands on the seam at 88%, where the crossfade below BEGINS,
+          // not where it ends. Running the drift to 100% meant the two
+          // cards swapped opacity while they were still up to 85px
+          // apart, which you saw as one card doubled. Arriving first and
+          // then holding costs nothing — the tween is done, so the card
+          // simply scrolls with the document from there, exactly as the
+          // scene card does, and the gap stays closed for the whole
+          // exchange.
+          end: "88% top",
           scrub: true,
           invalidateOnRefresh: true,
         },
@@ -416,20 +375,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // The text pulls away faster than the page scrolls, so the card is
     // visibly left behind rather than merely lingering.
-    gsap.to(".identity__inner > h1, .identity__inner > p", {
-      y: -80,
-      opacity: 0,
-      ease: "none",
-      scrollTrigger: { trigger: heroSection, start: "top top", end: "70% top", scrub: true },
-    });
+    //
+    // fromTo, not to, for the same reason as everywhere else on this
+    // page: an implicit "to" adopts whatever the element happens to
+    // measure at tween-creation time as its resting state. These
+    // elements are mid-CSS-entrance at that moment (.hero-enter), so a
+    // "to" could bake in opacity:0 and translateY(20px) — the entrance
+    // animation's FIRST keyframe — and the sub-headline, the CTA and
+    // the note under it would then sit invisible for the whole visit.
+    gsap.fromTo(
+      ".identity__inner > h1, .identity__inner > p",
+      { y: 0, opacity: 1 },
+      {
+        y: -80,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: { trigger: heroSection, start: "top top", end: "70% top", scrub: true },
+      }
+    );
 
     // Opacity only on the CTA: the magnetic-pull handler owns its x/y, and
     // two tweens writing one transform would fight.
-    gsap.to(".identity__inner > .btn", {
-      opacity: 0,
-      ease: "none",
-      scrollTrigger: { trigger: heroSection, start: "top top", end: "70% top", scrub: true },
-    });
+    gsap.fromTo(
+      ".identity__inner > .btn",
+      { opacity: 1 },
+      {
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: { trigger: heroSection, start: "top top", end: "70% top", scrub: true },
+      }
+    );
 
     // The scene card stays hidden until the two have nearly converged —
     // otherwise it drifts up into frame alongside the hero card and you see
