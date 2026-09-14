@@ -22,6 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
     onLeaveBack: () => nav.classList.remove("nav--solid"),
   });
 
+  const progressBar = document.getElementById("progressBar");
+  if (progressBar) {
+    ScrollTrigger.create({
+      trigger: document.body,
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => gsap.set(progressBar, { scaleX: self.progress }),
+    });
+  }
+
   ScrollTrigger.batch(".reveal-up", {
     start: "top 88%",
     once: true,

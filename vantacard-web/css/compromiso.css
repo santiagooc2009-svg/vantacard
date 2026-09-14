@@ -12,6 +12,25 @@
    so scrolling through doesn't read as one card template repeated.
    ============================================================ */
 
+/* Reading-progress hairline: this page is a long single narrative
+   (8 sections, no in-page nav), so a thin fixed indicator gives
+   scroll orientation the way an editorial long-read would, instead
+   of leaving the reader guessing how much is left. Driven by
+   ScrollTrigger's own progress value in compromiso.js — no separate
+   scroll listener. */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 101;
+  pointer-events: none;
+}
+
 .sustain-hero {
   max-width: 780px;
   margin: 0 auto;
