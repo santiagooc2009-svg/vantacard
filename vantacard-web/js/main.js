@@ -34,6 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const glow = document.getElementById("screenGlow");
   const contactShadow = document.getElementById("contactShadow");
   const heroPayoff = document.getElementById("heroPayoff");
+  const heroIntro = document.getElementById("heroIntro");
+  const heroCue = document.getElementById("heroCue");
+  const scene3d = document.querySelector(".scene-3d");
   const cardName = card.querySelector(".card-3d__name");
   const cardRole = card.querySelector(".card-3d__role");
   const profilePanel = document.getElementById("profilePanel");
@@ -326,6 +329,8 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.set(phone, PHONE_SETTLED);
     gsap.set(contactShadow, { y: SHADOW_Y, opacity: 0.5, scale: 1 });
     gsap.set(heroScene, { height: "100vh" });
+    // No scroll sequence to introduce, so the cue would be a lie.
+    gsap.set(heroCue, { display: "none" });
     // Collapsing the hero from its full scroll-jack height to 100vh
     // removes several thousand pixels from the page, but the reveal
     // ScrollTriggers above were measured against the tall layout and
@@ -422,6 +427,15 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.set(profilePanel, { xPercent: -50, yPercent: -50, x: 0 });
   gsap.set([cardName, cardRole], { opacity: 0 });
 
+  // On a phone there are only ~105px between the nav and the top of the
+  // card — not enough for a headline. Drop the scene down so the intro
+  // has a band to live in, then lift it back once the intro has faded
+  // and the scene needs its full frame for the zigzag. Applied to
+  // .scene-3d (the perspective container) rather than #world, which the
+  // timeline already scales at the end of the sequence.
+  const SCENE_DROP = isWideStage ? 90 : 110;
+  gsap.set(scene3d, { y: SCENE_DROP });
+
   // Which profile is "current" is derived from the timeline's time on
   // every update, not from one-time triggers — a scrubbed timeline can
   // jump straight to any position (fast scrolling, scrolling back up
@@ -461,6 +475,16 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   });
   syncProfile(); // set the initial "Abogado" state before any scrolling happens
+
+  // Hand off from the headline to the scene. Linear, because the user
+  // is driving this with the scrollbar — an ease would fight their
+  // input. It spans roughly half a viewport of scrolling, so the
+  // headline is readable for a beat rather than snapping away on the
+  // first flick.
+  tl.to([heroIntro, heroCue], { opacity: 0, duration: 0.12, ease: "none" }, 0);
+  if (SCENE_DROP) {
+    tl.to(scene3d, { y: 0, duration: 0.18, ease: "power1.inOut" }, 0);
+  }
 
   // One uniform step, repeated identically for every profile: card
   // dips to ZIGZAG_Y and slides toward `dir`, the panel fades out,

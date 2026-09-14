@@ -330,6 +330,74 @@ h3 {
   background: radial-gradient(ellipse 90% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
 }
 
+/* Opening statement over the 3D scene. Sits in the band between the
+   nav and the top of the card; js/main.js pushes the scene down a
+   little on narrow screens to make that band wide enough, then lifts it
+   back as this fades out. */
+.hero-intro {
+  position: absolute;
+  top: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: min(640px, calc(100% - var(--space-4) * 2));
+  text-align: center;
+  pointer-events: none;
+}
+
+.hero-intro h1 {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin: var(--space-2) 0 0.65rem;
+}
+
+.hero-intro__sub {
+  color: var(--text-secondary);
+  font-size: clamp(0.85rem, 1.5vw, 1.02rem);
+  line-height: 1.5;
+  max-width: 46ch;
+  margin: 0 auto;
+}
+
+/* The scene only plays as you scroll, so on arrival it looks like a
+   still image. Without a cue a first-time visitor has no reason to
+   believe scrolling does anything. */
+.hero-cue {
+  position: absolute;
+  bottom: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.hero-cue svg {
+  width: 16px;
+  height: 16px;
+  animation: cue-bob 2.2s ease-in-out infinite;
+}
+
+@keyframes cue-bob {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(5px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-cue svg {
+    animation: none;
+  }
+}
+
 /* Orb parallax layers */
 .orbs {
   position: absolute;
@@ -720,6 +788,14 @@ h3 {
   font-size: 0.92rem;
   font-weight: 500;
   transition: transform 0.25s var(--ease-premium), background-color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Naming the destination is half the reassurance; showing it is the
+   other half. Sized to the cap height of the label beside it. */
+.btn__icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
 }
 
 .btn--primary {
@@ -1188,7 +1264,7 @@ h3 {
   text-align: center;
 }
 
-.identity__inner h1 {
+.identity__inner h2 {
   font-size: clamp(2.6rem, 6vw, 4.5rem);
   letter-spacing: -0.03em;
   line-height: 1.05;
@@ -1214,7 +1290,7 @@ h3 {
    headline fully invisible (transparent fill, no fallback color).
    Drop the gradient fill there and just use solid system text. */
 @media (forced-colors: active) {
-  .identity__inner h1 {
+  .identity__inner h2 {
     background: none;
     -webkit-background-clip: initial;
     background-clip: initial;
