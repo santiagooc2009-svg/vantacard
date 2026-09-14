@@ -38,6 +38,17 @@ document.addEventListener("DOMContentLoaded", () => {
     onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.08 }),
   });
 
+  // Heading blocks stagger their own children — same mechanic as
+  // index.html, so both pages reveal section heads identically.
+  ScrollTrigger.batch(".reveal-group", {
+    start: "top 88%",
+    once: true,
+    onEnter: (batch) =>
+      batch.forEach((el) =>
+        gsap.to(el.children, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.06 })
+      ),
+  });
+
   // "Nuestra solución": each step pins in place and shrinks/fades out
   // as the next one rises in — identical logic to index.html's "Cómo
   // funciona" (see that file's comments for why fromTo, not to, and

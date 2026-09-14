@@ -209,6 +209,14 @@ button {
   transform: translateY(28px);
 }
 
+/* Same idea, one level down: the container stays put and its children
+   arrive in sequence, so a heading block reads eyebrow → headline →
+   lede instead of landing as a single slab. */
+.reveal-group > * {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
 h1,
 h2,
 h3 {
@@ -259,7 +267,9 @@ h3 {
 .nav__links a {
   font-size: 0.9rem;
   color: var(--text-secondary);
-  transition: color 0.25s ease;
+  /* Nav hover is seen dozens of times a session — it should register
+     as instant feedback, not as an animation you watch. */
+  transition: color 0.15s ease;
 }
 
 .nav__links a:hover {
@@ -720,10 +730,12 @@ h3 {
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 8px 20px -10px rgba(var(--shadow-color), 0.9);
 }
 
-.btn--primary:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(180deg, #ffffff 0%, var(--accent-strong) 100%);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 12px 28px -10px rgba(var(--shadow-color), 0.95);
+@media (hover: hover) and (pointer: fine) {
+  .btn--primary:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(180deg, #ffffff 0%, var(--accent-strong) 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 12px 28px -10px rgba(var(--shadow-color), 0.95);
+  }
 }
 
 /* Chrome shimmer: a bright diagonal band sweeps across on hover,
@@ -777,7 +789,10 @@ h3 {
 }
 
 .how__step {
-  min-height: 78vh;
+  /* 78vh left a visible band of empty black between the section heading
+     and the first step before the pin engaged. 68vh closes most of it
+     and matches the equivalent step height on compromiso.html. */
+  min-height: 68vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -926,8 +941,10 @@ h3 {
   transition: transform 0.3s var(--ease-premium);
 }
 
-.offerings__item:hover {
-  transform: translateY(-4px);
+@media (hover: hover) and (pointer: fine) {
+  .offerings__item:hover {
+    transform: translateY(-4px);
+  }
 }
 
 .offerings__media {
@@ -1025,9 +1042,11 @@ h3 {
   transition: border-color 0.3s ease, transform 0.3s var(--ease-premium);
 }
 
-.plan:hover {
-  border-color: var(--border-strong);
-  transform: translateY(-4px);
+@media (hover: hover) and (pointer: fine) {
+  .plan:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-4px);
+  }
 }
 
 /* Spotlight border: a 1px ring that lights up around the cursor.
@@ -1221,8 +1240,10 @@ h3 {
   transition: transform 0.4s var(--ease-premium);
 }
 
-.identity__card:hover {
-  transform: translateY(-4px);
+@media (hover: hover) and (pointer: fine) {
+  .identity__card:hover {
+    transform: translateY(-4px);
+  }
 }
 
 .identity__card .brand-mark {
@@ -1339,6 +1360,23 @@ h3 {
 .faq__item[open] .faq__icon {
   transform: rotate(45deg);
   border-color: var(--border-strong);
+}
+
+/* While the panel is collapsing, `open` is still true (it has to be, or
+   the content would vanish before it finished animating), so the icon
+   needs its own signal to rotate back on time instead of snapping at
+   the end of the collapse. */
+.faq__item.is-closing .faq__icon {
+  transform: rotate(0deg);
+  border-color: var(--border);
+}
+
+/* The box whose height is animated. Height is normally off-limits, but
+   an accordion has no transform equivalent — there's no way to move a
+   known distance when the distance is the content's own height. Kept to
+   200ms because this one costs layout on every frame. */
+.faq__panel {
+  overflow: hidden;
 }
 
 .faq__item p {

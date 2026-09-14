@@ -136,6 +136,78 @@ document.addEventListener("DOMContentLoaded", () => {
     onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.08 }),
   });
 
+  // Section heading blocks (eyebrow + h2 + lede) used to arrive as one
+  // flat slab. Staggering their own children instead lets the eye read
+  // them in the order they're meant to be read. 60ms is enough to be
+  // felt as a sequence without becoming a queue the reader waits on.
+  ScrollTrigger.batch(".reveal-group", {
+    start: "top 88%",
+    once: true,
+    onEnter: (batch) =>
+      batch.forEach((el) =>
+        gsap.to(el.children, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.06 })
+      ),
+  });
+
+  // FAQ: a native <details> snaps open, so the answer teleports in and
+  // shoves everything below it down the page. We drive `open` ourselves
+  // so the panel can animate in both directions, measuring the target
+  // height rather than animating to `auto` (which doesn't interpolate).
+  // <summary> keeps its native keyboard and screen-reader behaviour.
+  document.querySelectorAll(".faq__item").forEach((item) => {
+    const summary = item.querySelector("summary");
+    const panel = item.querySelector(".faq__panel");
+    if (!summary || !panel) return;
+
+    summary.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (item.dataset.animating) return;
+
+      if (prefersReduced) {
+        item.open = !item.open;
+        return;
+      }
+
+      item.dataset.animating = "1";
+
+      if (!item.open) {
+        // Put the content in the layout first — its natural height can't
+        // be measured while the element is still closed.
+        item.open = true;
+        gsap.fromTo(
+          panel,
+          { height: 0, opacity: 0 },
+          {
+            height: panel.scrollHeight,
+            opacity: 1,
+            duration: 0.2,
+            ease: "power4.out",
+            onComplete: () => {
+              // Back to auto so the panel reflows if the text wraps
+              // differently later (resize, font swap).
+              gsap.set(panel, { height: "auto" });
+              delete item.dataset.animating;
+            },
+          }
+        );
+      } else {
+        item.classList.add("is-closing");
+        gsap.to(panel, {
+          height: 0,
+          opacity: 0,
+          duration: 0.2,
+          ease: "power4.out",
+          onComplete: () => {
+            item.open = false;
+            item.classList.remove("is-closing");
+            gsap.set(panel, { clearProps: "height,opacity" });
+            delete item.dataset.animating;
+          },
+        });
+      }
+    });
+  });
+
   // Spotlight border on plan cards and offering tiles: track the
   // cursor into CSS custom properties the ::before ring reads. Plain
   // pointermove on a handful of small cards, not a scroll-frame
@@ -201,6 +273,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Press feedback. Driven through GSAP rather than a CSS :active rule
+  // because the magnetic pull below writes an inline transform, which a
+  // CSS transform would just lose to. Runs for everyone, including
+  // reduced-motion and touch: on a phone there is no hover, so without
+  // this the primary CTA answers a tap with nothing at all.
+  document.querySelectorAll(".btn").forEach((btn) => {
+    const press = (scale) => gsap.to(btn, { scale, duration: 0.16, ease: "power3.out", overwrite: "auto" });
+    btn.addEventListener("pointerdown", () => press(0.97));
+    btn.addEventListener("pointerup", () => press(1));
+    btn.addEventListener("pointerleave", () => press(1));
+    btn.addEventListener("pointercancel", () => press(1));
+  });
+
   // Magnetic pull on buttons: they nudge toward the cursor within a
   // small radius, then spring back on leave.
   if (!prefersReduced) {
@@ -241,6 +326,15 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.set(phone, PHONE_SETTLED);
     gsap.set(contactShadow, { y: SHADOW_Y, opacity: 0.5, scale: 1 });
     gsap.set(heroScene, { height: "100vh" });
+    // Collapsing the hero from its full scroll-jack height to 100vh
+    // removes several thousand pixels from the page, but the reveal
+    // ScrollTriggers above were measured against the tall layout and
+    // don't re-measure on their own — so their start points sat far
+    // below where their elements actually ended up, and most of the
+    // page stayed at opacity 0 for the whole visit. Reveal those
+    // elements outright instead: no scroll dependency to get stale,
+    // and no movement, which is the point of reduced motion.
+    gsap.set([".reveal-up", ".reveal-group > *"], { opacity: 1, y: 0 });
     return;
   }
 

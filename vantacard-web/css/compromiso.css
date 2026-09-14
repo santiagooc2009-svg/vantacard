@@ -122,8 +122,10 @@
   transition: transform 0.3s var(--ease-premium);
 }
 
-.sustain-row:hover {
-  transform: translateX(8px);
+@media (hover: hover) and (pointer: fine) {
+  .sustain-row:hover {
+    transform: translateX(8px);
+  }
 }
 
 .sustain-row:hover .sustain-row__icon {
