@@ -1086,6 +1086,21 @@ h3 {
   font-weight: 400;
 }
 
+/* Pricing isn't fixed per tier — a business/team plan genuinely
+   scales with headcount — so this reads as an intentional "let's
+   talk" tier rather than a placeholder. Sized down from the numeric
+   variant above since it's a phrase, not a digit. */
+.plan__price--quote {
+  font-size: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.plan__price--quote span {
+  font-size: 0.85rem;
+}
+
 .plan__desc {
   color: var(--text-secondary);
   font-size: 0.92rem;
@@ -1210,6 +1225,106 @@ h3 {
   max-width: 44ch;
   margin: 0 auto var(--space-4);
   color: var(--text-secondary);
+}
+
+/* ---------- FAQ ---------- */
+.faq {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.faq__head {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.faq__head h2 {
+  font-size: clamp(2rem, 3.8vw, 3rem);
+  letter-spacing: -0.02em;
+  margin: var(--space-2) 0 0;
+}
+
+.faq__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq__item {
+  border-top: 1px solid var(--border);
+}
+
+.faq__list .faq__item:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq__item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.faq__item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq__item summary::marker {
+  content: "";
+}
+
+.faq__icon {
+  position: relative;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  transition: transform 0.3s var(--ease-premium), border-color 0.3s ease;
+}
+
+.faq__icon::before,
+.faq__icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.faq__icon::before {
+  width: 10px;
+  height: 1.5px;
+}
+
+.faq__icon::after {
+  width: 1.5px;
+  height: 10px;
+}
+
+.faq__item:hover .faq__icon {
+  border-color: var(--border-strong);
+}
+
+.faq__item[open] .faq__icon {
+  transform: rotate(45deg);
+  border-color: var(--border-strong);
+}
+
+.faq__item p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 60ch;
+  padding: 0 0 var(--space-4);
 }
 
 /* ---------- Footer ---------- */
