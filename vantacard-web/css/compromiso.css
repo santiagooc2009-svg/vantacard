@@ -147,75 +147,82 @@
 }
 
 /* ---------- Cierre ----------
-   Bookends the opening: its own screen, same centred column, same
-   generous measure. It used to be a padded block with everything
-   stacked tight — headline, line, signature and button all within a
-   few rem of each other — which read as crowded at exactly the moment
-   the page should feel settled. The rhythm is wide now, and it widens
-   as it goes down: the biggest gap is the one before the signature,
-   so the mark and the button read as the close rather than as two
-   more lines of the paragraph. */
+   Its own screen, one centred axis, and — the part it was missing —
+   something to look at. The previous version spaced everything out
+   generously and ended up scattered: a headline, a line, a long void,
+   a small mark, another void, a button. Now the mark lives on the card
+   it belongs to, the caption sits under the card as a caption, and the
+   gaps are even instead of enormous. */
 .sustain-close {
-  max-width: 760px;
+  max-width: 720px;
   margin: 0 auto;
   min-height: 88vh;
   min-height: 88svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--space-7) var(--space-4);
+  align-items: center;
+  padding: var(--space-6) var(--space-4);
   text-align: center;
 }
 
 .sustain-close h2 {
-  font-size: clamp(2.2rem, 4.4vw, 3.2rem);
+  font-size: clamp(2.1rem, 4.2vw, 3rem);
   letter-spacing: -0.02em;
   line-height: 1.12;
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
 }
 
 .sustain-close > p {
   color: var(--text-secondary);
   font-size: 1.05rem;
   line-height: 1.7;
-  max-width: 52ch;
-  margin: 0 auto var(--space-7);
+  max-width: 50ch;
+  margin: 0 0 var(--space-5);
 }
 
-.sustain-close__signature {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: var(--space-6);
+.sustain-close__figure {
+  margin: 0 0 var(--space-5);
 }
 
-.sustain-close__signature .brand-mark {
-  justify-content: center;
+/* Shares its face with the hero card and the card in the 3D scene —
+   the rule lives in styles.css so the three cannot drift apart. Only
+   the size is this page's. */
+.sustain-close__card {
+  width: min(272px, 70vw);
+  aspect-ratio: 1.586;
+  margin: 0 auto var(--space-3);
 }
 
-.sustain-close__tagline {
+/* The one detail that says what the object is, bottom-right on the
+   face, the way a chip sits on a real card. */
+.sustain-close__chip {
+  align-self: flex-end;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: var(--accent-dim);
+}
+
+.sustain-close__figure figcaption {
   color: var(--text-tertiary);
   font-size: 0.9rem;
 }
 
-/* The section is a flex column, so without this the button stretches to
-   the full 760px measure instead of sizing to its own label. */
-.sustain-close .btn {
-  align-self: center;
-}
-
-/* Short screens: the full-height version pushes the button off the
-   bottom, and the button is the only thing here that has a job. */
-@media (max-height: 720px) {
+/* Short screens: the card is the first thing to give up its height,
+   and the button is the only thing here with a job. */
+@media (max-height: 760px) {
   .sustain-close {
     min-height: 0;
     padding-block: var(--space-6);
   }
   .sustain-close > p {
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-4);
   }
-  .sustain-close__signature {
-    margin-bottom: var(--space-5);
+  .sustain-close__card {
+    width: min(228px, 62vw);
+  }
+  .sustain-close__figure {
+    margin-bottom: var(--space-4);
   }
 }

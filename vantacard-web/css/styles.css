@@ -529,7 +529,8 @@ h3 {
    and 18px corners, and for the length of the crossfade you saw both
    marks at once inside one card. */
 .card-3d__inner,
-.identity__card {
+.identity__card,
+.sustain-close__card {
   border-radius: var(--radius-md);
   padding: var(--space-3);
   background: linear-gradient(150deg, #1b1d22 0%, #23262d 45%, #101114 100%);
@@ -660,6 +661,27 @@ h3 {
   font-size: 0.92rem;
   line-height: 1.5;
   color: var(--text-secondary);
+  /* Two even lines instead of one full-width line and a short tail.
+     It reads better, and it keeps the text out of the bottom-right
+     corner where the fixed WhatsApp button sits on a phone. Browsers
+     without it just wrap normally, which is where this started. */
+  text-wrap: balance;
+}
+
+/* Narrower and a little higher on a phone: the fixed WhatsApp button
+   sits in the bottom-right corner, and at this width the benefit line
+   used to run underneath it. */
+@media (max-width: 720px) {
+  .profile-panel {
+    width: min(76vw, 292px);
+    top: 84%;
+    gap: 0.45rem;
+  }
+
+  .profile-panel__icon {
+    width: 62px;
+    height: 62px;
+  }
 }
 
 .profile-panel__dots {

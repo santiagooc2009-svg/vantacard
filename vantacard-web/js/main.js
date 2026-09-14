@@ -507,23 +507,35 @@ document.addEventListener("DOMContentLoaded", () => {
   // instead of a flat card sliding over a static backdrop.
   const ORB_DRIFT = isWideStage ? [2, 4, 7] : [1, 2, 3];
 
+  // One line each, and each one has to be a scene the reader has
+  // actually lived, not a benefit. "Listos para la siguiente gran
+  // alianza" and "a la altura de cada reunión" were the old lines:
+  // they could sit under any profession, any product, and so they
+  // landed on nobody. The test for a replacement is whether the
+  // wrong audience would recognise it — a lawyer has dictated their
+  // cédula and had it written down wrong, a founder has said "ahorita
+  // te paso el link" and never sent it, an owner has thrown out a box
+  // of cards over one changed line.
+  //
+  // NOTE: the first profile is also written into index.html so the
+  // panel is not blank before this file runs. Change one, change both.
   const PROFILES = [
     {
       label: "Abogado",
       dir: 1, // right
-      benefit: "Tu cédula, tu especialidad y la consulta agendada — antes de despedirte.",
+      benefit: "Tu cédula, tu especialidad y la cita, sin dictar nada.",
       icon: "assets/badge-abogado.webp",
     },
     {
       label: "Emprendedor",
       dir: -1, // left
-      benefit: "Tu proyecto, tus redes y tu contacto — listos para la siguiente gran alianza.",
+      benefit: "Tu proyecto completo, no un “ahorita te paso el link”.",
       icon: "assets/badge-emprendedor.webp",
     },
     {
       label: "Empresario",
       dir: 1, // right
-      benefit: "Tu contacto y tu trayectoria — a la altura de cada reunión.",
+      benefit: "Cambias un puesto una vez, no reimprimes 500 tarjetas.",
       icon: "assets/badge-empresario.webp",
     },
   ];
