@@ -92,6 +92,33 @@
         ],
         "createdAt": "2026-09-14T12:29:49.657Z",
         "reason": "Same case as index.html: body's overflow-x:hidden is horizontal-only, .skip-link's top:-100px offset is vertical. Verified via Playwright keyboard-tab test that it renders fully visible when focused."
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "vantacard-web/catalogo.html"
+        ],
+        "createdAt": "2026-09-14T19:37:20.031Z",
+        "reason": "Same Inter-as-body-font pairing already sanctioned for index.html, compromiso.html and css/fonts.css (Inter for body legibility, deliberately paired with the display face Bricolage Grotesque) — flagged here only because this new page also links fonts.css/styles.css."
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "vantacard-web/catalogo.html"
+        ],
+        "createdAt": "2026-09-14T19:37:20.035Z",
+        "reason": "The chrome-shimmer gradient lives on .hero-payoff and .identity__inner h1 in styles.css; this page has neither. Verified in the browser: zero elements on catalogo.html compute background-clip:text with a gradient. The detector scans the whole linked cascade regardless of which classes the markup uses."
+      },
+      {
+        "rule": "clipped-overflow-container",
+        "value": "*",
+        "files": [
+          "vantacard-web/catalogo.html"
+        ],
+        "createdAt": "2026-09-14T19:37:20.038Z",
+        "reason": "Same case as index.html and compromiso.html: body's overflow-x:hidden is horizontal-only, and the flagged child is .skip-link, offset vertically via top:-100px. Verified by keyboard-tabbing to it in Playwright — it renders at 32,16 / 161x49, fully inside the viewport and unclipped."
       }
     ]
   }
