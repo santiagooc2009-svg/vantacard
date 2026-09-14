@@ -54,11 +54,6 @@ scroll-jacking y se muestra directamente la composición ya asentada.
 
 ## Pendientes de contenido
 
-Un valor sigue marcado intencionalmente como placeholder y no debe
-inventarse:
-
-- El enlace de Instagram en el footer (`#instagramLink`, actualmente `href="#"`).
-
 Los dos planes en `#planes` mostraban antes un precio sin rellenar
 (`$[completar] MXN`) — como el precio real todavía no está definido,
 se reemplazó por un tier de "Cotización personalizada / según tu
