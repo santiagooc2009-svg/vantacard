@@ -74,6 +74,24 @@
         ],
         "createdAt": "2026-09-14T00:00:00.000Z",
         "reason": "Same intentional chrome-shimmer on the hero h1 (.hero-payoff / .identity__inner h1, defined in styles.css) already sanctioned for styles.css and index.html; the detector scans the full cascade of a linked stylesheet regardless of whether this page's markup actually uses those classes — this page's own hero h1 has no gradient fill at all."
+      },
+      {
+        "rule": "clipped-overflow-container",
+        "value": "*",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-14T12:29:49.653Z",
+        "reason": "body's overflow-x:hidden is horizontal-only (no overflow-y set) and exists purely to suppress decorative horizontal drift, not to clip content; the flagged child is .skip-link, a standard visually-hidden-until-focus accessibility pattern positioned via top:-100px (vertical offset, unrelated to the horizontal-only clip). Verified via Playwright: tabbing to it renders it fully visible and unclipped at top:var(--space-2)."
+      },
+      {
+        "rule": "clipped-overflow-container",
+        "value": "*",
+        "files": [
+          "vantacard-web/compromiso.html"
+        ],
+        "createdAt": "2026-09-14T12:29:49.657Z",
+        "reason": "Same case as index.html: body's overflow-x:hidden is horizontal-only, .skip-link's top:-100px offset is vertical. Verified via Playwright keyboard-tab test that it renders fully visible when focused."
       }
     ]
   }

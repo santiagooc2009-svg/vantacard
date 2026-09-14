@@ -128,6 +128,27 @@ button {
   outline-offset: 3px;
 }
 
+/* Visually hidden until focused — lets a keyboard user jump straight
+   past the nav (and, on index.html, the scroll-jacked hero scene)
+   to the actual content instead of tabbing through every link twice. */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: var(--space-4);
+  z-index: 200;
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+}
+
 /* ---------- Typography ---------- */
 .eyebrow {
   font-family: var(--font-mono);
