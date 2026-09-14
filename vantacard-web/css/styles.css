@@ -226,6 +226,28 @@ h3 {
   color: var(--text-primary);
 }
 
+/* Hero entrance. Deliberately CSS, not GSAP: this is the first thing a
+   visitor sees, and `both` fill means the end state holds even if the
+   animation never runs — it can't strand the headline at opacity 0 the
+   way a scroll-triggered reveal can. */
+.hero-enter > * {
+  animation: hero-in 0.75s var(--ease-premium) both;
+}
+
+.hero-enter > *:nth-child(1) { animation-delay: 0.06s; }
+.hero-enter > *:nth-child(2) { animation-delay: 0.14s; }
+.hero-enter > *:nth-child(3) { animation-delay: 0.22s; }
+.hero-enter > *:nth-child(4) { animation-delay: 0.30s; }
+.hero-enter > *:nth-child(5) { animation-delay: 0.38s; }
+.hero-enter > *:nth-child(6) { animation-delay: 0.46s; }
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
 /* ---------- Nav ---------- */
 .nav {
   position: fixed;
@@ -358,44 +380,6 @@ h3 {
   line-height: 1.5;
   max-width: 46ch;
   margin: 0 auto;
-}
-
-/* The scene only plays as you scroll, so on arrival it looks like a
-   still image. Without a cue a first-time visitor has no reason to
-   believe scrolling does anything. */
-.hero-cue {
-  position: absolute;
-  bottom: var(--space-3);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--text-tertiary);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  pointer-events: none;
-}
-
-.hero-cue svg {
-  width: 16px;
-  height: 16px;
-  animation: cue-bob 2.2s ease-in-out infinite;
-}
-
-@keyframes cue-bob {
-  0%, 100% { transform: translateY(0); opacity: 0.55; }
-  50% { transform: translateY(5px); opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-cue svg {
-    animation: none;
-  }
 }
 
 /* Orb parallax layers */
@@ -1259,17 +1243,24 @@ h3 {
 /* ---------- Identity (closing brand statement) ---------- */
 .identity {
   max-width: var(--max-width);
+  /* Leads the page, so it has to clear the fixed nav (~79px) on its own
+     — nothing above it in the flow does that. */
   margin: 0 auto;
-  padding: var(--space-6) var(--space-4);
+  padding: calc(var(--space-6) + 2.5rem) var(--space-4) var(--space-5);
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   text-align: center;
 }
 
-.identity__inner h2 {
+.identity__inner h1 {
   font-size: clamp(2.6rem, 6vw, 4.5rem);
   letter-spacing: -0.03em;
   line-height: 1.05;
   max-width: 20ch;
-  margin: 0 auto var(--space-5);
+  margin: 0 auto var(--space-4);
   /* Chrome shimmer: a bright band drifts across the headline, like
      light moving over brushed metal. */
   background: linear-gradient(
@@ -1290,7 +1281,7 @@ h3 {
    headline fully invisible (transparent fill, no fallback color).
    Drop the gradient fill there and just use solid system text. */
 @media (forced-colors: active) {
-  .identity__inner h2 {
+  .identity__inner h1 {
     background: none;
     -webkit-background-clip: initial;
     background-clip: initial;
@@ -1302,7 +1293,7 @@ h3 {
 .identity__card {
   width: min(360px, 78vw);
   aspect-ratio: 1.586;
-  margin: 0 auto var(--space-5);
+  margin: 0 auto var(--space-4);
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   background: linear-gradient(150deg, #1b1d22 0%, #23262d 45%, #101114 100%);
@@ -1339,10 +1330,36 @@ h3 {
   font-size: 0.95rem;
 }
 
+/* Reassurance at the point of decision, which is where it actually
+   does work — an eyebrow above the headline just reproduces the stock
+   AI-SaaS hero shape. */
+.hero-note {
+  margin-top: var(--space-3);
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+}
+
 .identity__inner p {
   max-width: 44ch;
-  margin: 0 auto var(--space-4);
+  margin: 0 auto var(--space-3);
   color: var(--text-secondary);
+}
+
+/* Short laptop screens (1024x768 and similar): the hero fits every other
+   viewport in exactly one screen with the CTA above the fold, but not
+   this one. Trim the three things that carry the height. */
+@media (min-width: 721px) and (max-height: 820px) {
+  .identity {
+    padding-top: calc(var(--space-6) + 0.5rem);
+  }
+
+  .identity__card {
+    width: min(290px, 70vw);
+  }
+
+  .identity__inner h1 {
+    font-size: clamp(2.2rem, 4.2vw, 3.1rem);
+  }
 }
 
 /* ---------- FAQ ---------- */
@@ -1534,6 +1551,7 @@ h3 {
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
 }
