@@ -342,6 +342,126 @@ document.addEventListener("DOMContentLoaded", () => {
   // rotates, or changes depth for the rest of the scene.
   gsap.set(card, CARD_SETTLED);
 
+  // ---- One card, top to bottom ----
+  // The hero card and the scene card are different elements in different
+  // stacking contexts, so they can't be one node. Left alone they read as a
+  // cut: scroll carries the hero card off the top while the scene card
+  // rises independently, and for a stretch both are on screen at once.
+  // Instead, hold the hero card back so it lands exactly on the scene card,
+  // at the same size, and cross-fade them there. Only one card is ever
+  // visible, so it reads as a single object that never left. The words are
+  // what leave.
+  // Measured rather than computed: both rects are real by this point, so
+  // there are no constants here to fall out of sync with the scene.
+  const heroSection = document.querySelector(".identity");
+  const heroCard = document.querySelector(".identity__card");
+
+  if (heroSection && heroCard) {
+    // Measured lazily, not once at build time. main.js runs on
+    // DOMContentLoaded, which can fire before the webfonts land — and when
+    // it does the headline rewraps and drags the card ~270px, so a value
+    // captured then is simply wrong. Whether it was wrong depended on
+    // whether the fonts happened to be cached, which is the worst kind of
+    // bug to chase. Function values + invalidateOnRefresh let ScrollTrigger
+    // re-measure on every refresh (fonts, resize, orientation).
+    const naturalCentre = () => {
+      const applied = Number(gsap.getProperty(heroCard, "y")) || 0;
+      const r = heroCard.getBoundingClientRect();
+      // Centred scaling leaves the centre where it is, so this is the
+      // card's untransformed position once the applied offset is removed.
+      return r.top + window.scrollY + r.height / 2 - applied;
+    };
+
+    // Where the scene card sits the instant the stage pins. Measured, not
+    // derived from CARD_SETTLED: the scene centres that card with
+    // yPercent:-50, which GSAP resolves against the height it read at setup,
+    // landing ~5px off what the arithmetic predicts. Reading the real rect
+    // makes the two agree exactly rather than almost.
+    // Taken relative to the stage, so it holds at any scroll position — the
+    // stage fills the viewport once pinned, so the card's offset inside it
+    // is its on-screen position at the seam. An earlier version measured
+    // against window.scrollY and quietly fell back to the arithmetic,
+    // because ScrollTrigger evaluates this mid-refresh at a scroll position
+    // of its own choosing.
+    const seamCentre = () => {
+      const stageRect = stage.getBoundingClientRect();
+      const r = card.getBoundingClientRect();
+      return r.top - stageRect.top + r.height / 2;
+    };
+
+    const drift = () => seamCentre() - (naturalCentre() - heroScene.offsetTop);
+    const matchScale = () => {
+      const applied = Number(gsap.getProperty(heroCard, "scale")) || 1;
+      return card.getBoundingClientRect().width / (heroCard.getBoundingClientRect().width / applied);
+    };
+
+    // fromTo, not to: an inferred start reads the element's live computed
+    // style, which is only safe while nothing else is touching it.
+    gsap.fromTo(
+      heroCard,
+      { y: 0, scale: 1 },
+      {
+        y: drift,
+        scale: matchScale,
+        ease: "none", // scrubbed — the user drives this, an ease would fight them
+        scrollTrigger: {
+          trigger: heroSection,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      }
+    );
+
+    // The text pulls away faster than the page scrolls, so the card is
+    // visibly left behind rather than merely lingering.
+    gsap.to(".identity__inner > h1, .identity__inner > p", {
+      y: -80,
+      opacity: 0,
+      ease: "none",
+      scrollTrigger: { trigger: heroSection, start: "top top", end: "70% top", scrub: true },
+    });
+
+    // Opacity only on the CTA: the magnetic-pull handler owns its x/y, and
+    // two tweens writing one transform would fight.
+    gsap.to(".identity__inner > .btn", {
+      opacity: 0,
+      ease: "none",
+      scrollTrigger: { trigger: heroSection, start: "top top", end: "70% top", scrub: true },
+    });
+
+    // The scene card stays hidden until the two have nearly converged —
+    // otherwise it drifts up into frame alongside the hero card and you see
+    // the same card twice. They swap over the last stretch, a few tens of
+    // pixels apart, which is why the exchange doesn't register as a cut.
+    gsap.fromTo(
+      card,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        ease: "none",
+        scrollTrigger: { trigger: heroSection, start: "88% top", end: "bottom top", scrub: true },
+      }
+    );
+
+    gsap.fromTo(
+      heroCard,
+      { opacity: 1 },
+      {
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: { trigger: heroSection, start: "88% top", end: "bottom top", scrub: true },
+      }
+    );
+
+    // Belt and braces: ScrollTrigger refreshes on window load, but fonts can
+    // still settle after that on a cold cache.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => ScrollTrigger.refresh());
+    }
+  }
+
   // Phone: starts small and far away, tilted as if just glanced at.
   gsap.set(phone, {
     x: 30,

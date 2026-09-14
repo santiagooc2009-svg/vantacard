@@ -227,19 +227,31 @@ h3 {
 }
 
 /* Hero entrance. Deliberately CSS, not GSAP: this is the first thing a
-   visitor sees, and `both` fill means the end state holds even if the
-   animation never runs — it can't strand the headline at opacity 0 the
-   way a scroll-triggered reveal can. */
+   visitor sees, and if the animation never runs the element just shows
+   its normal style — a scroll-triggered reveal can strand it at
+   opacity 0 instead.
+   `backwards`, not `both`: it has to cover the delay, but it must stop
+   asserting values once it ends, because CSS animations outrank inline
+   styles and these same elements get scroll-driven transforms in
+   main.js. */
 .hero-enter > * {
-  animation: hero-in 0.75s var(--ease-premium) both;
+  animation: hero-in 0.6s var(--ease-premium) backwards;
 }
 
-.hero-enter > *:nth-child(1) { animation-delay: 0.06s; }
-.hero-enter > *:nth-child(2) { animation-delay: 0.14s; }
-.hero-enter > *:nth-child(3) { animation-delay: 0.22s; }
-.hero-enter > *:nth-child(4) { animation-delay: 0.30s; }
-.hero-enter > *:nth-child(5) { animation-delay: 0.38s; }
-.hero-enter > *:nth-child(6) { animation-delay: 0.46s; }
+.hero-enter > *:nth-child(1) { animation-delay: 0.04s; }
+.hero-enter > *:nth-child(3) { animation-delay: 0.12s; }
+.hero-enter > *:nth-child(4) { animation-delay: 0.20s; }
+.hero-enter > *:nth-child(5) { animation-delay: 0.28s; }
+
+/* The card is the one element GSAP drives through the whole scroll (it
+   drifts down to meet the scene card), so CSS must not animate it too.
+   main.js reads computed style when it builds those tweens, and while this
+   entrance was mid-flight it read opacity:0 and baked that in as the card's
+   resting state — the card stayed invisible for the entire page. One owner
+   per element. It simply starts visible; the words arrive around it. */
+.hero-enter > .identity__card {
+  animation: none;
+}
 
 @keyframes hero-in {
   from {
@@ -1241,7 +1253,28 @@ h3 {
 }
 
 /* ---------- Identity (closing brand statement) ---------- */
+/* The scene's stage carries a vignette that is at full strength right at
+   its top edge. With the hero sitting directly above and carrying none,
+   the boundary showed up as a hard horizontal line across the page —
+   measured as an abrupt 15.6 -> 11.0 drop in brightness. Giving the hero
+   the same vignette makes the two sections one continuous surface, which
+   is the whole point of the card crossing between them.
+   No `overflow: hidden` here: the card has to be able to drift past this
+   section's bottom edge during the handoff. */
+.identity::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 90% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
 .identity {
+  position: relative;
+  /* Above .hero-scene and .reveal-content: the card drifts down over the
+     scene during the handoff and has to stay on top of it until it fades. */
+  z-index: 3;
   max-width: var(--max-width);
   /* Leads the page, so it has to clear the fixed nav (~79px) on its own
      — nothing above it in the flow does that. */
@@ -1304,13 +1337,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.4s var(--ease-premium);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .identity__card:hover {
-    transform: translateY(-4px);
-  }
+  pointer-events: none;
 }
 
 .identity__card .brand-mark {
