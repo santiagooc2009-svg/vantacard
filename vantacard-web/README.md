@@ -8,9 +8,16 @@ tarjetas de presentación digitales NFC.
 ```
 vantacard-web/
 ├── index.html
-├── css/styles.css
-├── js/main.js
-├── assets/favicon.svg
+├── compromiso.html
+├── css/
+│   ├── styles.css       (shared design system)
+│   ├── fonts.css        (self-hosted @font-face rules)
+│   └── compromiso.css   (page-specific)
+├── js/
+│   ├── main.js          (index.html only)
+│   ├── compromiso.js    (compromiso.html only)
+│   └── vendor/          (GSAP + ScrollTrigger, vendored)
+├── assets/
 └── README.md
 ```
 
@@ -47,11 +54,18 @@ scroll-jacking y se muestra directamente la composición ya asentada.
 
 ## Pendientes de contenido
 
-Dos valores están marcados intencionalmente como placeholder y no
-deben inventarse:
+Un valor sigue marcado intencionalmente como placeholder y no debe
+inventarse:
 
-- `$[completar] MXN` — precio de los dos planes en `#servicios`.
 - El enlace de Instagram en el footer (`#instagramLink`, actualmente `href="#"`).
+
+Los dos planes en `#planes` mostraban antes un precio sin rellenar
+(`$[completar] MXN`) — como el precio real todavía no está definido,
+se reemplazó por un tier de "Cotización personalizada / según tu
+equipo" en vez de inventar una cifra. Si en algún momento se define
+un precio fijo por plan, hay que reemplazar `.plan__price--quote` en
+`index.html` (y ajustar el estilo en `css/styles.css` si se vuelve a
+un número en vez de una frase).
 
 ## Despliegue
 
