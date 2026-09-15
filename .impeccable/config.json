@@ -119,6 +119,33 @@
         ],
         "createdAt": "2026-09-14T19:37:20.038Z",
         "reason": "Same case as index.html and compromiso.html: body's overflow-x:hidden is horizontal-only, and the flagged child is .skip-link, offset vertically via top:-100px. Verified by keyboard-tabbing to it in Playwright — it renders at 32,16 / 161x49, fully inside the viewport and unclipped."
+      },
+      {
+        "rule": "focus-visible",
+        "value": "*",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-15T16:03:05.613Z",
+        "reason": "El auditor muestrea los enlaces de la hoja de menú móvil, que en escritorio están dentro de un contenedor display:none y en teléfono cerrado dentro de visibility:hidden — inalcanzables por teclado en ambos casos, y ahora además marcados inert. Verificado en el navegador: todo elemento interactivo que sí renderiza recibe el anillo global :focus-visible (2px solid var(--accent), outline-offset 3px)."
+      },
+      {
+        "rule": "focus-visible",
+        "value": "*",
+        "files": [
+          "vantacard-web/compromiso.html"
+        ],
+        "createdAt": "2026-09-15T16:03:05.617Z",
+        "reason": "El auditor muestrea los enlaces de la hoja de menú móvil, que en escritorio están dentro de un contenedor display:none y en teléfono cerrado dentro de visibility:hidden — inalcanzables por teclado en ambos casos, y ahora además marcados inert. Verificado en el navegador: todo elemento interactivo que sí renderiza recibe el anillo global :focus-visible (2px solid var(--accent), outline-offset 3px)."
+      },
+      {
+        "rule": "focus-visible",
+        "value": "*",
+        "files": [
+          "vantacard-web/catalogo.html"
+        ],
+        "createdAt": "2026-09-15T16:03:05.621Z",
+        "reason": "El auditor muestrea los enlaces de la hoja de menú móvil, que en escritorio están dentro de un contenedor display:none y en teléfono cerrado dentro de visibility:hidden — inalcanzables por teclado en ambos casos, y ahora además marcados inert. Verificado en el navegador: todo elemento interactivo que sí renderiza recibe el anillo global :focus-visible (2px solid var(--accent), outline-offset 3px)."
       }
     ]
   }

@@ -485,15 +485,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // or role) through this whole sequence and into the NFC-tap demo
   // that follows — the real Sport Car Dreams case study is introduced
   // separately, in the showcase mockups below.
-  const isWideStage = window.matchMedia("(min-width: 700px)").matches;
+  // 720px, the same line the CSS uses for every other phone rule. It
+  // was 700 here and 720 there, so 700-719px got the wide scene with
+  // the phone layout — one of those two numbers had to go.
+  const isWideStage = window.matchMedia("(min-width: 721px)").matches;
   const CARD_Y = CARD_SETTLED.y;
   // Mobile gets the same zigzag, just scaled down to fit: 300px card
   // on a ~360-390px screen has very little room either side before
   // it clips, so the drift is small but still a real, visible move —
   // not disabled the way it was before (SIDE 0 = the card just sat
   // still on phones, which is where most of this audience is).
-  const SIDE = isWideStage ? 210 : 34;
-  const PANEL_SIDE = isWideStage ? 240 : 0;
+  const SIDE = 210;
+  const PANEL_SIDE = 240;
   // One shared dip depth for every step, not a different Y per
   // profile — that inconsistency read as three unrelated animations
   // instead of one uniform motion repeated three times.
@@ -505,7 +508,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // little against the card's direction, back layer least and front
   // layer most, so the side-to-side motion reads as real depth
   // instead of a flat card sliding over a static backdrop.
-  const ORB_DRIFT = isWideStage ? [2, 4, 7] : [1, 2, 3];
+  const ORB_DRIFT = [2, 4, 7];
 
   // One line each, and each one has to be a scene the reader has
   // actually lived, not a benefit. "Listos para la siguiente gran
@@ -599,7 +602,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // duration, same ease, same shape every time — alternating only the
   // sign of the direction is what turns it into a zigzag (right,
   // left, right) instead of three different-looking animations.
-  PROFILES.forEach((p, i) => {
+  //
+  // Phones skip it entirely. A 300px card has 34px of room either side
+  // before it clips, so the zigzag was a twitch, and a panel that
+  // swaps in place is a carousel — the one pattern a phone reader
+  // cannot scan. The same three profiles are a plain list under the
+  // scene instead (section.audience, mobile-only), which is both
+  // easier to read and one less thing the pinned scene has to hold.
+  if (isWideStage) PROFILES.forEach((p, i) => {
     const start = i * STEP_GAP;
     const cardX = SIDE * p.dir;
     const panelX = -PANEL_SIDE * p.dir;
@@ -630,7 +640,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // stays generic (just the VantaCard mark) through this whole
   // sequence — no client name/role revealed here, so the NFC demo
   // that follows reads as a plain, universal card.
-  const returnStart = PROFILES.length * STEP_GAP;
+  // No profile steps on a phone, so there is nothing to return from:
+  // the card is already home and the approach starts immediately,
+  // which is also what makes the pinned scene shorter there.
+  const returnStart = isWideStage ? PROFILES.length * STEP_GAP : 0;
   tl.to(profilePanel, { opacity: 0, duration: 0.08 }, returnStart)
     .to(card, { x: 0, y: CARD_Y, scale: 1, duration: 0.24, ease: "power2.inOut" }, returnStart)
     .to([orbsBack, orbsMid, orbsFront], { xPercent: 0, duration: 0.24, ease: "power2.inOut" }, returnStart);
