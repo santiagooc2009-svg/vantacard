@@ -284,3 +284,23 @@
   line-height: 1.7;
   margin: 0 auto var(--space-5);
 }
+
+/* ---- Escala de teléfono ---- */
+@media (max-width: 720px) {
+  .catalog-hero h1 {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+
+  .catalog-hero__lede {
+    font-size: 1rem;
+  }
+
+  .catalog__group-head h2 {
+    font-size: 1.4rem;
+  }
+
+  .catalog-close h2 {
+    font-size: 1.6rem;
+  }
+}

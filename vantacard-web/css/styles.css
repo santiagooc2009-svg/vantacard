@@ -1119,30 +1119,38 @@ h3 {
    weight as every other icon here instead of dropped in as the brand's
    own gradient badge, which would be the one saturated object on an
    otherwise monochrome page. */
-.social-link {
+/* La marca sola, sin marco. El glifo de Instagram ya es un cuadrado
+   redondeado: meterlo dentro de otro cuadrado redondeado con borde
+   daba dos marcos anidados, que es lo que se veía mal. El área
+   tocable sigue siendo de 48px — la da la caja, no un recuadro
+   visible — y lo que responde es el color.
+   El selector lleva `.footer__col a` delante a propósito: esa regla
+   tiene más especificidad que `.social-link` sola y le ganaba el
+   display y el padding, así que el glifo quedaba pegado al borde
+   izquierdo de la caja en vez de centrado. */
+.footer__col a.social-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* 48px box, 26px mark. At 44/19 the glyph was swimming in its own
-     frame and read as an afterthought; this is the same ratio the
-     step icons use, at a size that actually carries a logo. Still
-     comfortably above the 44px tap-target floor. */
   width: 48px;
   height: 48px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  padding: 0;
+  /* El glifo mide 30 dentro de un área tocable de 48, así que sobran 9
+     de cada lado: este margen los descuenta para que el borde del logo
+     caiga en la misma línea que el texto de la columna, no 9px adentro. */
+  margin-left: -9px;
   color: var(--text-secondary);
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .social-link svg {
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
+  display: block;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .social-link:hover {
-    border-color: var(--accent);
+  .footer__col a.social-link:hover {
     color: var(--accent);
   }
 }
@@ -1855,6 +1863,42 @@ body.is-menu-open .nav__menu-bars::after {
 }
 
 @media (max-width: 720px) {
+  /* ---- Escala de teléfono ----
+     Los clamp() de los títulos tienen el piso calculado para
+     escritorio, y en una pantalla de 390px el piso es lo que manda:
+     la h1 salía a 41.6px y las h2 a 30-34px, que es lo que se veía
+     como "zoom". El cuerpo no se toca — 16px de texto y 14.7 de
+     secundario ya estaban bien; lo que sobraba era titular.
+
+     La escala de espacio también baja: 4.5rem de aire entre secciones
+     es proporción de monitor, no de teléfono. */
+  :root {
+    --space-4: 1.5rem;
+    --space-5: 2.25rem;
+    --space-6: 3rem;
+    --space-7: 4.5rem;
+  }
+
+  .identity__inner h1 {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+
+  .hero-payoff {
+    font-size: 1.65rem;
+  }
+
+  .chapter__aside h2,
+  .offerings__head h2,
+  .services__head h2,
+  .faq__head h2 {
+    font-size: 1.5rem;
+  }
+
+  .pull-quote {
+    font-size: 1.35rem;
+  }
+
   /* La barra: menos aire a los lados que en escritorio, y respeto por
      el recorte de la pantalla en horizontal. */
   .nav {
@@ -1962,7 +2006,7 @@ body.is-menu-open .nav__menu-bars::after {
   }
 
   .audience h2 {
-    font-size: clamp(1.8rem, 7vw, 2.2rem);
+    font-size: 1.5rem;
     letter-spacing: -0.02em;
     margin-bottom: var(--space-4);
   }

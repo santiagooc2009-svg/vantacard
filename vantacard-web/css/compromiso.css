@@ -226,3 +226,25 @@
     margin-bottom: var(--space-4);
   }
 }
+
+/* ---- Escala de teléfono ----
+   Mismo criterio que en styles.css: los pisos de los clamp() están
+   puestos para escritorio y en 390px son los que mandan. */
+@media (max-width: 720px) {
+  .sustain-hero h1 {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+
+  .sustain-hero__lede {
+    font-size: 1rem;
+  }
+
+  .sustain-close h2 {
+    font-size: 1.6rem;
+  }
+
+  .sustain-close > p {
+    font-size: 1rem;
+  }
+}
