@@ -34,3 +34,20 @@ Para que la ficha no diga nada que no sea cierto:
    quiero inventar los nombres).
 2. **Las placas**, ¿son solo de mostrador o también van en pared?
 3. Cualquier otro producto NFC que quieras en la página.
+
+---
+
+## Ya procesadas
+
+| Original | Se publica como | Dónde |
+|---|---|---|
+| `(6)` nogal sobre fondo negro | `assets/producto-madera.webp` | ficha Tarjeta de madera |
+| `(12)` mostrador de mármol | `assets/producto-placa-instagram.webp` | ficha Placa de Instagram |
+
+Las demás quedan aquí guardadas por si luego hacemos galería:
+`(4)` los cinco acabados, `(5)` el saco con la tarjeta, `(3)` el bolso,
+`(10)` y `(11)` la placa sobre blanco y sobre la mesa del jardín.
+
+**Esta carpeta no se publica.** `netlify.toml` pone `base = "vantacard-web"`,
+así que lo que está aquí arriba queda versionado pero nunca se sirve —
+son 8.7MB de PNG que no tienen por qué viajar al sitio.
