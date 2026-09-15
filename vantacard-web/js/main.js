@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // cost, so it's fine outside the ScrollTrigger/ban-on-scroll-
   // listeners rule (that rule targets window-level scroll polling,
   // not local pointer tracking).
-  document.querySelectorAll(".plan, .offerings__media").forEach((el) => {
+  document.querySelectorAll(".plan, .offerings__item").forEach((el) => {
     el.addEventListener("pointermove", (e) => {
       const r = el.getBoundingClientRect();
       el.style.setProperty("--mx", `${e.clientX - r.left}px`);

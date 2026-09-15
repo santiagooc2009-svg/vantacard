@@ -1199,7 +1199,27 @@ h3 {
   }
 }
 
-/* ---------- Offerings (what we do) ---------- */
+/* Los enlaces de ancla dejaban el título del destino justo debajo de
+   la barra fija, que mide 77-79px: llegabas a la sección y lo primero
+   que leías era el segundo párrafo. Este margen de scroll la deja
+   completa. Va en los destinos de enlace, no en todo [id]. */
+#servicios,
+#planes,
+#faq,
+#contacto,
+#audiencia,
+#productos {
+  scroll-margin-top: 96px;
+}
+
+/* ---------- Offerings (what we do) ----------
+   Dos servicios reales lado a lado, y la compatibilidad como banda
+   aparte. Antes eran tres fichas iguales, pero la tercera no era un
+   servicio sino una propiedad de las otras dos, y la fila se leía
+   coja: una línea, una línea, tres líneas.
+   Cada ficha es una tarjeta completa —borde alrededor de todo, no
+   solo de la imagen— para que el texto no quede colgando fuera del
+   contenedor, que era lo que la hacía ver sin terminar. ---------- */
 .offerings {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -1216,50 +1236,57 @@ h3 {
   letter-spacing: -0.02em;
 }
 
+.offerings__lede {
+  max-width: 46ch;
+  margin: var(--space-2) auto 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  text-wrap: balance;
+}
+
 .offerings__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
 }
 
 @media (max-width: 900px) {
   .offerings__grid {
     grid-template-columns: 1fr;
-    max-width: 420px;
+    max-width: 460px;
     margin: 0 auto;
   }
 }
 
+/* Misma carcasa que .plan: las dos rejillas de tarjetas de la página
+   tienen que leerse como un solo sistema, no como dos inventos. */
 .offerings__item {
-  transition: transform 0.3s var(--ease-premium);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  transition: border-color 0.3s ease, transform 0.3s var(--ease-premium);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .offerings__item:hover {
+    border-color: var(--border-strong);
     transform: translateY(-4px);
   }
 }
 
-.offerings__media {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  margin-bottom: var(--space-3);
-}
-
-/* Same spotlight-ring mechanic as .plan, extended here so the two
-   card grids on the page feel like one system, not two. */
-.offerings__media::before {
+/* El anillo de luz pasa de la imagen a la tarjeta entera, igual que
+   en .plan, para que recorra el borde que ahora sí existe. */
+.offerings__item::before {
   content: "";
   position: absolute;
-  inset: 0;
-  z-index: 1;
+  inset: -1px;
   border-radius: inherit;
   padding: 1px;
-  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), 0.5), transparent 65%);
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), 0.55), transparent 65%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -1268,14 +1295,40 @@ h3 {
   pointer-events: none;
 }
 
-.offerings__item:hover .offerings__media::before {
+.offerings__item:hover::before {
   opacity: 1;
+}
+
+.offerings__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #101114;
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-3);
 }
 
 .offerings__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s var(--ease-premium);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .offerings__item:hover .offerings__media img {
+    transform: scale(1.03);
+  }
+}
+
+/* El cuerpo crece y el enlace se va al fondo, así las dos fichas
+   terminan su flecha a la misma altura aunque el texto no mida igual. */
+.offerings__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0 var(--space-1);
 }
 
 .offerings__item h3 {
@@ -1283,9 +1336,142 @@ h3 {
   margin-bottom: var(--space-1);
 }
 
-.offerings__item p {
+.offerings__item > .offerings__body > p {
   color: var(--text-secondary);
   font-size: 0.92rem;
+  line-height: 1.6;
+  /* Dos renglones reservados: una descripción cabe en uno y la otra
+     en dos según el ancho, y sin esto la regla horizontal de cada
+     ficha quedaba a distinta altura y las dos se veían desfasadas. */
+  min-height: 3.2em;
+}
+
+@media (max-width: 900px) {
+  .offerings__item > .offerings__body > p {
+    min-height: 0;
+  }
+}
+
+.offerings__points {
+  list-style: none;
+  margin: var(--space-3) 0 var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.offerings__points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.offerings__tick {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-top: 0.15rem;
+  color: var(--accent-strong);
+}
+
+.offerings__tick svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Enlace, no botón: la decisión de la sección es seguir leyendo, y
+   dos botones más aquí competirían con los de los planes. */
+.offerings__link {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  align-self: flex-start;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
+}
+
+.offerings__arrow {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.25s var(--ease-premium);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .offerings__link:hover {
+    color: var(--accent);
+  }
+
+  .offerings__link:hover .offerings__arrow {
+    transform: translateX(4px);
+  }
+}
+
+/* La banda de compatibilidad: horizontal y más baja de tono que las
+   fichas, porque es una respuesta a una duda, no una tercera venta. */
+.offerings__note {
+  margin-top: var(--space-4);
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(26, 29, 34, 0.5);
+}
+
+.offerings__note-media {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #101114;
+  border: 1px solid var(--border);
+}
+
+.offerings__note-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offerings__note-body h3 {
+  font-size: 1.05rem;
+  margin-bottom: var(--space-1);
+}
+
+.offerings__note-body p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  max-width: 62ch;
+}
+
+@media (max-width: 720px) {
+  .offerings__note {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .offerings__note-media {
+    aspect-ratio: 16 / 10;
+  }
 }
 
 /* ---------- Services ---------- */
@@ -1893,6 +2079,10 @@ body.is-menu-open .nav__menu-bars::after {
   .services__head h2,
   .faq__head h2 {
     font-size: 1.5rem;
+  }
+
+  .offerings__lede {
+    font-size: 0.95rem;
   }
 
   .pull-quote {

@@ -318,31 +318,59 @@
 
     <section class="offerings" id="servicios">
       <div class="offerings__head reveal-group">
-        <h2>Nuestros servicios</h2>
+        <h2>Nuestros <span class="accent-italic">servicios</span></h2>
+        <p class="offerings__lede">Dos cosas, y las dos se conectan: la tarjeta que entregas y la página que abre cuando la acercan.</p>
       </div>
+
       <div class="offerings__grid">
+
         <article class="offerings__item reveal-up">
           <div class="offerings__media">
             <img src="assets/service-web.webp" alt="Vista de una página web de negocio con navegación, encabezado y botón para agendar" loading="lazy" width="1400" height="1080" />
           </div>
-          <h3>Presencia Digital Empresarial</h3>
-          <p>Una página web lista para mostrar tu negocio y llenar tu agenda.</p>
+          <div class="offerings__body">
+            <h3>Presencia Digital Empresarial</h3>
+            <p>Una página web lista para mostrar tu negocio y llenar tu agenda.</p>
+            <ul class="offerings__points">
+              <li><span class="offerings__tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Perfil de marca personalizado</li>
+              <li><span class="offerings__tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Agendado de citas en línea</li>
+              <li><span class="offerings__tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Actualizaciones ilimitadas</li>
+            </ul>
+            <a class="offerings__link" href="#planes">Ver los planes<svg class="offerings__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          </div>
         </article>
+
         <article class="offerings__item reveal-up">
           <div class="offerings__media">
             <img src="assets/service-cards.webp" alt="Tres tarjetas VantaCard con NFC, flotando en cascada" loading="lazy" width="1400" height="1080" />
           </div>
-          <h3>Tarjetas de Presentación Inteligentes</h3>
-          <p>Toda tu información, a un toque de distancia.</p>
-        </article>
-        <article class="offerings__item reveal-up">
-          <div class="offerings__media">
-            <img src="assets/service-qr.webp" alt="Tarjeta VantaCard con un código QR y un ícono de compartir" loading="lazy" width="1400" height="1080" />
+          <div class="offerings__body">
+            <h3>Tarjetas de Presentación Inteligentes</h3>
+            <p>Toda tu información, a un toque de distancia.</p>
+            <ul class="offerings__points">
+              <li><span class="offerings__tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Un toque, sin instalar ninguna app</li>
+              <li><span class="offerings__tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Madera, plástico y estilo fibra de carbono</li>
+              <li><span class="offerings__tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Una sola compra, sin reimpresiones</li>
+            </ul>
+            <a class="offerings__link" href="catalogo.html">Ver productos NFC<svg class="offerings__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
           </div>
-          <h3>Funciona en cualquier teléfono</h3>
-          <p>Cada tarjeta trae también un código QR y un enlace propio, por si el celular de quien la recibe no tiene NFC.</p>
         </article>
+
       </div>
+
+      <!-- Esto no es un tercer servicio: es una propiedad de los dos
+           de arriba, y ponerlo como tercera tarjeta hacía que la fila
+           se leyera como "web, tarjetas, y... una caracteristica".
+           Va como banda debajo, que es su lugar. -->
+      <aside class="offerings__note reveal-up">
+        <div class="offerings__note-media">
+          <img src="assets/service-qr.webp" alt="Tarjeta VantaCard con un código QR y un ícono de compartir" loading="lazy" width="1400" height="1080" />
+        </div>
+        <div class="offerings__note-body">
+          <h3>Funciona en cualquier teléfono</h3>
+          <p>Cada tarjeta trae también un código QR y un enlace propio, por si el celular de quien la recibe no tiene NFC. Sin apps, sin configurar nada de ninguno de los dos lados.</p>
+        </div>
+      </aside>
     </section>
 
     <section class="services" id="planes">
