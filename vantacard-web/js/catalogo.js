@@ -35,6 +35,31 @@ document.addEventListener("DOMContentLoaded", () => {
       extra
     );
 
+  // Galería de la ficha: la miniatura que se toca pasa a ser la foto
+  // grande. Delegado en el documento, así que si mañana se agregan
+  // productos desde el HTML no hay que tocar nada aquí.
+  document.addEventListener("click", (e) => {
+    const thumb = e.target.closest(".product__thumb");
+    if (!thumb) return;
+    const ficha = thumb.closest(".product");
+    const foto = ficha?.querySelector(".product__foto");
+    if (!foto) return;
+
+    ficha.querySelectorAll(".product__thumb").forEach((t) =>
+      t.setAttribute("aria-current", String(t === thumb))
+    );
+
+    const src = thumb.dataset.full;
+    if (!src || foto.getAttribute("src") === src) return;
+
+    // Un parpadeo corto en lugar de un cambio seco. Si la foto ya
+    // está en caché, onload dispara enseguida y ni se nota.
+    foto.style.opacity = "0";
+    foto.addEventListener("load", () => { foto.style.opacity = ""; }, { once: true });
+    foto.src = src;
+    foto.alt = thumb.dataset.alt || "";
+  });
+
   ScrollTrigger.batch(".reveal-up", {
     start: "top 88%",
     once: true,

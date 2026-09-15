@@ -149,6 +149,56 @@
   }
 }
 
+/* ---------- Galería de la ficha ----------
+   Una tira de miniaturas bajo la foto: tocar una la pone arriba. Sin
+   modal, sin librería y sin carrusel automático — el que mira decide
+   cuándo cambia, y cada miniatura es un botón que el teclado alcanza.
+   Las miniaturas pesan 200px; la foto grande se descarga solo cuando
+   la piden, así que una ficha con cuatro fotos no cobra las cuatro
+   por adelantado. */
+.product__foto {
+  transition: opacity 0.18s ease;
+}
+
+.product__thumbs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.product__thumb {
+  display: block;
+  width: 52px;
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.product__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product__thumb[aria-current="true"] {
+  opacity: 1;
+  border-color: var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product__thumb:hover {
+    opacity: 1;
+  }
+}
+
 .product__name {
   font-size: 1.15rem;
   line-height: 1.3;

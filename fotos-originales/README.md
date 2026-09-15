@@ -51,3 +51,13 @@ Las demás quedan aquí guardadas por si luego hacemos galería:
 **Esta carpeta no se publica.** `netlify.toml` pone `base = "vantacard-web"`,
 así que lo que está aquí arriba queda versionado pero nunca se sirve —
 son 8.7MB de PNG que no tienen por qué viajar al sitio.
+
+### Segunda tanda — tarjetas estilo fibra de carbono
+
+`(base)` el saco en la cafetería es la que se publica, recortada a
+`assets/producto-fibra.webp` (ventana 760x950 desde 162,202: a encuadre
+completo el tejido no se distinguía al tamaño del mosaico).
+`(1)` las dos sobre blanco y `(2)` la del bolso naranja quedan guardadas.
+
+**No son fibra de carbono**, son plástico con ese acabado, así que la
+ficha dice "estilo fibra de carbono" y nunca el material a secas.
