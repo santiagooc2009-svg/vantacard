@@ -1561,20 +1561,30 @@ h3 {
   pointer-events: none;
 }
 
-/* Reassurance at the point of decision, which is where it actually
-   does work — an eyebrow above the headline just reproduces the stock
-   AI-SaaS hero shape. */
-.hero-note {
-  margin-top: 0.75rem;
-  font-size: 0.82rem;
-  color: var(--text-tertiary);
-}
-
 .identity__inner p {
   max-width: 44ch;
   margin: 0 auto clamp(1.5rem, 2.2vw, 1.75rem);
   color: var(--text-secondary);
   text-wrap: balance;
+}
+
+/* Reassurance at the point of decision, which is where it actually
+   does work — an eyebrow above the headline just reproduces the stock
+   AI-SaaS hero shape.
+
+   El selector lleva `.identity__inner p` delante y va despues de esa
+   regla a proposito. La nota es un <p> dentro de .identity__inner, asi
+   que la regla de arriba le ganaba por especificidad: su `margin: 0 auto`
+   dejaba el margen superior en 0 —la nota quedaba a 2px del boton, que
+   es lo que se veia pegado— y su color la pintaba igual que el parrafo
+   principal en vez de un tono mas bajo. Ninguna de las dos cosas se
+   notaba en la hoja porque la regla de la nota parecia estar puesta. */
+.identity__inner p.hero-note {
+  /* El hueco mas chico del hero: la nota es el pie del boton, no un
+     bloque aparte. Arriba del boton hay 24-28px, aqui 20. */
+  margin: 1.25rem auto 0;
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
 }
 
 /* Short laptop screens (1024x768 and similar): the hero fits every other
