@@ -1,0 +1,152 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "vantacard-web/css/styles.css"
+        ],
+        "createdAt": "2026-09-09T13:44:17.488Z",
+        "reason": "intentional chrome-shimmer on hero h1 matching user's explicit silver/chrome brand direction; user repeatedly asked for more visual interest, not a default AI gradient-text tell"
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-09T13:45:41.201Z",
+        "reason": "same intentional chrome-shimmer on hero h1 (defined in styles.css) already sanctioned; hook re-flags on index.html edits too"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-09T13:54:52.551Z",
+        "reason": "Body/UI text font, deliberately paired with the distinctive display face (Bricolage Grotesque) per this session's typography update — Inter kept for body legibility, not a generator default."
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "vantacard-web/css/fonts.css"
+        ],
+        "createdAt": "2026-09-09T13:54:52.554Z",
+        "reason": "Same Inter-as-body-font pairing; flagged here only because self-hosting moved the @font-face rules into this new file."
+      },
+      {
+        "rule": "icon-tile-stack",
+        "value": "*",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-09T18:03:46.007Z",
+        "reason": "Icon and heading are laid out side-by-side (.how__step-head, flex row) per the detector's own suggested fix — verified via getBoundingClientRect that icon and h3 share the same Y range with different X ranges. The detector flags the bordered icon-frame + nearby h3 by DOM proximity, not actual rendered geometry, so it can't see the fix already applied."
+      },
+      {
+        "rule": "icon-tile-stack",
+        "value": "*",
+        "files": [
+          "vantacard-web/compromiso.html"
+        ],
+        "createdAt": "2026-09-14T00:00:00.000Z",
+        "reason": "Page was redesigned so each section has a distinct layout; icon+heading pairs now live in .sustain-row__icon (Visión, flex row) and .sustain-step__icon (Solución, flex row) — verified via getBoundingClientRect that icon and h3 share the same Y range with different X ranges in both. Same DOM-proximity heuristic limitation already sanctioned for .how__step-head on index.html. Supersedes the prior entry referencing the now-removed .sustain-card__head."
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "vantacard-web/compromiso.html"
+        ],
+        "createdAt": "2026-09-13T21:29:58.096Z",
+        "reason": "Same Inter-as-body-font pairing already sanctioned for index.html and css/fonts.css (Inter kept for body legibility, deliberately paired with the distinctive display face Bricolage Grotesque) — flagged here only because this new page also links fonts.css/styles.css."
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "vantacard-web/compromiso.html"
+        ],
+        "createdAt": "2026-09-14T00:00:00.000Z",
+        "reason": "Same intentional chrome-shimmer on the hero h1 (.hero-payoff / .identity__inner h1, defined in styles.css) already sanctioned for styles.css and index.html; the detector scans the full cascade of a linked stylesheet regardless of whether this page's markup actually uses those classes — this page's own hero h1 has no gradient fill at all."
+      },
+      {
+        "rule": "clipped-overflow-container",
+        "value": "*",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-14T12:29:49.653Z",
+        "reason": "body's overflow-x:hidden is horizontal-only (no overflow-y set) and exists purely to suppress decorative horizontal drift, not to clip content; the flagged child is .skip-link, a standard visually-hidden-until-focus accessibility pattern positioned via top:-100px (vertical offset, unrelated to the horizontal-only clip). Verified via Playwright: tabbing to it renders it fully visible and unclipped at top:var(--space-2)."
+      },
+      {
+        "rule": "clipped-overflow-container",
+        "value": "*",
+        "files": [
+          "vantacard-web/compromiso.html"
+        ],
+        "createdAt": "2026-09-14T12:29:49.657Z",
+        "reason": "Same case as index.html: body's overflow-x:hidden is horizontal-only, .skip-link's top:-100px offset is vertical. Verified via Playwright keyboard-tab test that it renders fully visible when focused."
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "vantacard-web/catalogo.html"
+        ],
+        "createdAt": "2026-09-14T19:37:20.031Z",
+        "reason": "Same Inter-as-body-font pairing already sanctioned for index.html, compromiso.html and css/fonts.css (Inter for body legibility, deliberately paired with the display face Bricolage Grotesque) — flagged here only because this new page also links fonts.css/styles.css."
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "vantacard-web/catalogo.html"
+        ],
+        "createdAt": "2026-09-14T19:37:20.035Z",
+        "reason": "The chrome-shimmer gradient lives on .hero-payoff and .identity__inner h1 in styles.css; this page has neither. Verified in the browser: zero elements on catalogo.html compute background-clip:text with a gradient. The detector scans the whole linked cascade regardless of which classes the markup uses."
+      },
+      {
+        "rule": "clipped-overflow-container",
+        "value": "*",
+        "files": [
+          "vantacard-web/catalogo.html"
+        ],
+        "createdAt": "2026-09-14T19:37:20.038Z",
+        "reason": "Same case as index.html and compromiso.html: body's overflow-x:hidden is horizontal-only, and the flagged child is .skip-link, offset vertically via top:-100px. Verified by keyboard-tabbing to it in Playwright — it renders at 32,16 / 161x49, fully inside the viewport and unclipped."
+      },
+      {
+        "rule": "focus-visible",
+        "value": "*",
+        "files": [
+          "vantacard-web/index.html"
+        ],
+        "createdAt": "2026-09-15T16:03:05.613Z",
+        "reason": "El auditor muestrea los enlaces de la hoja de menú móvil, que en escritorio están dentro de un contenedor display:none y en teléfono cerrado dentro de visibility:hidden — inalcanzables por teclado en ambos casos, y ahora además marcados inert. Verificado en el navegador: todo elemento interactivo que sí renderiza recibe el anillo global :focus-visible (2px solid var(--accent), outline-offset 3px)."
+      },
+      {
+        "rule": "focus-visible",
+        "value": "*",
+        "files": [
+          "vantacard-web/compromiso.html"
+        ],
+        "createdAt": "2026-09-15T16:03:05.617Z",
+        "reason": "El auditor muestrea los enlaces de la hoja de menú móvil, que en escritorio están dentro de un contenedor display:none y en teléfono cerrado dentro de visibility:hidden — inalcanzables por teclado en ambos casos, y ahora además marcados inert. Verificado en el navegador: todo elemento interactivo que sí renderiza recibe el anillo global :focus-visible (2px solid var(--accent), outline-offset 3px)."
+      },
+      {
+        "rule": "focus-visible",
+        "value": "*",
+        "files": [
+          "vantacard-web/catalogo.html"
+        ],
+        "createdAt": "2026-09-15T16:03:05.621Z",
+        "reason": "El auditor muestrea los enlaces de la hoja de menú móvil, que en escritorio están dentro de un contenedor display:none y en teléfono cerrado dentro de visibility:hidden — inalcanzables por teclado en ambos casos, y ahora además marcados inert. Verificado en el navegador: todo elemento interactivo que sí renderiza recibe el anillo global :focus-visible (2px solid var(--accent), outline-offset 3px)."
+      }
+    ]
+  }
+}

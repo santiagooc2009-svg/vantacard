@@ -1,0 +1,250 @@
+/* ============================================================
+   VantaCard — Nuestro compromiso
+   Page-specific styles only. Everything shared (nav, footer, btn,
+   accent-italic, ambient-glow, reveal-up, brand-mark, and now the
+   .chapter / .step / .pull-quote system) lives in styles.css — this
+   file never redefines those.
+
+   The page reads as one long-form piece, not as a deck: an opening,
+   four chapters that all share the same shape, two pull quotes that
+   break the rhythm between them, and a close. The only things
+   defined here are the two components that exist nowhere else — the
+   opening block and the impact entries.
+   ============================================================ */
+
+/* Reading-progress hairline. One long narrative with no in-page nav,
+   so a thin fixed indicator gives scroll orientation the way an
+   editorial long-read would, instead of leaving the reader guessing
+   how much is left. Driven by ScrollTrigger's own progress value in
+   compromiso.js — no separate scroll listener. */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 101;
+  pointer-events: none;
+}
+
+/* ---------- Apertura ----------
+   A screen of its own. It used to be a padded block barely taller than
+   its own text, which gave the light field behind the page almost no
+   room to move while you were still reading the opening — the page
+   started flat and only came alive further down. A full viewport of
+   height gives the light somewhere to travel, and gives the headline
+   the presence the first line of the page should have. */
+.sustain-hero {
+  max-width: 820px;
+  margin: 0 auto;
+  min-height: 92vh;
+  min-height: 92svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(var(--space-6) + 2rem) var(--space-4) var(--space-6);
+  text-align: center;
+}
+
+.sustain-hero h1 {
+  font-size: clamp(2.6rem, 6.2vw, 4.6rem);
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  margin: 0 0 var(--space-4);
+}
+
+.sustain-hero__lede {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  max-width: 58ch;
+  margin: 0 auto;
+}
+
+/* Short screens: a 92vh opening plus this much type does not fit, and
+   the quote below it should still hint at itself above the fold. */
+@media (max-height: 720px) {
+  .sustain-hero {
+    min-height: 0;
+    padding-block: calc(var(--space-6) + 1rem) var(--space-5);
+  }
+  .sustain-hero h1 {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+}
+
+/* ---------- Impacto ----------
+   The one chapter that does not use .step. Its entries carry a large
+   display numeral and an ODS attribution, so they need their own
+   proportions — and the difference keeps the page from reading as the
+   same row repeated eight times. */
+.impacts {
+  display: flex;
+  flex-direction: column;
+}
+
+.impact {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border);
+}
+
+.impact:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.impact__num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2.4rem;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--border-strong);
+  transition: color 0.3s ease;
+}
+
+.impact h3 {
+  font-size: 1.2rem;
+}
+
+.impact p {
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+/* The UN goal each idea maps to. Set as a quoted attribution rather
+   than a chip: it is the source the claim leans on, not a label. */
+.impact__ods {
+  margin-top: var(--space-3);
+  padding-left: var(--space-2);
+  border-left: 2px solid var(--border-strong);
+  color: var(--accent-dim);
+  font-size: 0.85rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .impact:hover .impact__num {
+    color: var(--accent-dim);
+  }
+}
+
+@media (max-width: 480px) {
+  .impact {
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+  .impact__num {
+    font-size: 1.8rem;
+  }
+}
+
+/* ---------- Cierre ----------
+   Its own screen, one centred axis, and — the part it was missing —
+   something to look at. The previous version spaced everything out
+   generously and ended up scattered: a headline, a line, a long void,
+   a small mark, another void, a button. Now the mark lives on the card
+   it belongs to, the caption sits under the card as a caption, and the
+   gaps are even instead of enormous. */
+.sustain-close {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 88vh;
+  min-height: 88svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.sustain-close h2 {
+  font-size: clamp(2.1rem, 4.2vw, 3rem);
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  margin: 0 0 var(--space-3);
+}
+
+.sustain-close > p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 50ch;
+  margin: 0 0 var(--space-5);
+}
+
+.sustain-close__figure {
+  margin: 0 0 var(--space-5);
+}
+
+/* Shares its face with the hero card and the card in the 3D scene —
+   the rule lives in styles.css so the three cannot drift apart. Only
+   the size is this page's. */
+.sustain-close__card {
+  width: min(272px, 70vw);
+  aspect-ratio: 1.586;
+  margin: 0 auto var(--space-3);
+}
+
+/* The one detail that says what the object is, bottom-right on the
+   face, the way a chip sits on a real card. */
+.sustain-close__chip {
+  align-self: flex-end;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: var(--accent-dim);
+}
+
+.sustain-close__figure figcaption {
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+}
+
+/* Short screens: the card is the first thing to give up its height,
+   and the button is the only thing here with a job. */
+@media (max-height: 760px) {
+  .sustain-close {
+    min-height: 0;
+    padding-block: var(--space-6);
+  }
+  .sustain-close > p {
+    margin-bottom: var(--space-4);
+  }
+  .sustain-close__card {
+    width: min(228px, 62vw);
+  }
+  .sustain-close__figure {
+    margin-bottom: var(--space-4);
+  }
+}
+
+/* ---- Escala de teléfono ----
+   Mismo criterio que en styles.css: los pisos de los clamp() están
+   puestos para escritorio y en 390px son los que mandan. */
+@media (max-width: 720px) {
+  .sustain-hero h1 {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+
+  .sustain-hero__lede {
+    font-size: 1rem;
+  }
+
+  .sustain-close h2 {
+    font-size: 1.6rem;
+  }
+
+  .sustain-close > p {
+    font-size: 1rem;
+  }
+}

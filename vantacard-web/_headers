@@ -1,0 +1,34 @@
+# Portable header config. Netlify reads this file and so does Cloudflare
+# Pages, so the security headers survive a move between hosts — they used
+# to live only in netlify.toml, which nothing else understands.
+#
+# The cache rules are new: every asset here has a stable filename, so
+# without them a repeat visitor re-downloads ~600KB of fonts and images
+# on every visit.
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# HTML must never be cached hard, or a content change would stay invisible
+# to anyone who already visited.
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Self-hosted woff2 files. These genuinely never change — a new typeface
+# would ship under a new filename.
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images and vendored JS keep their filenames across edits, so a week with
+# background revalidation rather than a year: fast repeat visits, but a
+# replaced image still reaches people within days instead of never.
+/assets/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/js/vendor/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400

@@ -1,0 +1,2086 @@
+/* ============================================================
+   VantaCard — Design System
+   Un solo mundo visual oscuro. Silver/chrome sobre casi-negro frío.
+   ============================================================ */
+
+:root {
+  /* Color */
+  --bg: #0a0b0d;
+  --bg-raised: #131519;
+  --bg-card: #1a1d22;
+  --accent: #c9ced6;
+  --accent-rgb: 201, 206, 214;
+  --accent-strong: #eef0f3;
+  --accent-dim: #7d838d;
+  --text-primary: #f2f3f5;
+  --text-secondary: #a7adb6;
+  --text-tertiary: #8b929c;
+  --border: rgba(201, 206, 214, 0.14);
+  --border-strong: rgba(201, 206, 214, 0.3);
+  --shadow-color: 4, 5, 7;
+
+  /* Type */
+  --font-display: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  /* Third voice, used sparingly: one italic word inside a headline,
+     never a whole paragraph — the contrast is the point. IBM Plex
+     Serif so the accent shares a family with the mono labels
+     already on the page, instead of being an unrelated import. */
+  --font-accent: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+
+  /* Scale */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-5: 3rem;
+  --space-6: 4.5rem;
+  --space-7: 7rem;
+
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+
+  --max-width: 1180px;
+
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Faint brushed-metal grain over the whole page. Cheap, tasteful
+   substitute for photography: it's what keeps a flat silver/black
+   palette from reading as an empty gradient. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.05;
+  /* overlay barely touches near-black pixels; screen (additive)
+     actually shows up against a dark background. */
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Visually hidden until focused — lets a keyboard user jump straight
+   past the nav (and, on index.html, the scroll-jacked hero scene)
+   to the actual content instead of tabbing through every link twice. */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: var(--space-4);
+  z-index: 200;
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+}
+
+/* ---------- Typography ---------- */
+/* Third typographic voice: a single italic serif word dropped into
+   an otherwise grotesque-sans headline. Used at most once or twice
+   a page — it's a accent, not a second body font. */
+.accent-italic {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent-strong);
+}
+
+/* ---------- Page-wide light field ----------
+   One light for the whole document instead of one per section.
+
+   Every section used to carry its own glow, which is exactly what made
+   the page read as a stack of slides: the light started and stopped at
+   each boundary, so every section announced itself as a separate card.
+   This is a single fixed layer behind everything — a tall vertical wash
+   of tone plus two soft lights — that the scroll moves. Nothing about
+   it is tied to a section, so the colour under the content never steps;
+   it drifts, continuously, from the top of the page to the bottom.
+
+   Everything in here moves by transform only, on a fixed layer, so the
+   whole effect is compositor work: no repaint of the page behind it. */
+.tone {
+  position: fixed;
+  inset: 0;
+  /* Behind in-flow content but above the canvas, which is painted from
+     body's own background-color. */
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Taller than the viewport on purpose: the scroll slides it past, and
+   what you see through the window is a slow, continuous change of tone
+   rather than a cut between one section's colour and the next. The
+   stops stay within a few levels of --bg — this should read as the room
+   being lit differently, never as coloured bands. */
+.tone__wash {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 320vh;
+  will-change: transform;
+  background: linear-gradient(
+    180deg,
+    #0a0b0d 0%,
+    #0c0e14 18%,
+    #090a0d 34%,
+    #0d0f16 52%,
+    #0a0b10 70%,
+    #0c0e13 86%,
+    #0a0b0d 100%
+  );
+}
+
+.tone__glow {
+  position: absolute;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  will-change: transform;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.055), transparent 68%);
+}
+
+.tone__glow--a {
+  width: min(105vw, 1100px);
+  left: -22%;
+  top: -30%;
+}
+
+.tone__glow--b {
+  width: min(95vw, 960px);
+  right: -20%;
+  top: 20%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.042), transparent 70%);
+}
+
+/* Scroll-reveal targets. Starting state only; main.js animates each
+   one to opacity:1/y:0 with ScrollTrigger.batch as it enters view. */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+/* The blur is the difference between content appearing and content
+   coming into focus. Only under no-preference: a filter transition is
+   motion, and it is also the one part of the reveal that costs real
+   GPU work, so a reduced-motion visitor gets the plain fade. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-up,
+  .reveal-group > * {
+    filter: blur(5px);
+  }
+}
+
+/* Same idea, one level down: the container stays put and its children
+   arrive in sequence, so a heading block reads headline → lede instead
+   of landing as a single slab. */
+.reveal-group > * {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+/* Hero entrance. Deliberately CSS, not GSAP: this is the first thing a
+   visitor sees, and if the animation never runs the element just shows
+   its normal style — a scroll-triggered reveal can strand it at
+   opacity 0 instead.
+   `backwards`, not `both`: it has to cover the delay, but it must stop
+   asserting values once it ends, because CSS animations outrank inline
+   styles and these same elements get scroll-driven transforms in
+   main.js. */
+.hero-enter > * {
+  animation: hero-in 0.6s var(--ease-premium) backwards;
+}
+
+.hero-enter > *:nth-child(1) { animation-delay: 0.04s; }
+.hero-enter > *:nth-child(3) { animation-delay: 0.12s; }
+.hero-enter > *:nth-child(4) { animation-delay: 0.20s; }
+.hero-enter > *:nth-child(5) { animation-delay: 0.28s; }
+
+/* The card is the one element GSAP drives through the whole scroll (it
+   drifts down to meet the scene card), so CSS must not animate it too.
+   main.js reads computed style when it builds those tweens, and while this
+   entrance was mid-flight it read opacity:0 and baked that in as the card's
+   resting state — the card stayed invisible for the entire page. One owner
+   per element. It simply starts visible; the words arrive around it. */
+.hero-enter > .identity__card {
+  animation: none;
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/* ---------- Nav ---------- */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  transition: background-color 0.4s var(--ease-premium), border-color 0.4s var(--ease-premium);
+  border-bottom: 1px solid transparent;
+}
+
+.nav--solid {
+  background: rgba(10, 11, 13, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom-color: var(--border);
+}
+
+.nav__logo {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-primary);
+  /* Padding + matching negative margin grows the tap target to 44px
+     tall (mobile) without shifting the visible logo position. The
+     brand-mark icon is only 19px tall, shorter than the plain text
+     this used to wrap, hence the wider padding than elsewhere. */
+  padding: 13px 0;
+  margin: -13px 0;
+}
+
+.nav__links {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.nav__links a {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  /* Nav hover is seen dozens of times a session — it should register
+     as instant feedback, not as an animation you watch. */
+  transition: color 0.15s ease;
+}
+
+.nav__links a:hover {
+  color: var(--text-primary);
+}
+
+.nav__cta {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.7rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.nav__cta:hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+@media (max-width: 720px) {
+  .nav__links {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Hero scene — pinned 3D animation
+   ============================================================ */
+
+/* Tall enough to hold the full scroll-driven sequence: the card's
+   parallax detour through three target profiles, then the original
+   phone-approach phases. All one continuous scrub, so it has to be
+   this long — see the "approach" label in js/main.js. */
+.hero-scene {
+  position: relative;
+  height: 750vh;
+}
+
+.hero-scene__stage {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: radial-gradient(ellipse 70% 55% at 50% 28%, rgba(201, 206, 214, 0.08), transparent 60%);
+}
+
+/* The stage used to carry a vignette here — transparent in the middle,
+   55% black at its edges. It framed the scene nicely on its own, but a
+   vignette is a box: it drew a visible dark border around the stage's
+   own rectangle, and a hard step wherever the stage met the section
+   above or below it. That is precisely the per-section lighting the
+   page-wide light field replaced, so it is gone. What lights the scene
+   now is the key light above plus the field behind it. */
+
+/* Opening statement over the 3D scene. Sits in the band between the
+   nav and the top of the card; js/main.js pushes the scene down a
+   little on narrow screens to make that band wide enough, then lifts it
+   back as this fades out. */
+.hero-intro {
+  position: absolute;
+  top: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: min(640px, calc(100% - var(--space-4) * 2));
+  text-align: center;
+  pointer-events: none;
+}
+
+.hero-intro h1 {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin: var(--space-2) 0 0.65rem;
+}
+
+.hero-intro__sub {
+  color: var(--text-secondary);
+  font-size: clamp(0.85rem, 1.5vw, 1.02rem);
+  line-height: 1.5;
+  max-width: 46ch;
+  margin: 0 auto;
+}
+
+/* Orb parallax layers */
+.orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  /* Slow idle drift, independent of the scroll-driven parallax on
+     the .orbs layer itself (different element, so no transform
+     conflict with the GSAP-driven translateY above it). Keeps the
+     scene alive even while the user isn't scrolling. */
+  animation: orb-breathe 14s ease-in-out infinite;
+}
+
+@keyframes orb-breathe {
+  0%, 100% { transform: scale(1) translate(0, 0); opacity: 1; }
+  50% { transform: scale(1.12) translate(2%, -3%); opacity: 0.75; }
+}
+
+.orbs--back .orb {
+  background: radial-gradient(circle, rgba(201, 206, 214, 0.16), transparent 70%);
+}
+.orbs--back .orb:nth-child(1) { width: 420px; height: 420px; top: 6%; left: 8%; animation-delay: 0s; }
+.orbs--back .orb:nth-child(2) { width: 340px; height: 340px; bottom: 4%; right: 10%; animation-delay: -7s; }
+
+.orbs--mid .orb {
+  background: radial-gradient(circle, rgba(201, 206, 214, 0.22), transparent 68%);
+  filter: blur(36px);
+}
+.orbs--mid .orb:nth-child(1) { width: 260px; height: 260px; top: 18%; right: 16%; animation-duration: 11s; animation-delay: -3s; }
+.orbs--mid .orb:nth-child(2) { width: 200px; height: 200px; bottom: 14%; left: 14%; animation-duration: 12.5s; animation-delay: -9s; }
+
+.orbs--front .orb {
+  background: radial-gradient(circle, rgba(238, 240, 243, 0.3), transparent 65%);
+  filter: blur(22px);
+}
+.orbs--front .orb:nth-child(1) { width: 130px; height: 130px; top: 30%; left: 22%; animation-duration: 8s; animation-delay: -1s; }
+.orbs--front .orb:nth-child(2) { width: 100px; height: 100px; bottom: 24%; right: 24%; animation-duration: 9.5s; animation-delay: -5s; }
+
+/* 3D world */
+.scene-3d {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1800px;
+}
+
+.scene-3d__world {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.contact-shadow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180px;
+  height: 34px;
+  opacity: 0;
+  filter: blur(4px);
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.65), transparent 72%);
+}
+
+/* .card-3d / .phone-3d live directly in the preserve-3d world and carry
+   only position + the animated transform. Visual styling (box-shadow,
+   border-radius, background) lives one level deeper on the __inner
+   element. Putting both on the same node that also has a live 3D
+   transform breaks Chromium's z-sort against 3D siblings — verified by
+   isolated repro — regardless of Z sign or will-change. Splitting the
+   node keeps the sorted element a plain box. */
+.card-3d,
+.phone-3d {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.card-3d {
+  width: 300px;
+  aspect-ratio: 1.586;
+}
+
+/* One card face, written once and worn by two elements: the static
+   card in the hero and the card inside the 3D scene. They are meant to
+   be the same physical object — the page scrolls one into the other and
+   crossfades between them — so every face property has to match
+   exactly. When they didn't, the swap showed: the hero card carried a
+   centred brand mark and 28px corners, the scene card a top-left mark
+   and 18px corners, and for the length of the crossfade you saw both
+   marks at once inside one card. */
+.card-3d__inner,
+.identity__card,
+.sustain-close__card {
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  background: linear-gradient(150deg, #1b1d22 0%, #23262d 45%, #101114 100%);
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 40px 70px -30px rgba(var(--shadow-color), 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-3d__inner {
+  width: 100%;
+  height: 100%;
+}
+
+.card-face__top {
+  display: flex;
+  align-items: center;
+}
+
+/* Brand mark: icon + divider + "Vanta / Card" wordmark. Used at full
+   (stacked, two-line) size on the card face; the nav uses the
+   --compact modifier to keep it to one line at nav-bar height. */
+.brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.brand-mark__icon {
+  width: 30px;
+  height: 24px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.brand-mark__divider {
+  width: 1px;
+  height: 22px;
+  background: var(--border-strong);
+  flex-shrink: 0;
+}
+
+.brand-mark__wordmark {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+
+.brand-mark--compact {
+  gap: 0.55rem;
+}
+
+.brand-mark--compact .brand-mark__icon {
+  width: 24px;
+  height: 19px;
+}
+
+.brand-mark--compact .brand-mark__divider {
+  height: 17px;
+}
+
+.brand-mark--compact .brand-mark__wordmark {
+  flex-direction: row;
+  gap: 0.35em;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.card-3d__name {
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.card-3d__role {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+/* Mobile default: centered, below where the card+phone sit. On wide
+   viewports (matched in JS too) js/main.js animates its `x` to
+   whichever side is opposite the card at each step — so no static
+   transform here; GSAP owns xPercent/yPercent/x/y entirely, the same
+   anchoring pattern #card3d and #phone3d already use. */
+.profile-panel {
+  position: absolute;
+  left: 50%;
+  top: 87%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: min(84vw, 320px);
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.profile-panel__label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+.profile-panel__icon {
+  width: 76px;
+  height: 76px;
+}
+
+.profile-panel__benefit {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  /* Two even lines instead of one full-width line and a short tail.
+     It reads better, and it keeps the text out of the bottom-right
+     corner where the fixed WhatsApp button sits on a phone. Browsers
+     without it just wrap normally, which is where this started. */
+  text-wrap: balance;
+}
+
+.profile-panel__dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 0.1rem;
+}
+
+.profile-panel__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  opacity: 0.4;
+}
+
+.profile-panel__dot--active {
+  opacity: 1;
+  background: var(--accent-strong);
+}
+
+@media (min-width: 700px) {
+  .profile-panel {
+    top: 46%;
+    width: min(26vw, 320px);
+  }
+
+  .profile-panel__label {
+    font-size: clamp(2rem, 3vw, 2.6rem);
+  }
+
+  .profile-panel__icon {
+    width: 92px;
+    height: 92px;
+  }
+}
+
+.phone-3d {
+  width: 220px;
+  aspect-ratio: 9 / 19.3;
+}
+
+.phone-3d__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 42px;
+  padding: 12px;
+  background: linear-gradient(165deg, #1c1e24, #08090b 75%);
+  border: 1px solid rgba(201, 206, 214, 0.16);
+  box-shadow: 0 60px 110px -35px rgba(var(--shadow-color), 0.9);
+}
+
+.phone-3d__notch {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 18px;
+  background: #08090b;
+  border-radius: 999px;
+  z-index: 2;
+}
+
+.phone-3d__screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 32px;
+  background: radial-gradient(ellipse 120% 90% at 50% 0%, #15171b, var(--bg) 70%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone-3d__glyph {
+  width: 46px;
+  height: 46px;
+  color: var(--accent);
+  opacity: 0.55;
+}
+
+.nfc-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.screen-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(238, 240, 243, 0.95), rgba(201, 206, 214, 0.4) 45%, transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ============================================================
+   Revealed content
+   ============================================================ */
+
+.reveal-content {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes chrome-sweep {
+  0%, 100% { background-position: 100% 0; }
+  50% { background-position: 0 0; }
+}
+
+/* ---------- Hero payoff (in-pin echo of the identity headline) ---------- */
+.hero-payoff {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  margin: 0;
+  width: min(22ch, 82vw);
+  text-align: center;
+  font-size: clamp(1.8rem, 4.6vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    var(--text-primary) 30%,
+    var(--accent-strong) 45%,
+    var(--text-primary) 60%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (forced-colors: active) {
+  .hero-payoff {
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    color: CanvasText;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: transform 0.25s var(--ease-premium), background-color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Naming the destination is half the reassurance; showing it is the
+   other half. Sized to the cap height of the label beside it. */
+.btn__icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.btn--primary {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--accent-strong) 0%, var(--accent) 100%);
+  color: var(--bg);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 8px 20px -10px rgba(var(--shadow-color), 0.9);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn--primary:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(180deg, #ffffff 0%, var(--accent-strong) 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 12px 28px -10px rgba(var(--shadow-color), 0.95);
+  }
+}
+
+/* Chrome shimmer: a bright diagonal band sweeps across on hover,
+   like light catching brushed metal. */
+.btn--primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.65) 50%, transparent 60%);
+  transform: translateX(-120%);
+}
+
+.btn--primary:hover::after {
+  transform: translateX(120%);
+  transition: transform 0.7s ease;
+}
+
+.btn--ghost {
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+}
+
+.btn--ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- Editorial chapter ----------
+   One shape for every section on the site whose job is to explain
+   something: the heading lives in its own narrow column and STAYS
+   there while its content scrolls past in the wide column beside it.
+
+   It replaces two separate pinned sticky-stacks (this page's "Cómo
+   funciona" and compromiso's "Nuestra solución"). Those took the
+   scroll away from the reader, and they pushed the section heading
+   off the top of the screen long before the content ended — so most
+   of the section was body text with nothing on screen saying what it
+   belonged to. Sticky costs no JavaScript and never fights the
+   reader's own scrolling. */
+.chapter {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.chapter__aside {
+  position: sticky;
+  /* Nav is 72px tall; this clears it with room to breathe. */
+  top: 104px;
+  align-self: start;
+}
+
+.chapter__aside h2 {
+  font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.chapter__aside > p {
+  margin-top: var(--space-3);
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.chapter__body > p {
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.chapter__body > p + p {
+  margin-top: var(--space-3);
+}
+
+@media (max-width: 900px) {
+  .chapter {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+  }
+  .chapter__aside {
+    position: static;
+  }
+}
+
+/* ---------- Numbered step rows ----------
+   Shared by index and compromiso. Both pages used to build this idea
+   as their own full-height pinned stack, with the CSS and the
+   ScrollTrigger logic duplicated; now it is one quiet list that reads
+   at a glance instead of three screens of scrolling. */
+.steps {
+  display: flex;
+  flex-direction: column;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+
+.step:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.step__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  transition: border-color 0.3s ease;
+}
+
+.step__icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* Same 48px slot, filled with the index instead of an icon — used by
+   lists that are numbered rather than illustrated. */
+.step__icon--num {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--accent-dim);
+}
+
+/* The index sits inside the heading rather than floating above the
+   row as its own micro-label — one less loose scrap of text. */
+.step__title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  font-size: 1.15rem;
+}
+
+.step__index {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: var(--accent-dim);
+  transition: color 0.3s ease;
+}
+
+.step p {
+  margin-top: 0.4rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .step:hover .step__icon {
+    border-color: var(--border-strong);
+  }
+  .step:hover .step__index {
+    color: var(--accent);
+  }
+}
+
+@media (max-width: 480px) {
+  .step {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+  .step__icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ---------- Pull quote ----------
+   The one place either page raises its voice. Full measure, centred,
+   serif italic — it breaks the chapter rhythm on purpose, so a long
+   read has a beat between chapters instead of running flat. */
+.pull-quote {
+  position: relative;
+  max-width: 46ch;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4);
+  border: none;
+  text-align: center;
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(1.5rem, 3.4vw, 2.3rem);
+  line-height: 1.32;
+  color: var(--accent-strong);
+}
+
+.pull-quote::before {
+  content: "\201C";
+  display: block;
+  font-family: var(--font-accent);
+  font-style: normal;
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  line-height: 1;
+  color: var(--border-strong);
+  margin-bottom: var(--space-1);
+}
+
+/* ---------- Fixed WhatsApp button ----------
+   Same spot on every screen, always: no scroll-triggered show/hide,
+   no entrance animation, and deliberately NOT a .btn, so main.js's
+   magnetic-pull and press handlers skip it — the brief was a button
+   that does not move. Only its border and background respond, and
+   only to hover. */
+.wa-fab {
+  position: fixed;
+  right: max(var(--space-3), env(safe-area-inset-right));
+  bottom: max(var(--space-3), env(safe-area-inset-bottom));
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(19, 21, 25, 0.88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-strong);
+  color: var(--accent-strong);
+  /* Edge, not elevation. A lit rim plus the blur behind it already
+     lifts a 54px circle off a near-black page; adding a soft drop
+     shadow on top of a hairline border is the generated-UI tell. */
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.wa-fab svg {
+  width: 25px;
+  height: 25px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wa-fab:hover {
+    border-color: var(--accent);
+    background: rgba(26, 29, 34, 0.96);
+  }
+}
+
+/* The button floats over whatever is at the bottom of the page, and
+   the last thing on both pages is the footer's bottom row. This keeps
+   it off the text there instead of sitting on top of it. */
+/* Instagram, as the mark rather than the word. It is the only social
+   account on the site, so a one-item list was more chrome than content
+   — and a logo is read faster than its name. Drawn in the same line
+   weight as every other icon here instead of dropped in as the brand's
+   own gradient badge, which would be the one saturated object on an
+   otherwise monochrome page. */
+/* La marca sola, sin marco. El glifo de Instagram ya es un cuadrado
+   redondeado: meterlo dentro de otro cuadrado redondeado con borde
+   daba dos marcos anidados, que es lo que se veía mal. El área
+   tocable sigue siendo de 48px — la da la caja, no un recuadro
+   visible — y lo que responde es el color.
+   El selector lleva `.footer__col a` delante a propósito: esa regla
+   tiene más especificidad que `.social-link` sola y le ganaba el
+   display y el padding, así que el glifo quedaba pegado al borde
+   izquierdo de la caja en vez de centrado. */
+.footer__col a.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  /* El glifo mide 30 dentro de un área tocable de 48, así que sobran 9
+     de cada lado: este margen los descuenta para que el borde del logo
+     caiga en la misma línea que el texto de la columna, no 9px adentro. */
+  margin-left: -9px;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.social-link svg {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .footer__col a.social-link:hover {
+    color: var(--accent);
+  }
+}
+
+.footer__bottom {
+  padding-bottom: 58px;
+}
+
+/* ---------- Showcase ----------
+   Lives in the chapter grid now, so "Asi se ve" stays pinned beside
+   the screenshots instead of scrolling off above them. The gallery
+   itself keeps its asymmetry: two phone screens at different sizes
+   and different heights, not a matching pair. ---------- */
+.showcase__gallery {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.showcase__item {
+  perspective: 1200px;
+}
+
+.showcase__item img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  will-change: transform;
+  transform: rotateX(0) rotateY(0);
+}
+
+.showcase__item--secondary {
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 560px) {
+  .showcase__gallery {
+    grid-template-columns: 1fr;
+  }
+  .showcase__item--secondary {
+    margin-top: 0;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Los enlaces de ancla dejaban el título del destino justo debajo de
+   la barra fija, que mide 77-79px: llegabas a la sección y lo primero
+   que leías era el segundo párrafo. Este margen de scroll la deja
+   completa. Va en los destinos de enlace, no en todo [id]. */
+#servicios,
+#planes,
+#faq,
+#contacto,
+#audiencia,
+#productos {
+  scroll-margin-top: 96px;
+}
+
+/* ---------- Offerings (what we do) ---------- */
+.offerings {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.offerings__head {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.offerings__head h2 {
+  font-size: clamp(2.1rem, 3.8vw, 3.1rem);
+  letter-spacing: -0.02em;
+}
+
+.offerings__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 900px) {
+  .offerings__grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
+.offerings__item {
+  transition: transform 0.3s var(--ease-premium);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .offerings__item:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.offerings__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-3);
+}
+
+/* Same spotlight-ring mechanic as .plan, extended here so the two
+   card grids on the page feel like one system, not two. */
+.offerings__media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), 0.5), transparent 65%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.offerings__item:hover .offerings__media::before {
+  opacity: 1;
+}
+
+.offerings__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offerings__item h3 {
+  font-size: 1.15rem;
+  margin-bottom: var(--space-1);
+}
+
+.offerings__item p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+/* ---------- Services ---------- */
+.services {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.services__head {
+  max-width: 52ch;
+  margin: 0 auto var(--space-5);
+  text-align: center;
+}
+
+.services__head h2 {
+  font-size: clamp(2.1rem, 3.8vw, 3.1rem);
+  letter-spacing: -0.02em;
+  margin-top: var(--space-2);
+}
+
+.services__lede {
+  margin-top: var(--space-3);
+  color: var(--text-secondary);
+}
+
+.services__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (max-width: 780px) {
+  .services__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.plan {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.3s ease, transform 0.3s var(--ease-premium);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .plan:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-4px);
+  }
+}
+
+/* Spotlight border: a 1px ring that lights up around the cursor.
+   --mx/--my are set from JS on pointermove. The mask trick keeps
+   only the ring visible, not a filled glow behind the card. */
+.plan::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), 0.55), transparent 65%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.plan:hover::before {
+  opacity: 1;
+}
+
+.plan--featured {
+  border-color: var(--border-strong);
+  background: linear-gradient(165deg, var(--bg-card), #20242b);
+}
+
+.plan__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: var(--space-2);
+}
+
+.plan__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.plan__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.plan__tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.plan__name {
+  font-size: 1.4rem;
+  margin-bottom: var(--space-1);
+}
+
+.plan__price {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin: var(--space-2) 0;
+}
+
+.plan__price span {
+  font-size: 0.95rem;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+/* Pricing isn't fixed per tier — a business/team plan genuinely
+   scales with headcount — so this reads as an intentional "let's
+   talk" tier rather than a placeholder. Sized down from the numeric
+   variant above since it's a phrase, not a digit. */
+.plan__price--quote {
+  font-size: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.plan__price--quote span {
+  font-size: 0.85rem;
+}
+
+.plan__desc {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  margin-bottom: var(--space-3);
+}
+
+.plan__features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: var(--space-4);
+  flex-grow: 1;
+}
+
+.plan__features li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.plan__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(var(--accent-rgb), 0.12);
+  flex-shrink: 0;
+}
+
+.plan__check svg {
+  width: 11px;
+  height: 11px;
+  color: var(--accent);
+}
+
+/* ---------- Identity (closing brand statement) ---------- */
+
+.identity {
+  position: relative;
+  /* Above .hero-scene and .reveal-content: the card drifts down over the
+     scene during the handoff and has to stay on top of it until it fades. */
+  z-index: 3;
+  max-width: var(--max-width);
+  /* Leads the page, so it has to clear the fixed nav (~79px) on its own
+     — nothing above it in the flow does that. */
+  margin: 0 auto;
+  padding: calc(var(--space-6) + 2.5rem) var(--space-4) var(--space-5);
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.identity__inner h1 {
+  font-size: clamp(2.6rem, 6vw, 4.5rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  /* 20ch partia el titular en tres renglones en escritorio: 230px de
+     titular sobre una pantalla de 900 dejaban al resto del hero sin
+     aire. Con 24ch caben dos. */
+  max-width: 24ch;
+  /* Texto centrado: sin esto los renglones quedan de largos muy
+     distintos y el bloque se ve desbalanceado. */
+  text-wrap: balance;
+  /* El ritmo del hero va escrito aqui y no con tokens: son cinco
+     bloques y lo que importa es que no queden a la misma distancia
+     unos de otros. Titular y tarjeta se separan mas; el boton y su
+     nota se pegan, porque son una sola cosa. */
+  margin: 0 auto clamp(1.75rem, 3vw, 2.5rem);
+  /* Chrome shimmer: a bright band drifts across the headline, like
+     light moving over brushed metal. */
+  background: linear-gradient(
+    100deg,
+    var(--text-primary) 30%,
+    var(--accent-strong) 45%,
+    var(--text-primary) 60%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: chrome-sweep 7s ease-in-out infinite;
+}
+
+/* Windows high-contrast / forced-colors mode overrides `color` but
+   not necessarily background-clip:text, which can leave this
+   headline fully invisible (transparent fill, no fallback color).
+   Drop the gradient fill there and just use solid system text. */
+@media (forced-colors: active) {
+  .identity__inner h1 {
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    color: CanvasText;
+    animation: none;
+  }
+}
+
+.identity__card {
+  /* Same 300px as the scene card, so the scale the handoff has to
+     reconcile is 1 and the two are pixel-identical when they trade
+     places. */
+  width: min(300px, 78vw);
+  aspect-ratio: 1.586;
+  margin: 0 auto clamp(1.75rem, 3vw, 2.5rem);
+  pointer-events: none;
+}
+
+.identity__inner p {
+  max-width: 44ch;
+  margin: 0 auto clamp(1.5rem, 2.2vw, 1.75rem);
+  color: var(--text-secondary);
+  text-wrap: balance;
+}
+
+/* Reassurance at the point of decision, which is where it actually
+   does work — an eyebrow above the headline just reproduces the stock
+   AI-SaaS hero shape.
+
+   El selector lleva `.identity__inner p` delante y va despues de esa
+   regla a proposito. La nota es un <p> dentro de .identity__inner, asi
+   que la regla de arriba le ganaba por especificidad: su `margin: 0 auto`
+   dejaba el margen superior en 0 —la nota quedaba a 2px del boton, que
+   es lo que se veia pegado— y su color la pintaba igual que el parrafo
+   principal en vez de un tono mas bajo. Ninguna de las dos cosas se
+   notaba en la hoja porque la regla de la nota parecia estar puesta. */
+.identity__inner p.hero-note {
+  /* El hueco mas chico del hero: la nota es el pie del boton, no un
+     bloque aparte. Arriba del boton hay 24-28px, aqui 20. */
+  margin: 1.25rem auto 0;
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+}
+
+/* Short laptop screens (1024x768 and similar): the hero fits every other
+   viewport in exactly one screen with the CTA above the fold, but not
+   this one. Trim the three things that carry the height. */
+@media (min-width: 721px) and (max-height: 820px) {
+  .identity {
+    padding-top: calc(var(--space-6) + 0.5rem);
+  }
+
+  .identity__inner h1 {
+    font-size: clamp(2.2rem, 4.2vw, 3.1rem);
+  }
+}
+
+/* Small, short phones (360x640 and down). Same problem, other end of the
+   range: the CTA fell just past the fold. */
+@media (max-width: 720px) and (max-height: 700px) {
+  .identity {
+    padding-top: calc(var(--space-5) + 1rem);
+    padding-bottom: var(--space-4);
+  }
+
+  .identity__inner h1 {
+    font-size: clamp(1.9rem, 6.8vw, 2.5rem);
+  }
+}
+
+/* ---------- FAQ ---------- */
+.faq {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.faq__head {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.faq__head h2 {
+  font-size: clamp(2rem, 3.8vw, 3rem);
+  letter-spacing: -0.02em;
+  margin: var(--space-2) 0 0;
+}
+
+.faq__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq__item {
+  border-top: 1px solid var(--border);
+}
+
+.faq__list .faq__item:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq__item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.faq__item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq__item summary::marker {
+  content: "";
+}
+
+.faq__icon {
+  position: relative;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  transition: transform 0.3s var(--ease-premium), border-color 0.3s ease;
+}
+
+.faq__icon::before,
+.faq__icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.faq__icon::before {
+  width: 10px;
+  height: 1.5px;
+}
+
+.faq__icon::after {
+  width: 1.5px;
+  height: 10px;
+}
+
+.faq__item:hover .faq__icon {
+  border-color: var(--border-strong);
+}
+
+.faq__item[open] .faq__icon {
+  transform: rotate(45deg);
+  border-color: var(--border-strong);
+}
+
+/* While the panel is collapsing, `open` is still true (it has to be, or
+   the content would vanish before it finished animating), so the icon
+   needs its own signal to rotate back on time instead of snapping at
+   the end of the collapse. */
+.faq__item.is-closing .faq__icon {
+  transform: rotate(0deg);
+  border-color: var(--border);
+}
+
+/* The box whose height is animated. Height is normally off-limits, but
+   an accordion has no transform equivalent — there's no way to move a
+   known distance when the distance is the content's own height. Kept to
+   200ms because this one costs layout on every frame. */
+.faq__panel {
+  overflow: hidden;
+}
+
+.faq__item p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 60ch;
+  padding: 0 0 var(--space-4);
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: var(--space-5) var(--space-4) var(--space-4);
+}
+
+.footer__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.footer__brand h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.4rem;
+}
+
+.footer__brand p {
+  color: var(--text-tertiary);
+  font-size: 0.85rem;
+  max-width: 32ch;
+}
+
+.footer__col h4 {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-2);
+  font-weight: 500;
+}
+
+.footer__col ul {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer__col a {
+  display: block;
+  /* Padding grows the tap target to 44px tall on mobile; ul's old
+     gap is folded into this so visual spacing stays about the same. */
+  padding: 0.7rem 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.footer__col a:hover {
+  color: var(--accent);
+}
+
+.footer__bottom {
+  max-width: var(--max-width);
+  margin: var(--space-5) auto 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   TELÉFONO  (max-width: 720px)
+   Todo lo de aquí abajo vive dentro de esta consulta o detrás de una
+   propiedad que el escritorio ignora. Nada de este bloque cambia un
+   pixel de una Mac o un iPad — está verificado comparando capturas de
+   página completa a 768, 834, 1024, 1280, 1440 y 1920 antes y después.
+   ============================================================ */
+
+/* Tres propiedades que solo existen en móviles. El resaltado azul del
+   tap y el retardo de 300ms son las dos cosas que más delatan a un
+   sitio web dentro de un teléfono; text-size-adjust evita que iOS
+   infle la tipografía al girar el aparato. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a,
+button,
+.wa-fab,
+.social-link {
+  touch-action: manipulation;
+}
+
+/* Botón de menú: invisible arriba de 720px, donde los enlaces caben en
+   la barra. */
+.nav__menu {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.nav__menu-bars {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 1.5px;
+}
+
+.nav__menu-bars::before,
+.nav__menu-bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 0.28s var(--ease-premium);
+}
+
+.nav__menu-bars::before {
+  transform: translateY(-4px);
+}
+
+.nav__menu-bars::after {
+  transform: translateY(4px);
+}
+
+body.is-menu-open .nav__menu-bars::before {
+  transform: rotate(45deg);
+}
+
+body.is-menu-open .nav__menu-bars::after {
+  transform: rotate(-45deg);
+}
+
+/* La hoja del menú. Tampoco existe arriba de 720px. */
+.nav-sheet {
+  display: none;
+}
+
+/* Las tres fichas de público como lista: en pantallas grandes son el
+   panel que gira dentro de la escena 3D. */
+.audience {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  /* ---- Escala de teléfono ----
+     Los clamp() de los títulos tienen el piso calculado para
+     escritorio, y en una pantalla de 390px el piso es lo que manda:
+     la h1 salía a 41.6px y las h2 a 30-34px, que es lo que se veía
+     como "zoom". El cuerpo no se toca — 16px de texto y 14.7 de
+     secundario ya estaban bien; lo que sobraba era titular.
+
+     La escala de espacio también baja: 4.5rem de aire entre secciones
+     es proporción de monitor, no de teléfono. */
+  :root {
+    /* 1.75, no 1.5: --space-3 ya vale 1.5rem, y ponerlos iguales
+       fundia dos escalones en uno. Todo lo que separaba bloques con
+       --space-4 pasaba a separarlos igual que lo de dentro de un
+       bloque, y el resultado se leia amontonado. */
+    --space-4: 1.75rem;
+    --space-5: 2.25rem;
+    --space-6: 3rem;
+    --space-7: 4.5rem;
+  }
+
+  .identity__inner h1 {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+
+  .hero-payoff {
+    font-size: 1.65rem;
+  }
+
+  .chapter__aside h2,
+  .offerings__head h2,
+  .services__head h2,
+  .faq__head h2 {
+    font-size: 1.5rem;
+  }
+
+  .pull-quote {
+    font-size: 1.35rem;
+  }
+
+  /* La barra: menos aire a los lados que en escritorio, y respeto por
+     el recorte de la pantalla en horizontal. */
+  .nav {
+    padding: var(--space-2) max(var(--space-3), env(safe-area-inset-right))
+      var(--space-2) max(var(--space-3), env(safe-area-inset-left));
+  }
+
+  .nav__menu {
+    display: inline-flex;
+    /* Compensa el padding del propio botón para que la barra del icono
+       quede alineada con el borde óptico de la barra, no 12px adentro. */
+    margin-right: -11px;
+  }
+
+  /* Con la hoja abierta, el botón de la barra sobra: la hoja trae el
+     suyo abajo, donde cae el pulgar. Quitarlo deja la barra en logo +
+     cerrar, que es lo que hace cualquier app. */
+  body.is-menu-open .nav__cta {
+    display: none;
+  }
+
+  /* Más chico de tipografía para que quepa junto al botón de menú, pero
+     nunca por debajo de 44px de alto: al encogerle el padding se quedó
+     en 42 y dejó de ser un objetivo cómodo para el pulgar. */
+  .nav__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.8rem;
+    padding: 0 0.95rem;
+  }
+
+  /* Debajo de la barra (z-index 100), no encima: el botón de cerrar es
+     el mismo que abrió la hoja y tiene que seguir alcanzable. */
+  .nav-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    padding: calc(72px + var(--space-3)) var(--space-4)
+      calc(var(--space-4) + env(safe-area-inset-bottom));
+    background: rgba(10, 11, 13, 0.97);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.22s ease, transform 0.26s var(--ease-premium),
+      visibility 0.26s;
+    overscroll-behavior: contain;
+  }
+
+  body.is-menu-open .nav-sheet {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  body.is-menu-open {
+    overflow: hidden;
+  }
+
+  .nav-sheet__links {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nav-sheet__links a {
+    padding: 1.05rem 0;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: -0.015em;
+    color: var(--text-primary);
+  }
+
+  /* Al fondo de la hoja, donde cae el pulgar. */
+  .nav-sheet__cta {
+    margin-top: auto;
+    width: 100%;
+  }
+
+  /* La escena 3D se salta la secuencia de perfiles en el teléfono
+     (main.js), así que ya no necesita 750vh de scroll para contarla.
+     El número sale de medirlo: en escritorio la línea de tiempo dura
+     2.34 y se reparte en 5850px, o sea 2500px por unidad. En teléfono
+     dura 1.32, así que 460vh deja unos 2300px por unidad — el mismo
+     ritmo, un pelo más rápido, que es lo que se quiere cuando lo que
+     empuja el scroll es un pulgar. */
+  .hero-scene {
+    height: 460vh;
+  }
+
+  .profile-panel {
+    display: none;
+  }
+
+  .audience {
+    display: block;
+    max-width: 460px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4) var(--space-3);
+  }
+
+  .audience h2 {
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+  }
+
+  .audience__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .audience__item {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .audience__item:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .audience__badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+  }
+
+  .audience__item h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .audience__item p {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+}
